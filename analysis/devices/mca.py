@@ -1,3 +1,4 @@
+import os.path
 import typing as tp
 
 import numpy as np
@@ -83,7 +84,8 @@ class TableMCA:
 
 
 if __name__ == "__main__":
-    __meas = MeasMCA("../data/calibration/cal_10_5.mca")
+    __meas = MeasMCA(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "data/calibration/cal_10_5.mca"))
     print(__meas.data)
     print(__meas.conf)
     print(__meas.status)
