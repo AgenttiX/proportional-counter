@@ -9,7 +9,8 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: report/main.tex
+          root_file: main.tex
+          working_directory: report
       - uses: actions/upload-artifact@v2
         with:
           name: pap328-report
