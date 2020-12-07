@@ -1,4 +1,4 @@
-name: Build the report
+name: LaTeX build
 on: [push, pull_request]
 jobs:
   build_latex:
@@ -7,10 +7,10 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Compile LaTeX document
+        working-directory: ./report
         uses: xu-cheng/latex-action@v2
         with:
           root_file: main.tex
-        working-directory: report
       - uses: actions/upload-artifact@v2
         with:
           name: pap328-report
