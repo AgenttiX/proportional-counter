@@ -130,3 +130,28 @@ dmypy.json
 
 # PyCharm
 .idea
+
+# LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.glg
+*.glo
+*.gls
+*.ist
+*.lof
+*.log
+*.lol
+*.lot
+*.out
+# *.pdf
+*.gz
+*.toc
+*.xml
+*.xmpi
+.directory
+svg-inkscape
+
+main.pdf
