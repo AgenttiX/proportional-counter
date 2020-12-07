@@ -1,6 +1,15 @@
-\usepackage{hyperref}
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
+\usepackage[backend=biber,sorting=none]{biblatex}
 \addbibresource{references.bib}
+
+\usepackage{amsmath}
+\usepackage{appendix}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{subcaption}
 
 \title{PAP328 project work: proportional counter}
 \author{Mika Mäki}
@@ -14,37 +23,101 @@
 \maketitle
 
 \section*{Abstract}
+In this project we assembled a gas-based proportional counter for X-ray and $\gamma$-ray detection.
+The detector was based on a 0,5 l drink can, which had an anode wire along its center.
+The detector was filled with the P10 gas mixture, and high voltage ($>$ 2000 V) was applied between the anode and the can.
+In these conditions when high-energy radation ionizes the gas, the resulting electrons drift towards the anode wire.
+Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with electronics.
+
+The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
+This setup demonstrated sufficient resolution to distinguish the ASDF peaks.
+
+The detector was also tested with a self-built pre-amplifier.
+However, these results were inconclusive due to unexpected degradation of the detector.
+These measurements are discussed in the appendix \ref{pre_amp}.
+
 
 \section{Introduction}
+What are radiation detectors?
+Basics of proportional counters.
+
+Context for the usages!
+
 
 \section{Theory}
 Formulas here and only here
-Theoretical predictions?
-Error analysis methods
+
+\subsection{The proportional counter}
+The detector.
+Electric field, gas composition, quenching, multiplication, different regions.
+Theoretical predictions on accuracy?
+
+\subsection{Error analysis methods}
+Error propagation formulas etc.
 
 
 \section{Experimental set-up}
-Date of the measurements
+Self-built detector etc.
+Answer the questions on page 5 of the instructions!
+
+
+\subsection{Detector assembly}
+Detector structure and construction steps
+
+The top of the can was removed.
+Holes.
 
 \begin{figure}[ht!]
-\caption{Pre-amplifier}
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201117_121044.jpg}
+\caption{The anode wire is soldered to the connector}
 \end{figure}
 
 \begin{figure}[ht!]
-\caption{Counter setup}
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201123_103327.jpg}
+\caption{A brass tube within a plastic screw serves as the other end of the anode wire}
 \end{figure}
 
 \begin{figure}[ht!]
-\caption{ASDF}
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201123_104201.jpg}
+\caption{Setup for soldering the anode (TODO CHECK) wire}
 \end{figure}
+
+
+\subsection{Calibration}
+The electronics have to be calibrated with an external pulser
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201130_135000.jpg}
+\caption{Setup for testing with an external pulser}
+\end{figure}
+
+
+\subsection{Testing}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201130_144418.jpg}
+\caption{Setup for testing with an Fe-55 source and a rack-mounted amplifier}
+\end{figure}
+
+
 
 \section{Results and discussion}
 
+
 \subsection{Calibration}
+Output vs. input signal
+See the spreadsheet!
 
 \subsection{High voltage sweep}
+The effect of gain settings and detector voltages
 
 \subsection{Spectral measurement}
+Some nice MCA spectra here
 
 
 \section{Conclusions}
@@ -56,14 +129,55 @@ Were the results as expected? If not, why?
 Is the mesurement precise enough to discuss ASDF?
 
 
-References in citation order.
-\printbibliography
-
+\clearpage
 \begin{appendices}
 
 \section{Pre-amplifier}
+\label{pre_amp}
+
 Detailed characterization here
 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201005_104331.jpg}
+\caption{Preliminary testing of the pre-amplifier components}
+\end{figure}
+
+
+\begin{figure}[ht!]
+\centering
+\subcaptionbox{}{
+	\includegraphics[width=\textwidth]{fig/IMG_20201201_121635.jpg}
+}
+\subcaptionbox{}{
+	\includegraphics[width=\textwidth]{fig/IMG_20201201_121625.jpg}
+}
+\caption{Power supply for the pre-amplifier}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201207_121010.jpg}
+\caption{Pre-amplifier board}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\subcaptionbox{}{
+	\includegraphics[width=\textwidth]{fig/IMG_20201201_121735.jpg}
+}
+\subcaptionbox{}{
+	\includegraphics[width=\textwidth]{fig/IMG_20201201_121845.jpg}
+}
+\caption{Mounting of the pre-amplifier board}
+\end{figure}
+
 \end{appendices}
+
+
+\clearpage
+\section{References}
+\printbibliography
+
 
 \end{document}
