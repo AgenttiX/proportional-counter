@@ -1,0 +1,142 @@
+name: CI
+on: [ push, pull_request ]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+    - name: Print Python version
+      run: python -V
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Load pip cache
+      uses: actions/cache@v2
+      with:
+        path: .pip
+        key: pip-${{ runner.os }}-${{ hashFiles('analysis/requirements.txt') }}
+        restore-keys: |
+          pip-${{ runner.os }}-
+          pip-
+    - name: Install requirements
+      run: |
+        pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install pylint
+        pip --cache-dir=.pip install -r analysis/requirements.txt
+    - name: Run Pylint
+      run: pylint devices analysis.py main.py plot.py 2>&1 | tee pylint.txt
+      working-directory: ${{ github.workspace }}/analysis
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Lint
+        path: |
+          ${{ github.workspace }}/analysis/pylint.txt
+        if-no-files-found: error
+  graph:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+    - name: Print Python version
+      run: python -V
+    - name: Install graphviz
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y graphviz
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Load pip cache
+      uses: actions/cache@v2
+      with:
+        path: .pip
+        key: pip-${{ runner.os }}-${{ hashFiles('analysis/requirements.txt') }}
+        restore-keys: |
+          pip-${{ runner.os }}-
+          pip-
+    - name: Install requirements
+      run: |
+        pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install pylint
+        pip --cache-dir=.pip install -r analysis/requirements.txt
+    - name: Run Pyreverse
+      run: |
+        pyreverse ./analysis/devices ./analysis/analysis.py ./analysis/main.py ./analysis/plot.py -o svg
+        pyreverse ./analysis/devices ./analysis/analysis.py ./analysis/main.py ./analysis/plot.py -o png
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Graph
+        path: |
+          classes.svg
+          packages.svg
+          classes.png
+          packages.png
+        if-no-files-found: error
+  fossa:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+    - name: Print Python version
+      run: python -V
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Load pip cache
+      uses: actions/cache@v2
+      with:
+        path: .pip
+        key: pip-${{ runner.os }}-${{ hashFiles('src/requirements.txt') }}
+        restore-keys: |
+          pip-${{ runner.os }}-
+          pip-
+    - name: Install requirements
+      run: |
+        pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install -r analysis/requirements.txt
+    - name: Install FOSSA
+      run: |
+        curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
+    - name: Run FOSSA
+      run: fossa analyze
+      env:
+        FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - uses: AppThreat/sast-scan-action@master
+      with:
+        output: reports
+        type: bash,python
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: sast-scan-reports
+        path: reports
+        if-no-files-found: error
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+    - name: Print Python version
+      run: python -V
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Load pip cache
+      uses: actions/cache@v2
+      with:
+        path: .pip
+        key: pip-${{ runner.os }}-${{ hashFiles('analysis/requirements.txt') }}
+        restore-keys: |
+          pip-${{ runner.os }}-
+          pip-
+    - name: Install requirements
+      run: |
+        pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install -r analysis/requirements.txt
+    - name: Run analysis
+      run: python main.py
+      working-directory: ${{ github.workspace }}/analysis
