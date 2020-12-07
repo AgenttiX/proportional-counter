@@ -7,10 +7,9 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Compile LaTeX document
-        working-directory: ./report
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: main.tex
+          root_file: report/main.tex
       - uses: actions/upload-artifact@v2
         with:
           name: pap328-report
