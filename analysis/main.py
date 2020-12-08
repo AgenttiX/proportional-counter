@@ -34,12 +34,12 @@ calibration = [
     ),
     MeasCal(
         voltage=1.49,
-        traces=(81, 85),
+        traces=(84, 85),    # Trace 81, 82 and 83 don't have a signal
         file="cal_10_68"
     ),
     MeasCal(
         voltage=1.895,
-        traces=(86, 90),
+        traces=(86, 89),    # Trace 90 does not have a signal
         file="cal_10_85"
     ),
     MeasCal(
@@ -63,7 +63,6 @@ calibration = [
         file="cal_10_145"
     )
 ]
-
 
 if __name__ == "__main__":
     analyze(calibration)
