@@ -15,7 +15,6 @@
 \title{PAP328 project work: proportional counter}
 \author{Mika Mäki}
 
-
 % TODO add date when the report was handed in
 
 
@@ -25,17 +24,20 @@
 
 \section*{Abstract}
 In this project we assembled a gas-based proportional counter for X-ray and $\gamma$-ray detection.
-The detector was based on a 0,5 l drink can, which had an anode wire along its center.
-The detector was filled with the P10 gas mixture, and high voltage ($>$ 2000 V) was applied between the anode and the can.
-In these conditions when high-energy radation ionizes the gas, the resulting electrons drift towards the anode wire.
+The detector consists of a cylindrical cathode, for which we used a beverage can, and a thin anode wire along its center.
+When high voltage is applied between the cathode and the anode and incoming high-energy radiation ionizes the gas inside, the resulting electrons drift towards the anode wire.
 Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with electronics.
 
 The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
-This setup demonstrated sufficient resolution to distinguish the ASDF peaks.
+This setup demonstrated sufficient resolution to distinguish the TODO peaks.
+
+TODO add main results here.
 
 The detector was also tested with a self-built pre-amplifier.
 However, these results were inconclusive due to unexpected degradation of the detector.
 These measurements are discussed in the appendix \ref{pre_amp}.
+
+\tableofcontents
 
 
 \section{Introduction}
@@ -53,8 +55,13 @@ The detector.
 Electric field, gas composition, quenching, multiplication, different regions.
 Theoretical predictions on accuracy?
 
+TODO refer to the article "A gaseous proportional counter built from a conventional aluminum beverage can"
+
 \subsection{Error analysis methods}
 Error propagation formulas etc.
+
+\subsection{Read-out electronics}
+
 
 
 \section{Experimental set-up}
@@ -121,6 +128,7 @@ The effect of gain settings and detector voltages
 
 \subsection{Spectral measurement}
 Some nice MCA spectra here
+The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
 
 
 \section{Conclusions}
