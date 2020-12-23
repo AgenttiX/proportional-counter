@@ -7,73 +7,12 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from devices.mca import MeasMCA
-from devices.oscilloscope import MeasOsc
+from meas import Meas, MeasCal
+import fitting
 import plot
 
 
-class MeasCal:
-    def __init__(
-            self,
-            voltage: float, traces: tp.Tuple[int, int],
-            file: str):
-        self.voltage = voltage
-        if not os.path.isabs(file):
-            if file.startswith("cal"):
-                folder = "calibration"
-            elif file.startswith(("Am", "Fe")):
-                folder = "hv_scan"
-            else:
-                raise ValueError(
-                    "Cannot deduce file location from the file name. "
-                    "Please use and absolute path.")
-            file = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "data",
-                folder,
-                f"{file}.mca"
-            )
-        self.mca = MeasMCA(file)
-
-        if isinstance(traces, tuple) and len(traces) == 2:
-            inds = range(traces[0], traces[1]+1)
-        elif isinstance(traces, list):
-            inds = traces
-        else:
-            raise NotImplementedError("Unknown trace settings")
-        folder = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "data",
-            "calibration"
-        )
-        self.traces = [
-            MeasOsc(
-                os.path.join(folder, f"C1Trace{str(ind).zfill(5)}.txt")
-            )
-            for ind in inds
-        ]
-        self.trace_inds = np.array(inds)
-
-    @property
-    def peak_height(self):
-        peak_heights = np.array([meas_osc.peak_height for meas_osc in self.traces])
-        return np.mean(peak_heights), np.std(peak_heights)
-
-    def plot_traces(self, ax: plt.Axes):
-        for trace, trace_ind in zip(self.traces, self.trace_inds):
-            ax.plot(trace.t, trace.voltage, label=trace_ind)
-            ax.legend()
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Voltage (V)")
-
-
-class Meas:
-    def __init__(self, path: str, gain: int, voltage: int):
-        self.gain = gain
-        self.voltage = voltage
-        self.mca = MeasMCA(path)
-
-
-def read_hv_scan(folder: str, prefix: str):
+def read_hv_scan(folder: str, prefix: str) -> tp.Tuple[np.ndarray, np.ndarray, tp.List[MeasMCA]]:
     paths = glob.glob(os.path.join(folder, f"{prefix}_*.mca"))
     gains = []
     voltages = []
@@ -92,6 +31,13 @@ def read_hv_scan(folder: str, prefix: str):
 
 def hv_scan(folder: str, prefix: str):
     gains, voltages, mcas = read_hv_scan(folder, prefix)
+    fig: plt.Figure = plt.figure()
+    ax: plt.Axes = fig.add_subplot()
+    true_volts = voltages / gains
+    ax.plot(mcas[0].data)
+
+    if prefix == "Fe":
+        fitting.fit_fe(mcas)
 
 
 def spectra(am_path, fe_path, noise_path, gain, voltage):
@@ -115,7 +61,7 @@ def calibration(
         cal_data: tp.List[MeasCal],
         coarse_gain: float = 10,
         fine_gain: float = 10,
-        preamp_capacitance: float = 1e-12):
+        preamp_capacitance: float = 1e-12) -> np.ndarray:
     # meas = cal_data[0]
     # osc = meas.traces[0]
     fig: plt.Figure = plt.figure()
@@ -129,14 +75,22 @@ def calibration(
     gain = coarse_gain*fine_gain
     charges = preamp_capacitance*np.array([meas.voltage for meas in cal_data]) / gain
 
-    ax.errorbar(charges, peak_heights, yerr=peak_stds, fmt=".", capsize=3)
+    ax.errorbar(charges, peak_heights, yerr=peak_stds, fmt=".", capsize=3, label="data")
+    # This transforms the scale to a more reasonable one for the fitting algorithm and therefore
+    # reduces errors.
     fit_accuracy_fixer = 1e14
-    fit = curve_fit(lambda x, a, b: a*x + b, xdata=charges*fit_accuracy_fixer, ydata=peak_heights)
+    fit = curve_fit(
+        lambda x, a, b: a*x + b,
+        xdata=charges*fit_accuracy_fixer,
+        ydata=peak_heights,
+    )
     coeff = np.array([fit[0][0]*fit_accuracy_fixer, fit[0][1]])
-    ax.plot(charges, np.polyval(coeff, charges), label="linear fit")
+    ax.plot(charges, np.polyval(coeff, charges), label=f"fit (y = {coeff[0]:.3e}x + {coeff[1]:.3e}")
     ax.set_xlabel("Collected charge (C)")
     ax.set_ylabel("Pulse height (V)")
+    ax.legend()
 
+    # Special analysis for failed measurements
     failed_meas = []
     for meas in cal_data:
         if meas.peak_height[1] > 0.01:
@@ -149,11 +103,13 @@ def calibration(
             meas.plot_traces(ax)
             ax.set_title(f"V = {meas.voltage:.2f} V")
 
+    return coeff
+
 
 def analyze(cal_data: tp.List[MeasCal]):
     calibration(cal_data)
-    plt.show()
-    return
+    # plt.show()
+    # return
 
     data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
     hv_scan_folder = os.path.join(data_folder, "hv_scan")

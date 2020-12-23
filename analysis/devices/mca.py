@@ -55,6 +55,7 @@ class MeasMCA:
                     self.status[row[0]] = self.convert_value(row[1])
 
         self.data = np.array(data, dtype=np.int_)
+        self.channels = np.arange(0, self.data.size)
 
         # self.data = pd.read_csv(
         #     path,
