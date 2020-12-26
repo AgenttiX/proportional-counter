@@ -12,13 +12,20 @@ def fit_fe(
         mcas: tp.List[MeasMCA],
         threshold_level: float = 0.5,
         cut_width_mult: float = 2):
+    """Create fits for Fe-55 MCA measurements"""
     fig: plt.Figure
     # axes: tp.List[plt.Axes]
     num_plots_x = int(np.sqrt(len(mcas))*3/2)
     num_plots_y = int(np.ceil(len(mcas) / num_plots_x))
     fig, axes = plt.subplots(num_plots_y, num_plots_x)
     axes_flat: tp.List[plt.Axes] = [item for sublist in axes for item in sublist]
+
+    # Remove unnecessary axes
+    for i in range(len(mcas), len(axes_flat)):
+        fig.delaxes(axes_flat[i])
+
     fig.suptitle("Fe fits")
+    # fig.tight_layout()
 
     peak_channels = np.zeros(len(mcas))
 
@@ -35,7 +42,7 @@ def fit_fe(
         cut_ind_min = max(0, peak_ind - cut_width_mult*(peak_ind-threshold_inds[0]))
         cut_ind_max = min(mca.data.size, peak_ind + cut_width_mult*(threshold_inds[-1]-peak_ind) + 1)
         cut_inds = np.arange(cut_ind_min, cut_ind_max)
-        ax.vlines((cut_ind_min, cut_ind_max), ymin=0, ymax=peak, label="fit cut")
+        ax.vlines((cut_ind_min, cut_ind_max), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
         # fit = curve_fit(
         #     stats.double_gaussian,

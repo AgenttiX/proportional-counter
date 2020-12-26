@@ -152,6 +152,7 @@ dmypy.json
 *.xml
 *.xmpi
 .directory
+*eps-converted-to.pdf
 svg-inkscape
 
 main.pdf

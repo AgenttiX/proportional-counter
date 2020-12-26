@@ -5,6 +5,7 @@ from devices.oscilloscope import MeasOsc
 
 
 def plot_osc(meas: MeasOsc, ax: plt.Axes):
+    """Plot an oscilloscope measurement"""
     ax.plot(meas.t, meas.voltage, label="data")
     peak_ind = np.argmax(meas.voltage)
     ax.hlines(meas.zero_level, meas.t[0], meas.t[peak_ind], label="zero level", colors=["r"])
@@ -17,5 +18,6 @@ def plot_osc(meas: MeasOsc, ax: plt.Axes):
 
 
 def legend_multi(ax: plt.Axes, lines):
+    """Create a legend for a multi-axis plot"""
     labels = [line.get_label() for line in lines]
     ax.legend(lines, labels)

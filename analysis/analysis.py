@@ -11,6 +11,8 @@ from meas import Meas, MeasCal
 import fitting
 import plot
 
+FIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fig")
+
 
 def analyze_sizes(sizes: tp.Dict[str, tp.List[float]]):
     print("Sizes")
@@ -38,23 +40,34 @@ def read_hv_scan(folder: str, prefix: str) -> tp.Tuple[np.ndarray, np.ndarray, t
     return np.array(gains), np.array(voltages), mcas
 
 
+def save_fig(fig: plt.Figure, name: str):
+    fig.savefig(os.path.join(FIG_FOLDER, f"{name}.eps"))
+    fig.savefig(os.path.join(FIG_FOLDER, f"{name}.svg"))
+
+
 def hv_scan(folder: str, prefix: str):
+    """Analyze HV scan data"""
     gains, voltages, mcas = read_hv_scan(folder, prefix)
     fig: plt.Figure = plt.figure()
+    fig.suptitle(f"{prefix} HV scan")
     ax: plt.Axes = fig.add_subplot()
     true_volts = voltages / gains
     ax.plot(mcas[0].data)
 
     if prefix == "Fe":
         fitting.fit_fe(mcas)
+    # if prefix == "Am":
+    #     fitting.fit_am(mcas)
 
 
 def spectra(am_path, fe_path, noise_path, gain, voltage):
+    """Analyze spectral measurement"""
     am = MeasMCA(am_path)
     fe = MeasMCA(fe_path)
     noise = MeasMCA(noise_path)
 
     fig: plt.Figure = plt.figure()
+    fig.suptitle("Spectral measurements")
     ax1: plt.Axes = fig.add_subplot()
     ax2: plt.Axes = ax1.twinx()
     line_am = ax1.plot(am.data, label="Am-241")[0]
@@ -64,6 +77,7 @@ def spectra(am_path, fe_path, noise_path, gain, voltage):
     ax1.set_xlabel("MCA channel")
     ax1.set_ylabel("count")
     plot.legend_multi(ax1, [line_am, line_fe, line_noise])
+    save_fig(fig, "spectra")
 
 
 def calibration(
@@ -74,7 +88,7 @@ def calibration(
     # meas = cal_data[0]
     # osc = meas.traces[0]
     fig: plt.Figure = plt.figure()
-    fig.suptitle("Calibration")
+    fig.suptitle("Amplifier calibration")
     ax: plt.Axes = fig.add_subplot()
     # plot.plot_osc(osc, ax)
 
@@ -84,6 +98,9 @@ def calibration(
     gain = coarse_gain*fine_gain
     charges = preamp_capacitance*np.array([meas.voltage for meas in cal_data]) / gain
 
+    #####
+    # Amplifier calibration
+    #####
     ax.errorbar(charges, peak_heights, yerr=peak_stds, fmt=".", capsize=3, label="data")
     # This transforms the scale to a more reasonable one for the fitting algorithm and therefore
     # reduces errors.
@@ -98,6 +115,7 @@ def calibration(
     ax.set_xlabel("Collected charge (C)")
     ax.set_ylabel("Pulse height (V)")
     ax.legend()
+    save_fig(fig, "amp_calibration")
 
     # Special analysis for failed measurements
     failed_meas = []
@@ -111,6 +129,12 @@ def calibration(
             ax = fig2.add_subplot(len(failed_meas), 1, i+1)
             meas.plot_traces(ax)
             ax.set_title(f"V = {meas.voltage:.2f} V")
+
+    #####
+    # MCA calibration
+    #####
+
+    # TODO: add fitting of MCA peak channel vs. pulse height and MCA peak channel vs. collected charge
 
     return coeff
 
