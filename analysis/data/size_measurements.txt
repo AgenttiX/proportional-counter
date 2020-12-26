@@ -1,0 +1,72 @@
+This is the original measurement diary for the size measurements.
+
+
+Can outer diameter:
+- 66.01 mm
+- 65.74 mm
+- 65.81 mm
+- 65.70 mm
+- 65.89 mm
+
+Can top end inner diameter:
+- 47.50 mm
+- 47.78 mm
+- 47.58 mm
+- 47.76 mm
+- 47.47 mm
+
+Can top end outer diameter:
+- 53.84 mm
+- 53.88 mm
+- 53.98 mm
+- 53.89 mm
+- 53.82 mm
+
+Can bottom end inner diameter:
+- 45.51 mm
+- 44.93 mm
+- 45.40 mm
+- 45.43 mm
+- 45.47 mm
+
+Can thickness (measured from the top section):
+- 240 µm
+- 250 µm
+- 240 µm
+- 250 µm
+- 280 µm
+
+Can thickness (measured from an opened and straightened Sandels can):
+- 102 µm
+- 103 µm
+- 102 µm
+- 100 µm
+- 102 µm
+
+Long brass tube length:
+- 29.25 mm
+- 29.26 mm
+- 29.27 mm
+- 29.27 mm
+- 29.25 mm
+
+Short brass tube length:
+- 10.05 mm
+- 9.98 mm
+- 9.99
+- 9.99
+- 10.04
+
+Brass tube diameter:
+- 992 µm
+- 990 µm
+- 991 µm
+- 990 µm
+- 987 µm
+
+Brass tube + connector length from acryl:
+- 27.30 mm
+- 27.15 mm
+- 27.32 mm
+- 27.59 mm
+- 27.23 mm

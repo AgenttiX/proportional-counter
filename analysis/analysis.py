@@ -12,6 +12,15 @@ import fitting
 import plot
 
 
+def analyze_sizes(sizes: tp.Dict[str, tp.List[float]]):
+    print("Sizes")
+    for name, data in sizes.items():
+        print(name)
+        print(f"µ = {np.mean(data)}")
+        print(f"σ = {np.std(data)}")
+    print()
+
+
 def read_hv_scan(folder: str, prefix: str) -> tp.Tuple[np.ndarray, np.ndarray, tp.List[MeasMCA]]:
     paths = glob.glob(os.path.join(folder, f"{prefix}_*.mca"))
     gains = []
