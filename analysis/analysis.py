@@ -11,7 +11,7 @@ from meas import Meas, MeasCal
 import fitting
 import plot
 
-FIG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fig")
+FIG_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "report", "fig", "python")
 
 
 def analyze_sizes(sizes: tp.Dict[str, tp.List[float]]):
