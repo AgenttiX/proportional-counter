@@ -21,7 +21,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
-        pip --cache-dir=.pip install pylint
+        pip --cache-dir=.pip install pylint wheel
         pip --cache-dir=.pip install -r analysis/requirements.txt
     - name: Run Pylint
       run: pylint devices analysis.py main.py plot.py 2>&1 | tee pylint.txt
@@ -57,7 +57,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
-        pip --cache-dir=.pip install pylint
+        pip --cache-dir=.pip install pylint wheel
         pip --cache-dir=.pip install -r analysis/requirements.txt
     - name: Run Pyreverse
       run: |
@@ -93,6 +93,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install wheel
         pip --cache-dir=.pip install -r analysis/requirements.txt
     - name: Install FOSSA
       run: |
@@ -136,6 +137,7 @@ jobs:
     - name: Install requirements
       run: |
         pip --cache-dir=.pip install --upgrade pip
+        pip --cache-dir=.pip install wheel
         pip --cache-dir=.pip install -r analysis/requirements.txt
     - name: Run analysis
       run: python main.py
