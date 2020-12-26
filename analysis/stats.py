@@ -2,7 +2,7 @@
 Statistical distributions and related functions
 """
 
-import numba
+# import numba
 import numpy as np
 import scipy.stats
 
