@@ -1,7 +1,25 @@
+import typing as tp
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from devices.oscilloscope import MeasOsc
+from meas import MeasCal
+
+
+def plot_failed_cals(cal_data: tp.List[MeasCal]):
+    """Detection and plotting of failed calibration measurements"""
+    failed_meas: tp.List[MeasCal] = []
+    for meas in cal_data:
+        if meas.peak_height[1] > 0.01:
+            failed_meas.append(meas)
+    if failed_meas:
+        fig: plt.Figure = plt.figure()
+        fig.suptitle("These calibration measurements have bad traces. Please fix!")
+        for i, meas in enumerate(failed_meas):
+            ax = fig.add_subplot(len(failed_meas), 1, i+1)
+            meas.plot_traces(ax)
+            ax.set_title(f"V = {meas.voltage:.2f} V")
 
 
 def plot_osc(meas: MeasOsc, ax: plt.Axes):

@@ -202,7 +202,40 @@ A piece of aluminum foil was put over the bottom of the can to provide additiona
 
 \FloatBarrier
 \subsection{Calibration}
-The electronics have to be calibrated with an external pulser
+\label{setup_calibration}
+To establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation, the detector and readout electronics had to be calibrated.
+The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/instructions/connections.png}
+\caption{Electrical connections of the setup \cite{instructions}, TODO draw own one with vector graphics}
+\label{fig:connections}
+\end{figure}
+
+The first step was the calibration of the amplifier by establishing a relationship between the collected charge and the outgoing pulse height.
+This was done by attaching a pulse generator to the amplifier input, and an oscilloscope to its output.
+The output NOPE voltage is defined by the equation
+\begin{equation}
+V = \frac{GQ}{C},
+\end{equation}
+where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier, and $G$ is the total gain of the amplifier.
+Therefore 
+\begin{equation}
+Q = \frac{CV}{G}.
+\end{equation}
+
+\ref{fig:amp_calibration}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{../analysis/fig/amp_calibration.eps}
+\caption{Amplifier calibration}
+\label{fig:amp_calibration}
+\end{figure}
+
+The multichannel analyzer was calibrated simultaneously by attaching it to the same output of the amplifier as the oscilloscope.
+Therefore a correspondence could be established between the pulse heights measured with the oscilloscope and the channels of the MCA signal peaks. 
 
 \begin{figure}[ht!]
 \centering
@@ -213,6 +246,7 @@ The electronics have to be calibrated with an external pulser
 
 \FloatBarrier
 \subsection{Testing}
+\label{setup_testing}
 
 \begin{figure}[ht!]
 \centering
@@ -223,21 +257,26 @@ The electronics have to be calibrated with an external pulser
 
 \FloatBarrier
 \section{Results and discussion}
+\label{results}
 
 
 \subsection{Calibration}
+\label{results_calibration}
 Output vs. input signal
 See the spreadsheet!
 
 \subsection{High voltage sweep}
+\label{results_hv}
 The effect of gain settings and detector voltages
 
 \subsection{Spectral measurement}
+\label{results_spectral}
 Some nice MCA spectra here
 The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
 
 
 \section{Conclusions}
+\label{conclusions}
 Discuss results in context.
 No need to repeat the results.
 Refer to the introduction.

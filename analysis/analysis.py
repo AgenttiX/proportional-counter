@@ -117,22 +117,27 @@ def calibration(
     ax.legend()
     save_fig(fig, "amp_calibration")
 
-    # Special analysis for failed measurements
-    failed_meas = []
-    for meas in cal_data:
-        if meas.peak_height[1] > 0.01:
-            failed_meas.append(meas)
-    if failed_meas:
-        fig2: plt.Figure = plt.figure()
-        fig2.suptitle("These calibration measurements have bad traces. Please fix!")
-        for i, meas in enumerate(failed_meas):
-            ax = fig2.add_subplot(len(failed_meas), 1, i+1)
-            meas.plot_traces(ax)
-            ax.set_title(f"V = {meas.voltage:.2f} V")
+    plot.plot_failed_cals(cal_data)
 
     #####
     # MCA calibration
     #####
+    mca_peak_inds = np.array([np.argmax(cal.mca.data) for cal in cal_data])
+
+    fig2: plt.Figure = plt.figure()
+    fig2.suptitle("MCA calibration")
+    ax2: plt.Axes = fig2.add_subplot()
+
+    ax2.errorbar(mca_peak_inds, peak_heights, yerr=peak_stds, fmt=".", capsize=3, label="data")
+    fit = curve_fit(
+        lambda x, a, b: a*x + b,
+        xdata=mca_peak_inds,
+        ydata=peak_heights,
+    )
+    coeff = np.array([fit[0][0], fit[0][1]])
+    ax2.plot(mca_peak_inds, np.polyval(coeff, mca_peak_inds), label=f"fit (y = {coeff[0]:.3e}x + {coeff[1]:.3e}")
+    ax2.set_xlabel("MCA channel")
+    ax2.set_ylabel("Peak height (V)")
 
     # TODO: add fitting of MCA peak channel vs. pulse height and MCA peak channel vs. collected charge
 
@@ -141,8 +146,8 @@ def calibration(
 
 def analyze(cal_data: tp.List[MeasCal]):
     calibration(cal_data)
-    # plt.show()
-    # return
+    plt.show()
+    return
 
     data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
     hv_scan_folder = os.path.join(data_folder, "hv_scan")
