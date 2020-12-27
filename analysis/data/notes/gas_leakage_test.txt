@@ -1,0 +1,16 @@
+Directly (disconnected & reconnected hose between each)
+- 40.6 ml/min
+- 40.4
+- 40.1
+- 39.9
+- 39.7
+- The detector is properly zeroed
+
+After connecting (out from connector side)
+- 38.5 ml/min
+
+Reversed (in from connector side)
+- 37.9
+
+With P10
+- Flow from line: 70.0 ml/min
