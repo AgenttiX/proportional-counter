@@ -9,6 +9,11 @@ import scipy.stats
 
 # Distributions
 
+def exp_fit(x, slope, offset):
+    """Equation 3 of the article"""
+    return np.exp(slope*x + offset)
+
+
 # @numba.njit
 def gaussian(x, mu, sigma):
     return scipy.stats.norm.pdf(x, mu, sigma)
