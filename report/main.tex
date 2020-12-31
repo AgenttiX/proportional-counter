@@ -53,6 +53,13 @@ Context for the usages!
 \label{theory}
 Formulas here and only here
 
+Electrical field
+\begin{equation}
+E(r) = \frac{U}{r \ln(b/a) }
+\end{equation}
+
+Gas constants \cite{wolff_measurement_1974}
+
 
 \subsection{The proportional counter}
 \label{counter}
@@ -61,13 +68,54 @@ Electric field, gas composition, quenching, multiplication, different regions.
 Theoretical predictions on accuracy?
 
 TODO refer to the article "A gaseous proportional counter built from a conventional aluminum beverage can"
+\cite{winkler_gaseous_2015}
+
+\cite{knoll_radiation_2010}
+
+
+
+Schockley \cite{shockley_currents_1938}
+Ramo \cite{ramo_currents_1939}
+
 
 \subsection{Error analysis methods}
 \label{error_analysis}
-Error propagation formulas etc.
+The detector consists of various components, each of which has its manufacturing imperfections.
+In addition, each of the measurements systems used has inaccuracies.
+Together these provide various sources of uncertainties for the measurements.
+Combining these into uncertainties of the end results is known as error propagation.
+
+By Taylor expanding the function in question around the mean values of the random variables we get an expression which depends on the 
+
+In the general case the covariance matrix of the output variables is given by
+\begin{equation}
+U_{kl}
+= \mathrm{Cov}(y_k, y_l)
+\approx \sum_{i,j=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\partial y_l}{\partial x_j} \right)_{\mathbf{x}=\mathbf{\mu}} V_{ij},
+\end{equation}
+where $U$ is the covariance matrix of the output variables $y$ and $V$ is the covariance matrix of the input variables $x$.
+Consequently the variances for each of the output variables are
+\begin{equation}
+\sigma_{y_k}^2 \approx \sum_{i,j=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\partial y_k}{\partial x_j} \right)_{\mathbf{x}=\mathbf{\mu}} V_{ij}.
+\end{equation}
+\cite[p. 20--22]{cowan_statistical_1998}
+
+If the input variables $x_i$ are uncorrelated, these expressions are simplified.
+Then the covariance matrix is given by
+\begin{equation}
+U_{kl} \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\partial y_l}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}} \sigma_i^2,
+\end{equation}
+and the variances are
+\begin{equation}
+\sigma_{y_k}^2 \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}}^2 \sigma_i^2
+\end{equation}
+\cite[p. 20--22]{cowan_statistical_1998}
+
 
 \subsection{Read-out electronics}
 \label{electronics}
+
+
 
 
 
