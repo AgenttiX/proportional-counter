@@ -111,9 +111,13 @@ def calibration(
         ydata=peak_heights,
     )
     coeff = np.array([fit[0][0]*fit_accuracy_fixer, fit[0][1]])
-    ax.plot(charges, np.polyval(coeff, charges), label=f"fit (y = {coeff[0]:.3e}x + {coeff[1]:.3e}")
+    coeff_stds = np.array([fit[1][0, 0]*fit_accuracy_fixer, fit[1][1, 1]])
+    ax.plot(
+        charges,
+        np.polyval(coeff, charges),
+        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[1]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})")
     ax.set_xlabel("Collected charge (C)")
-    ax.set_ylabel("Pulse height (V)")
+    ax.set_ylabel("Output pulse height (V)")
     ax.legend()
     save_fig(fig, "amp_calibration")
 
