@@ -27,7 +27,7 @@
 In this project we assembled a gas-based proportional counter for X-ray and $\gamma$-ray detection.
 The detector consists of a cylindrical cathode, for which we used a beverage can, and a thin anode wire along its center.
 When high voltage is applied between the cathode and the anode and incoming high-energy radiation ionizes the gas inside, the resulting electrons drift towards the anode wire.
-Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with electronics.
+Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with read-out electronics.
 
 The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
 This setup demonstrated sufficient resolution to distinguish the TODO peaks.
@@ -174,7 +174,9 @@ The detector was also tested with a custom pre-amplifier, and the results are in
 
 \section{Experimental set-up}
 \label{setup}
-Self-built detector etc.
+As a part of this project we built the detector ourselves from a construction kit designed by the course organizers.
+For the read-out electronics we used devices available in the laboratory.
+
 Answer the questions on page 5 of the instructions!
 
 
@@ -195,7 +197,8 @@ TODO: which form is the best: active or passive, and we or I? Is it a bad practi
 First we prepared the parts of the detector by removing a single strand from a copper wire and cutting two pieces of brass tube for the wire mounting.
 The course organizers removed the top of the can and drilled two holes to its bottom, one to the center and one off-center.
 We then smoothened the cutting edges and grinded away the anti-corrosion layer from the inside of the walls of the can.
-Table \ref{table:sizes} contains some size measurements of the can and the brass tubes.
+Table \ref{table:sizes} contains size measurements of the can and the brass tubes.
+Each of the results is averaged from five measurements.
 The can thickness and brass tube diameter were measured using a
 \href{https://en.wikipedia.org/wiki/Micrometer}{micrometer}, and the rest were measured with a
 \href{https://en.wikipedia.org/wiki/Calipers}{caliper}.
@@ -315,8 +318,8 @@ The electrical connections of the setup used for both calibration and the measur
 \end{figure}
 
 The first step was the calibration of the amplifier by establishing a relationship between the collected charge and the outgoing pulse height.
-This was done by attaching a pulse generator to the amplifier input, and an oscilloscope to its output.
-The output NOPE voltage is defined by the equation
+This was done by setting the bias voltage to zero and attaching a pulse generator to the amplifier input, and an oscilloscope to its output.
+The voltage over a capacitor is defined by the equation
 \begin{equation}
 V = \frac{GQ}{C},
 \end{equation}
@@ -325,8 +328,11 @@ Therefore
 \begin{equation}
 Q = \frac{CV}{G}.
 \end{equation}
+By varying the voltage of the test pulse we get the relationship between the collected charge and the pulse height measured with the oscilloscope as in figure \ref{fig:amp_calibration}.
+The pulse height was determined by comparing the peak of an exponential decay fit to the average voltage before the pulse.
+The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two.
 
-\ref{fig:amp_calibration}.
+TODO: What would be reasonable errors for C and G? Currently the resulting overall errors seem too small.
 
 \begin{figure}[ht!]
 \centering
@@ -337,6 +343,10 @@ Q = \frac{CV}{G}.
 
 The multichannel analyzer was calibrated simultaneously by attaching it to the same output of the amplifier as the oscilloscope.
 Therefore a correspondence could be established between the pulse heights measured with the oscilloscope and the channels of the MCA signal peaks. 
+
+
+
+
 
 \begin{figure}[ht!]
 \centering
