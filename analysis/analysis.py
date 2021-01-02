@@ -88,7 +88,7 @@ def calibration(
     # meas = cal_data[0]
     # osc = meas.traces[0]
     fig: plt.Figure = plt.figure()
-    fig.suptitle("Amplifier calibration")
+    fig.suptitle("Amplifier calibration NOPE")
     ax: plt.Axes = fig.add_subplot()
     # plot.plot_osc(osc, ax)
 
@@ -109,13 +109,15 @@ def calibration(
         lambda x, a, b: a*x + b,
         xdata=charges*fit_accuracy_fixer,
         ydata=peak_heights,
+        sigma=peak_stds,
     )
     coeff = np.array([fit[0][0]*fit_accuracy_fixer, fit[0][1]])
     coeff_stds = np.array([fit[1][0, 0]*fit_accuracy_fixer, fit[1][1, 1]])
     ax.plot(
         charges,
         np.polyval(coeff, charges),
-        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[1]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})")
+        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[1]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})"
+    )
     ax.set_xlabel("Collected charge (C)")
     ax.set_ylabel("Output pulse height (V)")
     ax.legend()
@@ -139,9 +141,33 @@ def calibration(
         ydata=peak_heights,
     )
     coeff = np.array([fit[0][0], fit[0][1]])
-    ax2.plot(mca_peak_inds, np.polyval(coeff, mca_peak_inds), label=f"fit (y = {coeff[0]:.3e}x + {coeff[1]:.3e}")
+    ax2.plot(
+        mca_peak_inds,
+        np.polyval(coeff, mca_peak_inds),
+        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[1]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})"
+    )
     ax2.set_xlabel("MCA channel")
     ax2.set_ylabel("Peak height (V)")
+
+    # Charge vs. MCA channel
+    fig3: plt.Figure = plt.figure()
+    fig3.suptitle("MCA calibration")
+    ax3: plt.Axes = fig3.add_subplot()
+
+    # Is this the correct way to determine the charges?
+    charges2 = preamp_capacitance * peak_heights / gain
+    charges2_std = preamp_capacitance * peak_stds / gain
+
+    ax3.errorbar(mca_peak_inds, charges2, yerr=charges2_std, fmt=".", capsize=3, label="data")
+    fit = curve_fit(
+        lambda x, a, b: a*x + b,
+        xdata=mca_peak_inds,
+        ydata=charges2,
+        sigma=charges2_std,
+    )
+    coeff = np.array([fit[0][0], fit[0][1]])
+    coeff_stds = np.array([fit[1][0, 0] * fit_accuracy_fixer, fit[1][1, 1]])
+    ax3.plot(mca_peak_inds, np.polyval(coeff, mca_peak_inds), label=f"fit (y = {coeff[0]:.3e}x + {coeff[1]:.3e}")
 
     # TODO: add fitting of MCA peak channel vs. pulse height and MCA peak channel vs. collected charge
 
