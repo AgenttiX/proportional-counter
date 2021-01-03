@@ -305,11 +305,12 @@ A piece of aluminum foil was put over the bottom of the can to provide additiona
 
 
 \clearpage
-\subsection{Electronics calibration}
+\subsection{Calibration}
 \label{setup_calibration}
 To establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation, the detector and readout electronics had to be calibrated.
-The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}.
-TODO add device models here
+The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}, except that for the electronics calibration the oscilloscope was connected directly to the output of the output of the pulser.
+
+TODO add device models here from the pictures (when I can reboot my crashed file server back in Helsinki, probably on 11.1.2021)
 
 \begin{figure}[ht!]
 \centering
@@ -326,34 +327,17 @@ The voltage over a capacitor is defined by the equation
 V = \frac{Q}{C},
 \end{equation}
 where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier.
-Therefore the collected charge
+Therefore the collected charge is defined by
 \begin{equation}
 Q = CV,
 \end{equation}
 where $V$ is the output pulse height measured with the oscilloscope.
-By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in \ref{fig:mca_calibration}.
 The pulse height was determined by comparing the value of an exponential fit at the peak time to the average voltage before the pulse.
 These are illustrated in figure \ref{fig:cal_trace}.
-The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two.
-To this data we can make the linear fit
-\begin{equation}
-Q = g \cdot \text{Channel}_\text{MCA} + h,
-\end{equation}
-and for the fit parameters we get the values $g = MOVEFROMPLOTLEGEND$ and $h = MOVEFROMPLOTLEGEND$.
 
-TODO: What would be reasonable errors for C and G?
-Perhaps 5 \% for both?
-Currently the resulting overall errors seem too small.
+TODO: It was said that all formulas should be in the theory section, but I suppose this is an exception.
 
-TODO: the charge scale is different than in the article.
-Could it be due to differences in the setup, or due to different
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/python/mca_calibration.eps}
-\caption{MCA calibration}
-\label{fig:mca_calibration}
-\end{figure}
+NOTE: The necessity of these formulas is also questionable, but at least for me the workings of the setup weren't obvious from the beginning.
 
 \begin{figure}[ht!]
 \centering
@@ -369,8 +353,63 @@ Could it be due to differences in the setup, or due to different
 \label{fig:cal_trace}
 \end{figure}
 
+
+
+\FloatBarrier
+\subsection{Testing}
+\label{setup_testing}
+For the testing with radiation sources the electrical connections were the same except that the pulse generator was removed and that the oscilloscope was attached to the output of the spectral amplifier.
+The detector was placed within lead shielding, and the radioactive source was placed on top, as in figure \ref{fig:setup_testing}.
+For the $^{241}$Am source we had to use a thick metal sheet with a thin slit as a collimator to reduce the intensity of the radiation.
+Without the attenuator the pulses would pile up so that individual pulses would no longer be detectable separately for energy measurement.
+The $^{241}$Am source also required the use of additional lead shielding around the detector due to its different enclosure.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201130_144418.jpg}
+\caption{Setup for testing with an $^{55}$Fe source and the rack-mounted amplifier}
+\label{fig:setup_testing}
+\end{figure}
+
+
+\clearpage
+\section{Results and discussion}
+\label{results}
+In this chapter we discuss the measurement results of the setups described in chapter \ref{assembly}.
+
+TODO add more general text
+
+
+\subsection{Calibration}
+\label{results_calibration}
+By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in \ref{fig:mca_calibration}.
+The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two.
+To this data we can make the linear fit
+\begin{equation}
+Q = g \cdot \text{Channel}_\text{MCA} + h,
+\end{equation}
+and for the fit parameters we get the values $g = MOVEFROMPLOTLEGEND$ and $h = MOVEFROMPLOTLEGEND$.
+
+TODO: What would be reasonable errors for C and G?
+Perhaps 5 \% for both?
+Currently the resulting overall errors seem too small.
+
+TODO: the charge scale is different than in the article.
+Could it be due to differences in the setup, or due to different
+
+TODO: Move fit values from plot legends to the text when the fits are ok
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/mca_calibration.eps}
+\caption{MCA calibration}
+\label{fig:mca_calibration}
+\end{figure}
+
 It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
 The relationship between these is illustrated in figure \ref{fig:pulser_calibration}
+
+TODO: drop the second-last point from the fit
 
 \begin{figure}[ht!]
 \centering
@@ -380,10 +419,10 @@ The relationship between these is illustrated in figure \ref{fig:pulser_calibrat
 \end{figure}
 
 
-\FloatBarrier
-\subsection{Detector calibration}
+\subsection{High voltage sweep}
+\label{results_hv}
 To find the optimal settings for the detector we tested it with several voltages and gain values.
-With the $^55$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fits}.
+With the $^{55}$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fits}.
 
 \begin{figure}[ht!]
 \centering
@@ -392,32 +431,9 @@ With the $^55$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fits}
 \label{fig:fe_scan_fits}
 \end{figure}
 
+For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1603--2301 V.
+The range was limited on the lower end 
 
-
-\FloatBarrier
-\subsection{Testing}
-\label{setup_testing}
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/IMG_20201130_144418.jpg}
-\caption{Setup for testing with an Fe-55 source and a rack-mounted amplifier}
-\end{figure}
-
-
-\FloatBarrier
-\section{Results and discussion}
-\label{results}
-
-
-\subsection{Calibration}
-\label{results_calibration}
-Output vs. input signal
-See the spreadsheet!
-
-\subsection{High voltage sweep}
-\label{results_hv}
-The effect of gain settings and detector voltages
 
 \subsection{Spectral measurement}
 \label{results_spectral}
@@ -425,6 +441,7 @@ Some nice MCA spectra here
 The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
 
 
+\clearpage
 \section{Conclusions}
 \label{conclusions}
 Discuss results in context.

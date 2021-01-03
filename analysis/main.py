@@ -1,6 +1,13 @@
+"""
+This is the main script for running the analysis workflow.
+"""
+
+import numpy as np
+
 from analysis import analyze, analyze_sizes, MeasCal
 
 
+# Electronics calibration data
 calibration = [
     MeasCal(
         voltage=0.067,
