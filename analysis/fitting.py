@@ -9,10 +9,27 @@ import plot
 import stats
 
 
+def create_subplot_grid(
+        num_plots: int,
+        grid_aspect_ratio: float = 1) -> tp.Tuple[plt.Figure, tp.List[plt.Axes], int, int]:
+    fig: plt.Figure
+    num_plots_x = int(np.sqrt(num_plots)*grid_aspect_ratio)
+    num_plots_y = int(np.ceil(num_plots / num_plots_x))
+    fig, axes = plt.subplots(num_plots_y, num_plots_x)
+    axes_flat: tp.List[plt.Axes] = [item for sublist in axes for item in sublist]
+
+    # Remove unnecessary axes
+    for i in range(num_plots, len(axes_flat)):
+        fig.delaxes(axes_flat[i])
+
+    return fig, axes_flat, num_plots_x, num_plots_y
+
+
 def get_cut(
         data: np.ndarray,
         threshold_level: float,
         cut_width_mult: float) -> tp.Tuple[np.ndarray, int, int, float]:
+    """Get cut parameters for fitting to a peak"""
     peak_ind: int = np.argmax(data)
     peak = data[peak_ind]
     threshold_inds = np.where(data > peak * threshold_level)[0]
@@ -27,6 +44,10 @@ def get_cut(
 def fit_am():
     """Fit the peaks of an Am-241 spectrum"""
     # TODO: this is going to be more complicated than for the Fe-55
+
+
+def fit_am_hv_scan():
+    """Create fits for the Am-241 HV scan measurements"""
 
 
 def fit_fe(
@@ -83,19 +104,9 @@ def fit_fe_hv_scan(
         mcas: tp.List[MeasMCA],
         threshold_level: float = 0.5,
         cut_width_mult: float = 2):
-    """Create fits for Fe-55 MCA measurements"""
-    fig: plt.Figure
-    # axes: tp.List[plt.Axes]
-    grid_aspect_ratio = 1
-    num_plots_x = int(np.sqrt(len(mcas))*grid_aspect_ratio)
-    num_plots_y = int(np.ceil(len(mcas) / num_plots_x))
-    fig, axes = plt.subplots(num_plots_y, num_plots_x)
-    axes_flat: tp.List[plt.Axes] = [item for sublist in axes for item in sublist]
+    """Create fits for Fe-55 HV scan measurements"""
 
-    # Remove unnecessary axes
-    for i in range(len(mcas), len(axes_flat)):
-        fig.delaxes(axes_flat[i])
-
+    fig, axes_flat, num_plots_x, num_plots_y = create_subplot_grid(len(mcas))
     fig.suptitle("Fe fits")
     # fig.tight_layout()
 
