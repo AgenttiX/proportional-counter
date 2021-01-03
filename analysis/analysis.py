@@ -76,8 +76,8 @@ def spectra(am_path, fe_path, noise_path, gain, voltage):
 
 def calibration(
         cal_data: tp.List[MeasCal],
-        coarse_gain: float = 10,
-        fine_gain: float = 10,
+        # coarse_gain: float = 10,
+        # fine_gain: float = 10,
         preamp_capacitance: float = 1e-12) -> np.ndarray:
     """Analyze calibration data"""
 
@@ -93,7 +93,7 @@ def calibration(
     peak_data = np.array([meas.peak_height for meas in cal_data])
     peak_heights = peak_data[:, 0]
     peak_stds = peak_data[:, 1]
-    gain = coarse_gain*fine_gain
+    # gain = coarse_gain*fine_gain
     charges = preamp_capacitance * peak_heights
     charges_std = preamp_capacitance * peak_stds
 
