@@ -87,7 +87,7 @@ def calibration(
     meas = cal_data[0]
     osc = meas.traces[0]
     plot.plot_osc(osc, ax)
-    save_fig(fig, "calibration_trace")
+    plot.save_fig(fig, "calibration_trace")
 
     set_voltages = np.array([meas.voltage for meas in cal_data])
     peak_data = np.array([meas.peak_height for meas in cal_data])
