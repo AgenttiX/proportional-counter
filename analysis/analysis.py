@@ -72,7 +72,7 @@ def hv_scan(folder: str, prefix: str):
     ax.plot(mcas[0].data)
 
     if prefix == "Fe":
-        fitting.fit_fe(mcas)
+        fitting.fit_fe_hv_scan(mcas)
     # if prefix == "Am":
     #     fitting.fit_am(mcas)
 
@@ -85,15 +85,29 @@ def spectra(am_path, fe_path, noise_path, gain, voltage):
 
     fig: plt.Figure = plt.figure()
     fig.suptitle("Spectral measurements")
+    fig.subplots_adjust(bottom=0.2)
     ax1: plt.Axes = fig.add_subplot()
     ax2: plt.Axes = ax1.twinx()
-    line_am = ax1.plot(am.data, label="Am-241")[0]
-    line_fe = ax2.plot(fe.data, label="Fe-55")[0]
-    line_noise = ax1.plot(noise.data, label="noise")[0]
+
+    am_subtracted = am.data - noise.data * noise.real_length / am.real_length
+    fe_subtracted = fe.data - noise.data * noise.real_length / fe.real_length
+
+    # ax3 = plot.double_x_axis(ax1)
+
+    line_am = ax1.plot(
+        am_subtracted,
+        label="$^{241}$Am", color="darkgrey")[0]
+    line_fe = ax2.plot(
+        fe_subtracted,
+        label="$^{55}$Fe", color="peru")[0]
+    # line_noise = ax1.plot(noise.data, label="noise", color="orange")[0]
+    fitting.fit_fe(fe, ax2)
 
     ax1.set_xlabel("MCA channel")
-    ax1.set_ylabel("count")
-    plot.legend_multi(ax1, [line_am, line_fe, line_noise])
+    ax1.set_ylabel(r"Count ($^{241}Am$)")
+    ax2.set_ylabel(r"Count ($^{55}Fe$)")
+    # plot.legend_multi(ax1, [line_am, line_fe, line_noise])
+    plot.legend_multi(ax1, [line_am, line_fe])
     plot.save_fig(fig, "spectra")
 
 

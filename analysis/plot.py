@@ -10,6 +10,27 @@ from meas import MeasCal
 FIG_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "report", "fig", "python")
 
 
+def double_x_axis(ax: plt.Axes, tick_locs: np.ndarray, tick_label_func: callable) -> plt.Axes:
+    """
+    Add a secondary x axis to an existing Matplotlib [sub]figure
+
+    Based on
+    https://stackoverflow.com/questions/31803817/how-to-add-second-x-axis-at-the-bottom-of-the-first-one-in-matplotlib
+    """
+    ax2: plt.Axes = ax.twiny()
+    ax2.xaxis.set_ticks_position("bottom")
+    ax2.xaxis.set_label_position("bottom")
+    ax2.spines["bottom"].set_position(("axes", -0.15))
+    ax2.set_frame_on(True)
+    ax2.patch.set_visible(False)
+    for sp in ax2.spines.values():
+        sp.set_visible(False)
+    ax2.spines["bottom"].set_visible(True)
+    ax2.set_xticks(tick_locs)
+    ax2.set_xticklabels(tick_label_func(tick_locs))
+    return ax2
+
+
 def legend_multi(ax: plt.Axes, lines):
     """Create a legend for a multi-axis plot"""
     labels = [line.get_label() for line in lines]

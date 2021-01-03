@@ -57,6 +57,9 @@ class MeasMCA:
         self.data = np.array(data, dtype=np.int_)
         self.channels = np.arange(0, self.data.size)
 
+        # Metadata
+        self.real_length = float(self.meta["REAL_TIME"])
+
         # self.data = pd.read_csv(
         #     path,
         #     skiprows=data_start_line+1, header=None,
