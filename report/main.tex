@@ -171,7 +171,7 @@ Capacitive decoupling \ref{fig:theory_schematic}
 The detector was also tested with a custom pre-amplifier, and the results are in appendix \ref{pre_amp}.
 
 
-
+\clearpage
 \section{Experimental set-up}
 \label{setup}
 As a part of this project we built the detector ourselves from a construction kit designed by the course organizers.
@@ -304,11 +304,12 @@ It should be noted that the copper tape should be put on a different side as on 
 A piece of aluminum foil was put over the bottom of the can to provide additional shielding from electromagnetic interference, as the end of the anode wire slightly extrudes from within the can.
 
 
-\FloatBarrier
-\subsection{Calibration}
+\clearpage
+\subsection{Electronics calibration}
 \label{setup_calibration}
 To establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation, the detector and readout electronics had to be calibrated.
 The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}.
+TODO add device models here
 
 \begin{figure}[ht!]
 \centering
@@ -317,42 +318,80 @@ The electrical connections of the setup used for both calibration and the measur
 \label{fig:connections}
 \end{figure}
 
-The first step was the calibration of the amplifier by establishing a relationship between the collected charge and the outgoing pulse height.
-This was done by setting the bias voltage to zero and attaching a pulse generator to the amplifier input, and an oscilloscope to its output.
+\FloatBarrier
+The first step was the calibration of the multichannel analyzer to the collected charge.
+This was done by setting the bias voltage to zero and attaching a pulse generator to the amplifier input, and an oscilloscope and the multichannel analyzer to its output, as in figure \ref{fig:pulser_setup}.
 The voltage over a capacitor is defined by the equation
 \begin{equation}
-V = \frac{GQ}{C},
+V = \frac{Q}{C},
 \end{equation}
-where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier, and $G$ is the total gain of the amplifier.
-Therefore 
+where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier.
+Therefore the collected charge
 \begin{equation}
-Q = \frac{CV}{G}.
+Q = CV,
 \end{equation}
-By varying the voltage of the test pulse we get the relationship between the collected charge and the pulse height measured with the oscilloscope as in figure \ref{fig:amp_calibration}.
-The pulse height was determined by comparing the peak of an exponential decay fit to the average voltage before the pulse.
+where $V$ is the output pulse height measured with the oscilloscope.
+By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in \ref{fig:mca_calibration}.
+The pulse height was determined by comparing the value of an exponential fit at the peak time to the average voltage before the pulse.
+These are illustrated in figure \ref{fig:cal_trace}.
 The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two.
+To this data we can make the linear fit
+\begin{equation}
+Q = g \cdot \text{Channel}_\text{MCA} + h,
+\end{equation}
+and for the fit parameters we get the values $g = MOVEFROMPLOTLEGEND$ and $h = MOVEFROMPLOTLEGEND$.
 
-TODO: What would be reasonable errors for C and G? Currently the resulting overall errors seem too small.
+TODO: What would be reasonable errors for C and G?
+Perhaps 5 \% for both?
+Currently the resulting overall errors seem too small.
+
+TODO: the charge scale is different than in the article.
+Could it be due to differences in the setup, or due to different
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{fig/python/amp_calibration.eps}
-\caption{Amplifier calibration}
-\label{fig:amp_calibration}
+\includegraphics[width=\textwidth]{fig/python/mca_calibration.eps}
+\caption{MCA calibration}
+\label{fig:mca_calibration}
 \end{figure}
-
-The multichannel analyzer was calibrated simultaneously by attaching it to the same output of the amplifier as the oscilloscope.
-Therefore a correspondence could be established between the pulse heights measured with the oscilloscope and the channels of the MCA signal peaks. 
-
-
-
-
 
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/IMG_20201130_135000.jpg}
 \caption{Setup for testing with an external pulser}
+\label{fig:pulser_setup}
 \end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/calibration_trace.eps}
+\caption{An oscilloscope trace for the calibration}
+\label{fig:cal_trace}
+\end{figure}
+
+It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
+The relationship between these is illustrated in figure \ref{fig:pulser_calibration}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/pulser_calibration.eps}
+\caption{Pulser calibration}
+\label{fig:pulser_calibration}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Detector calibration}
+To find the optimal settings for the detector we tested it with several voltages and gain values.
+With the $^55$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fits}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/fe_scan_fits.eps}
+\caption{$^{55}$Fe voltage scan data}
+\label{fig:fe_scan_fits}
+\end{figure}
+
 
 
 \FloatBarrier

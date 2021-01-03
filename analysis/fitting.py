@@ -5,6 +5,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from devices.mca import MeasMCA
+import plot
 import stats
 
 
@@ -29,11 +30,26 @@ def fit_fe(
 
     peak_channels = np.zeros(len(mcas))
 
+    max_peak_height = np.max([np.max(mca.data) for mca in mcas])
+    max_ch = np.max([mca.channels[-1] for mca in mcas])
+    y_adjust_step = 50
+    max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
+
     for i, mca in enumerate(mcas):
         ax = axes_flat[i]
         ax.plot(mca.data)
-        ax.set_xlabel("MCA channel")
-        ax.set_ylabel("count")
+        if i % num_plots_x == 0:
+            ax.set_ylabel("Count")
+        else:
+            ax.yaxis.set_ticklabels([])
+
+        if len(mcas) - i <= num_plots_x:
+            ax.set_xlabel("MCA ch.")
+        else:
+            ax.xaxis.set_ticklabels([])
+
+        ax.set_xlim(0, max_ch)
+        ax.set_ylim(0, max_peak_height_round)
 
         peak_ind = np.argmax(mca.data)
         peak = mca.data[peak_ind]
@@ -63,5 +79,7 @@ def fit_fe(
         )
         ax.plot(mca.channels, fit[0][0]*stats.gaussian(mca.channels, *fit[0][1:]))
         peak_channels[i] = fit[0][1]
+
+    plot.save_fig(fig, "fe_scan_fits")
 
     return peak_channels

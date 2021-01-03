@@ -1,3 +1,4 @@
+import os.path
 import typing as tp
 
 import matplotlib.pyplot as plt
@@ -5,6 +6,14 @@ import numpy as np
 
 from devices.oscilloscope import MeasOsc
 from meas import MeasCal
+
+FIG_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "report", "fig", "python")
+
+
+def legend_multi(ax: plt.Axes, lines):
+    """Create a legend for a multi-axis plot"""
+    labels = [line.get_label() for line in lines]
+    ax.legend(lines, labels)
 
 
 def plot_failed_cals(cal_data: tp.List[MeasCal]):
@@ -24,18 +33,24 @@ def plot_failed_cals(cal_data: tp.List[MeasCal]):
 
 def plot_osc(meas: MeasOsc, ax: plt.Axes):
     """Plot an oscilloscope measurement"""
-    ax.plot(meas.t, meas.voltage, label="data")
+    x_mult = 1e6
+    y_mult = 1e3
+    ax.plot(meas.t*x_mult, meas.voltage*y_mult, label="data")
     peak_ind = np.argmax(meas.voltage)
-    ax.hlines(meas.zero_level, meas.t[0], meas.t[peak_ind], label="zero level", colors=["r"])
-    ax.scatter(meas.t[peak_ind], meas.voltage[peak_ind], label="peak", c="r")
+    ax.hlines(
+        meas.zero_level*y_mult,
+        meas.t[0]*x_mult, meas.t[peak_ind]*x_mult,
+        label="zero level", colors=["r"], zorder=10)
+    ax.scatter(meas.t[peak_ind]*x_mult, meas.voltage[peak_ind]*y_mult, label="peak", c="r", zorder=10)
 
     args = meas.exp_decay_fit
     exp_fit = args[0]*np.exp(args[1]*meas.t[peak_ind:])
-    ax.plot(meas.t[peak_ind:], exp_fit, label="exp fit")
+    ax.plot(meas.t[peak_ind:]*x_mult, exp_fit*y_mult, label="exp fit")
+    ax.set_xlabel("Time (µs)")
+    ax.set_ylabel("Voltage (mV)")
     ax.legend()
 
 
-def legend_multi(ax: plt.Axes, lines):
-    """Create a legend for a multi-axis plot"""
-    labels = [line.get_label() for line in lines]
-    ax.legend(lines, labels)
+def save_fig(fig: plt.Figure, name: str):
+    fig.savefig(os.path.join(FIG_FOLDER, f"{name}.eps"))
+    fig.savefig(os.path.join(FIG_FOLDER, f"{name}.svg"))
