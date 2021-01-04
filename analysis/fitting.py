@@ -8,10 +8,15 @@ from devices.mca import MeasMCA
 import plot
 import stats
 
+THRESHOLD_LEVEL = 0.5
+CUT_WIDTH_MULT = 2
+
 
 def create_subplot_grid(
         num_plots: int,
-        grid_aspect_ratio: float = 1) -> tp.Tuple[plt.Figure, tp.List[plt.Axes], int, int]:
+        grid_aspect_ratio: float = 1,
+        xlabel: str = None,
+        ylabel: str = None) -> tp.Tuple[plt.Figure, tp.List[plt.Axes], int, int]:
     fig: plt.Figure
     num_plots_x = int(np.sqrt(num_plots)*grid_aspect_ratio)
     num_plots_y = int(np.ceil(num_plots / num_plots_x))
@@ -22,13 +27,25 @@ def create_subplot_grid(
     for i in range(num_plots, len(axes_flat)):
         fig.delaxes(axes_flat[i])
 
+    for i, ax in enumerate(axes_flat):
+        if xlabel is not None:
+            if num_plots - i <= num_plots_x:
+                ax.set_xlabel(xlabel)
+            else:
+                ax.xaxis.set_ticklabels([])
+
+            if i % num_plots_x == 0:
+                ax.set_ylabel(ylabel)
+            else:
+                ax.yaxis.set_ticklabels([])
+
     return fig, axes_flat, num_plots_x, num_plots_y
 
 
 def get_cut(
         data: np.ndarray,
-        threshold_level: float,
-        cut_width_mult: float) -> tp.Tuple[np.ndarray, int, int, float]:
+        threshold_level: float = THRESHOLD_LEVEL,
+        cut_width_mult: float = CUT_WIDTH_MULT) -> tp.Tuple[np.ndarray, int, int, float]:
     """Get cut parameters for fitting to a peak"""
     peak_ind: int = np.argmax(data)
     peak = data[peak_ind]
@@ -41,20 +58,65 @@ def get_cut(
     return cut_inds, threshold_width, peak_ind, peak
 
 
-def fit_am():
+def fit_am(
+        mca: MeasMCA,
+        ax: plt.Axes,
+        threshold_level: float = THRESHOLD_LEVEL,
+        cut_width_mult: float = CUT_WIDTH_MULT):
     """Fit the peaks of an Am-241 spectrum"""
-    # TODO: this is going to be more complicated than for the Fe-55
+    peak = np.max(mca.data)
+    above_threshold = np.where(mca.data > threshold_level * peak)[0]
+    half_ind = (above_threshold[0] + above_threshold[-1]) // 2
+    filtered = mca.data.copy()
+    filtered[:half_ind] = 0
+    # ax.plot(filtered)
+
+    cut_inds, threshold_width, peak_ind, peak = get_cut(filtered, threshold_level, cut_width_mult)
+
+    # Vertical lines according to the cuts
+    ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+
+    fit = curve_fit(
+        stats.gaussian_scaled,
+        cut_inds,
+        mca.data[cut_inds],
+        p0=(peak, peak_ind, threshold_width)
+    )
+    ax.plot(
+        mca.channels,
+        fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:]),
+        linestyle="--",
+        label="Fe-55 fit"
+    )
+    return fit
 
 
-def fit_am_hv_scan():
+def fit_am_hv_scan(mcas: tp.List[MeasMCA]):
     """Create fits for the Am-241 HV scan measurements"""
+    fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
+    # fig.suptitle("Am fits")
+
+    max_peak_height = np.max([np.max(mca.data) for mca in mcas])
+    max_ch = np.max([mca.channels[-1] for mca in mcas])
+    y_adjust_step = 50
+    max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
+
+    for i, mca in enumerate(mcas):
+        ax = axes[i]
+        ax.plot(mca.data)
+        ax.set_xlim(0, max_ch)
+        ax.set_ylim(0, max_peak_height_round)
+
+        fit_am(mca, ax)
+
+    plot.save_fig(fig, "am_scan_fits")
 
 
 def fit_fe(
         mca: MeasMCA,
         ax: plt.Axes,
-        threshold_level: float = 0.5,
-        cut_width_mult: float = 2,
+        threshold_level: float = THRESHOLD_LEVEL,
+        cut_width_mult: float = CUT_WIDTH_MULT,
         secondary: bool = True):
     """Fit the peaks of an Fe-55 spectrum
 
@@ -102,12 +164,12 @@ def fit_fe(
 
 def fit_fe_hv_scan(
         mcas: tp.List[MeasMCA],
-        threshold_level: float = 0.5,
-        cut_width_mult: float = 2):
+        threshold_level: float = THRESHOLD_LEVEL,
+        cut_width_mult: float = CUT_WIDTH_MULT):
     """Create fits for Fe-55 HV scan measurements"""
 
-    fig, axes_flat, num_plots_x, num_plots_y = create_subplot_grid(len(mcas))
-    fig.suptitle("Fe fits")
+    fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
+    # fig.suptitle("Fe fits")
     # fig.tight_layout()
 
     peak_channels = np.zeros(len(mcas))
@@ -119,17 +181,8 @@ def fit_fe_hv_scan(
     max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
 
     for i, mca in enumerate(mcas):
-        ax = axes_flat[i]
+        ax = axes[i]
         ax.plot(mca.data)
-        if i % num_plots_x == 0:
-            ax.set_ylabel("Count")
-        else:
-            ax.yaxis.set_ticklabels([])
-
-        if len(mcas) - i <= num_plots_x:
-            ax.set_xlabel("MCA ch.")
-        else:
-            ax.xaxis.set_ticklabels([])
 
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)

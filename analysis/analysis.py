@@ -65,16 +65,16 @@ def hv_scan(folder: str, prefix: str):
     print(voltages)
     print(f"Voltage range: {min(voltages)} - {max(voltages)} V")
 
-    fig: plt.Figure = plt.figure()
-    fig.suptitle(f"{prefix} HV scan")
-    ax: plt.Axes = fig.add_subplot()
-    true_volts = voltages / gains
-    ax.plot(mcas[0].data)
+    # fig: plt.Figure = plt.figure()
+    # fig.suptitle(f"{prefix} HV scan")
+    # ax: plt.Axes = fig.add_subplot()
+    # true_volts = voltages / gains
+    # ax.plot(mcas[0].data)
 
     if prefix == "Fe":
         fitting.fit_fe_hv_scan(mcas)
-    # if prefix == "Am":
-    #     fitting.fit_am(mcas)
+    if prefix == "Am":
+        fitting.fit_am_hv_scan(mcas)
 
 
 def spectra(am_path, fe_path, noise_path, gain, voltage):
@@ -85,23 +85,45 @@ def spectra(am_path, fe_path, noise_path, gain, voltage):
 
     fig: plt.Figure = plt.figure()
     fig.suptitle("Spectral measurements")
-    fig.subplots_adjust(bottom=0.2)
+    fig.subplots_adjust(bottom=0.2, right=0.85)
     ax1: plt.Axes = fig.add_subplot()
     ax2: plt.Axes = ax1.twinx()
+    ax1.set_xlim(0, am.channels[-1])
+    ax2.set_xlim(0, am.channels[-1])
 
     am_subtracted = am.data - noise.data * noise.real_length / am.real_length
     fe_subtracted = fe.data - noise.data * noise.real_length / fe.real_length
-
-    # ax3 = plot.double_x_axis(ax1)
+    y_mult = 1.1
+    ax1.set_ylim(0, np.max(am_subtracted)*y_mult)
+    ax2.set_ylim(0, np.max(fe_subtracted)*y_mult)
 
     line_am = ax1.plot(
+        am.channels,
         am_subtracted,
         label="$^{241}$Am", color="darkgrey")[0]
     line_fe = ax2.plot(
+        fe.channels,
         fe_subtracted,
         label="$^{55}$Fe", color="peru")[0]
     # line_noise = ax1.plot(noise.data, label="noise", color="orange")[0]
-    fitting.fit_fe(fe, ax2)
+    fit_am = fitting.fit_am(am, ax1)
+    fit_fe = fitting.fit_fe(fe, ax2)
+
+    ind_am_peak = fit_am[0][1]
+    ind_fe_peak = fit_fe[0][0][1]
+    print("Am peak index:", ind_am_peak)
+    print("Fe peak index:", ind_fe_peak)
+    am_peak = 59.5409e3
+    fe_peak = 5.90e3
+    a = (am_peak - fe_peak)/(ind_am_peak - ind_fe_peak)
+    b = am_peak - a*ind_am_peak
+
+    def ind_conv_func(vals):
+        return [f"{(a*x + b) / 1000:.2f}" for x in vals]
+
+    # The correspondence of the values is dependent on the manual limits
+    ax3 = plot.double_x_axis(ax1, tick_locs=np.arange(0, am.channels[-1], 200), tick_label_func=ind_conv_func)
+    ax3.set_xlabel("Energy (keV)")
 
     ax1.set_xlabel("MCA channel")
     ax1.set_ylabel(r"Count ($^{241}Am$)")

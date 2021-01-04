@@ -419,10 +419,19 @@ TODO: drop the second-last point from the fit
 \end{figure}
 
 
+\clearpage
 \subsection{High voltage sweep}
 \label{results_hv}
 To find the optimal settings for the detector we tested it with several voltages and gain values.
-With the $^{55}$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fits}.
+With the $^{241}$Am source we obtained the spectra in figure \ref{fig:am_scan_fits} and for the $^{55}$Fe source the data in figure \ref{fig:fe_scan_fits}.
+For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152--2301 V, as within this range suitable gain values were available to fit the signal within the range of the multichannel analyzer.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/am_scan_fits.eps}
+\caption{$^{241}$Am voltage scan data}
+\label{fig:am_scan_fits}
+\end{figure}
 
 \begin{figure}[ht!]
 \centering
@@ -431,21 +440,24 @@ With the $^{55}$Fe source we obtained the spectra in figure \ref{fig:fe_scan_fit
 \label{fig:fe_scan_fits}
 \end{figure}
 
-For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152--2301 V, as within this range suitable gain values were available to fit the signal within the range of the multichannel analyzer.
+TODO: plot 1) charge multiplication vs. voltage, 2) resolution vs. voltage
 
 
-
+\clearpage
 \subsection{Spectral measurement}
 \label{results_spectral}
 To obtain accurate spectral data, we ran long spectral measurements with both sources, and without any source for determining the noise level.
 The $^{241}$Am source was measured for 30 min, the $^{55}$Fe source for 15 min and the noise for 60 min.
 Figure \ref{fig:spectra} contains the noise-subtracted spectra.
+The energy axis has been determined by fitting Gaussians to the primary peaks and using their means as reference points corresponding to their known emission energies.
 
 The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
 
 TODO: The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
 
 TODO: the red dotted lines are for debugging fit cuts and therefore temporary
+
+TODO: analyze the secondary peaks of the Am-241 spectrum.
 
 \begin{figure}[ht!]
 \centering
