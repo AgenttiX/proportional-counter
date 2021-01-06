@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 
 import plot
 
-DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+DATA_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 PREAMP_FOLDER = os.path.join(DATA_FOLDER, "preamp")
 
 
