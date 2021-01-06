@@ -65,10 +65,10 @@ def fit_am(
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT):
     """Fit the peaks of an Am-241 spectrum"""
-    peak = np.max(mca.data)
-    above_threshold = np.where(mca.data > threshold_level * peak)[0]
+    peak = np.max(mca.counts)
+    above_threshold = np.where(mca.counts > threshold_level * peak)[0]
     half_ind = (above_threshold[0] + above_threshold[-1]) // 2
-    filtered = mca.data.copy()
+    filtered = mca.counts.copy()
     filtered[:half_ind] = 0
     # ax.plot(filtered)
 
@@ -80,7 +80,7 @@ def fit_am(
     fit = curve_fit(
         stats.gaussian_scaled,
         cut_inds,
-        mca.data[cut_inds],
+        mca.counts[cut_inds],
         p0=(peak, peak_ind, threshold_width)
     )
     ax.plot(
@@ -97,7 +97,7 @@ def fit_am_hv_scan(mcas: tp.List[MeasMCA]):
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     # fig.suptitle("Am fits")
 
-    max_peak_height = np.max([np.max(mca.data) for mca in mcas])
+    max_peak_height = np.max([np.max(mca.counts) for mca in mcas])
     max_ch = np.max([mca.channels[-1] for mca in mcas])
     y_adjust_step = 50
     max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
@@ -105,7 +105,7 @@ def fit_am_hv_scan(mcas: tp.List[MeasMCA]):
     fits = []
     for i, mca in enumerate(mcas):
         ax = axes[i]
-        ax.plot(mca.data)
+        ax.plot(mca.counts)
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)
 
@@ -125,7 +125,7 @@ def fit_fe(
 
     TODO: this could be combined to the HV scan fitting function
     """
-    cut_inds, threshold_width, peak_ind, peak = get_cut(mca.data, threshold_level, cut_width_mult)
+    cut_inds, threshold_width, peak_ind, peak = get_cut(mca.counts, threshold_level, cut_width_mult)
 
     # Vertical lines according to the cuts
     ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
@@ -133,7 +133,7 @@ def fit_fe(
     fit = curve_fit(
         stats.gaussian_scaled,
         cut_inds,
-        mca.data[cut_inds],
+        mca.counts[cut_inds],
         p0=(peak, peak_ind, threshold_width)
     )
     if not secondary:
@@ -146,12 +146,12 @@ def fit_fe(
         return fit
 
     # The secondary peak is the Argon escape peak and therefore not a property of the Fe-55 source itself
-    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(mca.data[:cut_inds[0]], threshold_level, cut_width_mult)
+    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(mca.counts[:cut_inds[0]], threshold_level, cut_width_mult)
     ax.vlines((cut_inds2[0], cut_inds2[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
     fit2 = curve_fit(
         stats.gaussian_scaled,
         cut_inds2,
-        mca.data[cut_inds2],
+        mca.counts[cut_inds2],
         p0=(peak2, peak_ind, threshold_width)
     )
     fit1_data = fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:])
@@ -178,7 +178,7 @@ def fit_fe_hv_scan(
     # peak_channels = np.zeros(len(mcas))
     # fit_stds = np.zeros_like(peak_channels)
 
-    max_peak_height = np.max([np.max(mca.data) for mca in mcas])
+    max_peak_height = np.max([np.max(mca.counts) for mca in mcas])
     max_ch = np.max([mca.channels[-1] for mca in mcas])
     y_adjust_step = 50
     max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
@@ -186,7 +186,7 @@ def fit_fe_hv_scan(
     fits = []
     for i, mca in enumerate(mcas):
         ax = axes[i]
-        ax.plot(mca.data)
+        ax.plot(mca.counts)
 
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)

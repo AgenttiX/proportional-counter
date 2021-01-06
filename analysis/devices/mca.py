@@ -6,7 +6,20 @@ import numpy as np
 
 
 class MeasMCA:
-    def __init__(self, path: str):
+    def __init__(self, path: str, diff_nonlin: float = None, int_nonlin: float = None):
+        """A multichannel analyzer (MCA) measurement
+
+        For the nonlinearities, please see
+        https://en.wikipedia.org/wiki/Differential_nonlinearity
+        https://en.wikipedia.org/wiki/Integral_nonlinearity
+
+        :param path: Path of the measurement file
+        :param diff_nonlin: Differential nonlinearity of the MCA
+        :param int_nonlin: Integral nonlinearity of the MCA
+        """
+        self.diff_nonlin = diff_nonlin
+        self.int_nonlin = int_nonlin
+
         roi_start_line = None
         data_start_line = None
         data_end_line = None
@@ -54,8 +67,8 @@ class MeasMCA:
                     row = [cell.strip() for cell in line.split(":", maxsplit=1)]
                     self.status[row[0]] = self.convert_value(row[1])
 
-        self.data = np.array(data, dtype=np.int_)
-        self.channels = np.arange(0, self.data.size)
+        self.counts = np.array(data, dtype=np.int_)
+        self.channels = np.arange(0, self.counts.size)
 
         # Metadata
         self.real_length = float(self.meta["REAL_TIME"])
@@ -67,6 +80,10 @@ class MeasMCA:
         #     encoding="cp1252",
         #     engine="c"
         # )
+
+    @property
+    def count_stds(self):
+        return self.counts * self.int_nonlin
 
     @staticmethod
     def convert_value(value: str) -> tp.Union[int, float, str]:
@@ -90,6 +107,6 @@ class TableMCA:
 if __name__ == "__main__":
     __meas = MeasMCA(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "data/calibration/cal_10_5.mca"))
-    print(__meas.data)
+    print(__meas.counts)
     print(__meas.conf)
     print(__meas.status)

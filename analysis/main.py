@@ -110,10 +110,14 @@ cal_data = [
 cal_gain = 10
 # Adjustment has a higher uncertainty than a single measurement
 hv_adjustment_std = 5  # volts
+
 # Differential nonlinearity: relative x axis error
-mca_diff_nonlinearity = 0.6e-2
+mca_diff_nonlin = 0.6e-2
 # Integral nonlinearity: relative y axis error
-mca_int_nonlinearity = 0.02e-2
+mca_int_nonlin = 0.02e-2
+
+preamp_int_nonlin = 0.05e-2
+spec_amp_int_nonlin = 0.05e-2
 
 ###
 # Spectral

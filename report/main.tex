@@ -157,14 +157,25 @@ U_{kl} \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\part
 and the variances are
 \begin{equation}
 \sigma_{y_k}^2 \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}}^2 \sigma_i^2
+\label{eq:variance}
 \end{equation}
 \cite[p. 20--22]{cowan_statistical_1998}
+
+
+\subsection{Error analysis}
+The total gain of the amplifiers is a product of the gains of the pre-amplifier and the spectral amplifier.
+Therefore the uncertainty of the gain using equation \ref{eq:variance} is
+\begin{equation}
+\sigma_g \approx \sqrt{(g_\text{spec} \sigma_\text{pre})^2 + (g_\text{pre}\sigma_\text{spec})^2}.
+\end{equation}
+TODO: the gain of the spectral amplifier was varied from 10*1 to 10*100, but what was the gain of the pre-amplifier?
+Since they were two parts of the same device, was the setting already a total of these?
+Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spectral amplifier?
 
 
 \subsection{Read-out electronics}
 \label{electronics}
 
-TODO: Kind of outside of the scope of the report?
 
 Capacitive decoupling \ref{fig:theory_schematic}
 

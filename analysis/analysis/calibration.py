@@ -67,7 +67,7 @@ def calibration(
     #####
     # MCA calibration
     #####
-    mca_peak_inds = np.array([np.argmax(cal.mca.data) for cal in cal_data])
+    mca_peak_inds = np.array([np.argmax(cal.mca.counts) for cal in cal_data])
 
     fig3: plt.Figure = plt.figure()
     # fig3.suptitle("MCA calibration")
@@ -101,7 +101,7 @@ def calibration(
     ax3.legend()
 
     for meas in cal_data:
-        ax4.plot(meas.mca.channels, meas.mca.data, color="tab:blue")
+        ax4.plot(meas.mca.channels, meas.mca.counts, color="tab:blue")
 
     for ax in (ax3, ax4):
         ax.set_xlim(0, cal_data[0].mca.channels[-1])

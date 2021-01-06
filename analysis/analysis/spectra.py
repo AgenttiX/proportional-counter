@@ -22,8 +22,8 @@ def spectra(am_path, fe_path, noise_path, gain, voltage):
     ax1.set_xlim(0, am.channels[-1])
     ax2.set_xlim(0, am.channels[-1])
 
-    am_subtracted = am.data - noise.data * noise.real_length / am.real_length
-    fe_subtracted = fe.data - noise.data * noise.real_length / fe.real_length
+    am_subtracted = am.counts - noise.counts * noise.real_length / am.real_length
+    fe_subtracted = fe.counts - noise.counts * noise.real_length / fe.real_length
     y_mult = 1.1
     ax1.set_ylim(0, np.max(am_subtracted)*y_mult)
     ax2.set_ylim(0, np.max(fe_subtracted)*y_mult)

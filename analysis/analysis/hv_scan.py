@@ -5,6 +5,8 @@ import typing as tp
 
 import matplotlib.pyplot as plt
 import numpy as np
+import uncertainties as unc
+import uncertainties.unumpy as unp
 
 import const
 from devices.mca import MeasMCA
@@ -18,7 +20,7 @@ def get_total_charges(mcas: tp.List[MeasMCA], gains: np.ndarray, cal_coeff: np.n
     charges = np.zeros(len(mcas))
     for i, mca in enumerate(mcas):
         charge_mults = np.polyval(cal_coeff, mca.channels)
-        charges[i] = np.sum(mca.data * charge_mults) * cal_gain / gains[i]
+        charges[i] = np.sum(mca.counts * charge_mults) * cal_gain / gains[i]
     return charges
 
 
@@ -26,7 +28,7 @@ def get_peak_charges(fits: tp.List[type_hints.CURVE_FIT], gains: np.ndarray, cal
     """Get the charge corresponding to an MCA peak
 
     In the article:
-    "The centroids of the peaks were converted nto total charge or the number readout
+    "The centroids of the peaks were converted to total charge or the number readout
     electrons using the measured electronics calibration function."
     Since the centroid of a Gaussian refers to its mean value, I presume that this
     means that we should multiply the peak height with the value of the calibration function at that channel.
@@ -37,29 +39,42 @@ def get_peak_charges(fits: tp.List[type_hints.CURVE_FIT], gains: np.ndarray, cal
     return charges
 
 
-def hv_scan(folder: str, prefix: str):
+def hv_scan(
+        folder: str,
+        prefix: str,
+        diff_nonlin: float,
+        int_nonlin: float,
+        voltage_std: float,
+        gain_rel_std: float = 0,
+        ):
     """Analyze HV scan data"""
     print(f"{prefix} HV scan")
-    gains, voltages, mcas = read_hv_scan(folder, prefix)
+    gains, voltages, mcas = read_hv_scan(folder, prefix, diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
     print("Gains:")
     print(gains)
     print("Voltages:")
     print(voltages)
     print(f"Voltage range: {min(voltages)} - {max(voltages)} V")
 
+    gains = unp.uarray(gains, gains*gain_rel_std)
+    voltages = unp.uarray(voltages, voltage_std)
     return gains, voltages, mcas
 
 
-def hv_scans(folder: str, cal_coeff: np.ndarray = None, cal_gain: float = None):
+def hv_scans(
+        folder: str,
+        cal_coeff: np.ndarray,
+        cal_gain: float,
+        diff_nonlin: float,
+        int_nonlin: float,
+        voltage_std: float):
     utils.print_title("HV scans")
-    am_gains, am_voltages, am_mcas = hv_scan(folder, "Am")
-    fe_gains, fe_voltages, fe_mcas = hv_scan(folder, "Fe")
+    am_gains, am_voltages, am_mcas = hv_scan(folder, "Am", diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
+    fe_gains, fe_voltages, fe_mcas = hv_scan(folder, "Fe", diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
 
     am_fits = fitting.fit_am_hv_scan(am_mcas)
     fe_fits = fitting.fit_fe_hv_scan(fe_mcas)
 
-    if cal_coeff is None or cal_gain is None:
-        return
     # am_charges = get_charges(am_mcas, am_gains, cal_coeff, cal_gain)
     # fe_charges = get_charges(fe_mcas, fe_gains, cal_coeff, cal_gain)
 
@@ -68,10 +83,21 @@ def hv_scans(folder: str, cal_coeff: np.ndarray = None, cal_gain: float = None):
     am_charges = get_peak_charges(am_fits, am_gains, cal_coeff, cal_gain) * fix
     fe_charges = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_gain) * fix
 
+    ###
+    # Measured charges
+    ###
     fig: plt.Figure = plt.figure()
     ax: plt.Axes = fig.add_subplot()
-    ax.scatter(am_voltages, am_charges / const.ELEMENTARY_CHARGE, label=r"$\gamma$ (59.5 keV) of $^{241}$Am")
-    ax.scatter(fe_voltages, fe_charges / const.ELEMENTARY_CHARGE, label=r"$\gamma$ (5.9 keV) of $^{55}$Fe")
+    ax.errorbar(
+        am_voltages,
+        am_charges / const.ELEMENTARY_CHARGE,
+        label=r"$\gamma$ (59.5 keV) of $^{241}$Am"
+    )
+    ax.errorbar(
+        fe_voltages,
+        fe_charges / const.ELEMENTARY_CHARGE,
+        label=r"$\gamma$ (5.9 keV) of $^{55}$Fe"
+    )
     ax.set_yscale("log")
     ax.set_xlabel("Voltage (V)")
     ax.set_ylabel("Number of electrons")
@@ -79,10 +105,29 @@ def hv_scans(folder: str, cal_coeff: np.ndarray = None, cal_gain: float = None):
     ax.legend()
     plot.save_fig(fig, "hv_scans")
 
+    ###
+    # Gas multiplication factors
+    ###
+    fig2: plt.Figure = plt.figure()
+    ax2: plt.Axes = fig.add_subplot()
+    theor_gas_mult = utils.diethorn(
+        V=voltages
+    )
 
-def read_hv_scan(folder: str, prefix: str) -> tp.Tuple[np.ndarray, np.ndarray, tp.List[MeasMCA]]:
+    ###
+    # Resolution
+    ###
+    fig3: plt.Figure = plt.figure()
+    ax: plt.Axes = fig.add_subplot()
+
+
+def read_hv_scan(
+        folder: str,
+        prefix: str,
+        diff_nonlin: float,
+        int_nonlin: float) -> tp.Tuple[np.ndarray, np.ndarray, tp.List[MeasMCA]]:
     """Read HV scan data from files"""
-    # glob returns random order
+    # glob returns random order so the data has to be sorted later for convenient display
     paths = glob.glob(os.path.join(folder, f"{prefix}_*.mca"))
     gains = []
     voltages = []
@@ -95,9 +140,10 @@ def read_hv_scan(folder: str, prefix: str) -> tp.Tuple[np.ndarray, np.ndarray, t
         parts = name.split("_")
         gains.append(int(parts[1]))
         voltages.append(int(parts[2]))
-        mcas.append(MeasMCA(path))
+        mcas.append(MeasMCA(path, diff_nonlin=diff_nonlin, int_nonlin=int_nonlin))
     data = list(zip(gains, voltages, mcas))
 
+    # In the measurement order the voltage is increased and the gain is decreased
     def compare(data1, data2):
         if data1[0] != data2[0]:
             return -1 + 2*int(data1[0] < data2[0])
