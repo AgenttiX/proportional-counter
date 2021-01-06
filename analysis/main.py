@@ -2,9 +2,13 @@
 This is the main script for running the analysis workflow.
 """
 
-import numpy as np
+import os.path
+import typing as tp
 
-from analysis import analyze, analyze_sizes, MeasCal
+import matplotlib.pyplot as plt
+
+import analysis
+from meas import MeasCal
 
 
 # Electronics calibration data
@@ -84,8 +88,33 @@ brass_tube_diameter = [992, 990, 991, 990, 987]
 brass_tube_with_connector = [27.30, 27.15, 27.32, 27.59, 27.23]
 
 
+def main(cal_data: tp.List[MeasCal]):
+    """
+    The main analysis function.
+    Comment out sections as needed.
+    """
+    # calibration(cal_data)
+    # plt.show()
+    # return
+
+    data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+    hv_scan_folder = os.path.join(data_folder, "hv_scan")
+    analysis.hv_scan(hv_scan_folder, "Am")
+    analysis.hv_scan(hv_scan_folder, "Fe")
+
+    analysis.spectra(
+        os.path.join(data_folder, "spectra", "Am_10_1810_long_meas.mca"),
+        os.path.join(data_folder, "spectra", "Fe_10_1810_long_meas.mca"),
+        os.path.join(data_folder, "spectra", "Noise_1810.mca"),
+        gain=10,
+        voltage=1810
+    )
+
+    plt.show()
+
+
 if __name__ == "__main__":
-    analyze_sizes({
+    analysis.analyze_sizes({
         "Can outer diameter (mm)": can_diam_outer,
         "Can top end inner diameter (mm)": can_top_diam_inner,
         "Can top end outer diameter (mm)": can_top_diam_outer,
@@ -97,4 +126,4 @@ if __name__ == "__main__":
         "Brass tube diameter (µm)": brass_tube_diameter,
         "Brass tube with connector (mm)": brass_tube_with_connector,
     })
-    analyze(calibration)
+    main(calibration)
