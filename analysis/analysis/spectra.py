@@ -4,10 +4,12 @@ import numpy as np
 from devices.mca import MeasMCA
 import fitting
 import plot
+import utils
 
 
 def spectra(am_path, fe_path, noise_path, gain, voltage):
     """Analyze spectral measurement"""
+    utils.print_title("Spectra")
     am = MeasMCA(am_path)
     fe = MeasMCA(fe_path)
     noise = MeasMCA(noise_path)

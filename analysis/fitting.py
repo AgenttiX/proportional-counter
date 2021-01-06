@@ -7,6 +7,7 @@ from scipy.optimize import curve_fit
 from devices.mca import MeasMCA
 import plot
 import stats
+import type_hints
 
 THRESHOLD_LEVEL = 0.5
 CUT_WIDTH_MULT = 2
@@ -101,15 +102,17 @@ def fit_am_hv_scan(mcas: tp.List[MeasMCA]):
     y_adjust_step = 50
     max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
 
+    fits = []
     for i, mca in enumerate(mcas):
         ax = axes[i]
         ax.plot(mca.data)
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)
 
-        fit_am(mca, ax)
+        fits.append(fit_am(mca, ax))
 
     plot.save_fig(fig, "am_scan_fits")
+    return fits
 
 
 def fit_fe(
@@ -165,21 +168,22 @@ def fit_fe(
 def fit_fe_hv_scan(
         mcas: tp.List[MeasMCA],
         threshold_level: float = THRESHOLD_LEVEL,
-        cut_width_mult: float = CUT_WIDTH_MULT):
+        cut_width_mult: float = CUT_WIDTH_MULT) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for Fe-55 HV scan measurements"""
 
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     # fig.suptitle("Fe fits")
     # fig.tight_layout()
 
-    peak_channels = np.zeros(len(mcas))
-    fit_stds = np.zeros_like(peak_channels)
+    # peak_channels = np.zeros(len(mcas))
+    # fit_stds = np.zeros_like(peak_channels)
 
     max_peak_height = np.max([np.max(mca.data) for mca in mcas])
     max_ch = np.max([mca.channels[-1] for mca in mcas])
     y_adjust_step = 50
     max_peak_height_round = y_adjust_step * np.ceil(max_peak_height/y_adjust_step)
 
+    fits = []
     for i, mca in enumerate(mcas):
         ax = axes[i]
         ax.plot(mca.data)
@@ -202,9 +206,10 @@ def fit_fe_hv_scan(
         #     better_fit = fit[0][3:]
         # ax.plot(mca.channels, better_fit[0]*stats.gaussian(mca.channels, *better_fit[1:]))
 
-        peak_channels[i] = fit[0][1]
-        fit_stds[i] = fit[0][2]
+        # peak_channels[i] = fit[0][1]
+        # fit_stds[i] = fit[0][2]
+        fits.append(fit)
 
     plot.save_fig(fig, "fe_scan_fits")
 
-    return peak_channels, fit_stds
+    return fits

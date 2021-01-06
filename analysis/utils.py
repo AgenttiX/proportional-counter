@@ -42,3 +42,9 @@ def gas_mult_factor_p10(V, a, b, p):
     delta_V = 23.6  # eV
     delta_V_std = 21.8  # eV
     # TODO
+
+
+def print_title(title: str):
+    print("###")
+    print(title)
+    print("###")

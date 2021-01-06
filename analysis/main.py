@@ -1,18 +1,47 @@
 """
 This is the main script for running the analysis workflow.
+The analysis is run as one large workflow, since some phases need results from the others.
+For example the high voltage scan is based on the charge calibration of the MCA.
 """
 
 import os.path
-import typing as tp
 
 import matplotlib.pyplot as plt
 
 import analysis
 from meas import MeasCal
 
+###
+# Size measurements
+###
+# From the file "size_measurements.txt"
+can_diam_outer = [66.01, 65.74, 65.81, 65.70, 65.89]
+can_top_diam_inner = [47.50, 47.78, 47.58, 47.76, 47.47]
+can_top_diam_outer = [53.84, 53.88, 53.98, 53.89, 53.82]
+can_bottom_diam_inner = [45.51, 44.93, 45.40, 45.43, 45.47]
+can_thickness_top = [240, 250, 240, 250, 280]
+can_thickness_opened = [102, 103, 102, 100, 102]
+long_brass_tube_length = [29.25, 29.26, 29.27, 29.27, 29.25]
+short_brass_tube_length = [10.05, 9.98, 9.99, 10.04]
+brass_tube_diameter = [992, 990, 991, 990, 987]
+brass_tube_with_connector = [27.30, 27.15, 27.32, 27.59, 27.23]
+sizes = {
+    "Can outer diameter (mm)": can_diam_outer,
+    "Can top end inner diameter (mm)": can_top_diam_inner,
+    "Can top end outer diameter (mm)": can_top_diam_outer,
+    "Can bottom end inner diameter (mm)": can_bottom_diam_inner,
+    "Can thickness (µm, from top section)": can_thickness_top,
+    "Can thickness (µm, from opened and straightened can)": can_thickness_opened,
+    "Long brass tube length (mm)": long_brass_tube_length,
+    "Short brass tube length (mm)": short_brass_tube_length,
+    "Brass tube diameter (µm)": brass_tube_diameter,
+    "Brass tube with connector (mm)": brass_tube_with_connector,
+}
 
-# Electronics calibration data
-calibration = [
+###
+# Electronics calibration
+###
+cal_data = [
     MeasCal(
         voltage=0.067,
         traces=(51, 55),
@@ -75,32 +104,37 @@ calibration = [
     )
 ]
 
-# From the file "size_measurements.txt"
-can_diam_outer = [66.01, 65.74, 65.81, 65.70, 65.89]
-can_top_diam_inner = [47.50, 47.78, 47.58, 47.76, 47.47]
-can_top_diam_outer = [53.84, 53.88, 53.98, 53.89, 53.82]
-can_bottom_diam_inner = [45.51, 44.93, 45.40, 45.43, 45.47]
-can_thickness_top = [240, 250, 240, 250, 280]
-can_thickness_opened = [102, 103, 102, 100, 102]
-long_brass_tube_length = [29.25, 29.26, 29.27, 29.27, 29.25]
-short_brass_tube_length = [10.05, 9.98, 9.99, 10.04]
-brass_tube_diameter = [992, 990, 991, 990, 987]
-brass_tube_with_connector = [27.30, 27.15, 27.32, 27.59, 27.23]
+###
+# HV scan
+###
+cal_gain = 10
+# Adjustment has a higher uncertainty than a single measurement
+hv_adjustment_std = 5  # volts
+# Differential nonlinearity: relative x axis error
+mca_diff_nonlinearity = 0.6e-2
+# Integral nonlinearity: relative y axis error
+mca_int_nonlinearity = 0.02e-2
+
+###
+# Spectral
+###
+hv_std = 1  # volts
 
 
-def main(cal_data: tp.List[MeasCal]):
+def main():
     """
     The main analysis function.
     Comment out sections as needed.
     """
-    # calibration(cal_data)
+    analysis.analyze_sizes(sizes)
+
+    cal_coeff = analysis.calibration(cal_data)
     # plt.show()
     # return
 
     data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
     hv_scan_folder = os.path.join(data_folder, "hv_scan")
-    analysis.hv_scan(hv_scan_folder, "Am")
-    analysis.hv_scan(hv_scan_folder, "Fe")
+    analysis.hv_scans(hv_scan_folder, cal_coeff, cal_gain)
 
     analysis.spectra(
         os.path.join(data_folder, "spectra", "Am_10_1810_long_meas.mca"),
@@ -114,16 +148,4 @@ def main(cal_data: tp.List[MeasCal]):
 
 
 if __name__ == "__main__":
-    analysis.analyze_sizes({
-        "Can outer diameter (mm)": can_diam_outer,
-        "Can top end inner diameter (mm)": can_top_diam_inner,
-        "Can top end outer diameter (mm)": can_top_diam_outer,
-        "Can bottom end inner diameter (mm)": can_bottom_diam_inner,
-        "Can thickness (µm, from top section)": can_thickness_top,
-        "Can thickness (µm, from opened and straightened can)": can_thickness_opened,
-        "Long brass tube length (mm)": long_brass_tube_length,
-        "Short brass tube length (mm)": short_brass_tube_length,
-        "Brass tube diameter (µm)": brass_tube_diameter,
-        "Brass tube with connector (mm)": brass_tube_with_connector,
-    })
-    main(calibration)
+    main()

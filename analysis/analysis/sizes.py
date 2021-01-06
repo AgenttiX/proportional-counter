@@ -2,9 +2,11 @@ import typing as tp
 
 import numpy as np
 
+import utils
+
 
 def analyze_sizes(sizes: tp.Dict[str, tp.List[float]]):
-    print("Sizes")
+    utils.print_title("Sizes")
     for name, data in sizes.items():
         print(name)
         print(f"µ = {np.mean(data)}")

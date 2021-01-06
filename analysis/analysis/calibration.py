@@ -6,7 +6,8 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 import plot
-from meas import Meas, MeasCal
+from meas import MeasCal
+import utils
 
 
 def calibration(
@@ -15,6 +16,7 @@ def calibration(
         # fine_gain: float = 10,
         preamp_capacitance: float = 1e-12) -> np.ndarray:
     """Analyze calibration data"""
+    utils.print_title("Calibration")
 
     # Oscilloscope example
     fig: plt.Figure = plt.figure()
