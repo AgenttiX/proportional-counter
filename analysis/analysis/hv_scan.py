@@ -5,6 +5,7 @@ import typing as tp
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.linalg
 import uncertainties as unc
 import uncertainties.unumpy as unp
 
@@ -24,7 +25,13 @@ def get_total_charges(mcas: tp.List[MeasMCA], gains: np.ndarray, cal_coeff: np.n
     return charges
 
 
-def get_peak_charges(fits: tp.List[type_hints.CURVE_FIT], gains: np.ndarray, cal_coeff: np.ndarray, cal_gain: float):
+def get_peak_charges(
+        fits: tp.List[type_hints.CURVE_FIT],
+        gains: np.ndarray,
+        cal_coeff: np.ndarray,
+        cal_coeff_covar: np.ndarray,
+        cal_gain: float,
+        gain_rel_std: float):
     """Get the charge corresponding to an MCA peak
 
     In the article:
@@ -33,10 +40,33 @@ def get_peak_charges(fits: tp.List[type_hints.CURVE_FIT], gains: np.ndarray, cal
     Since the centroid of a Gaussian refers to its mean value, I presume that this
     means that we should multiply the peak height with the value of the calibration function at that channel.
     """
-    peaks = np.array([fit[0][0] for fit in fits])
+    if cal_coeff.size != 2:
+        raise NotImplementedError
+    counts = np.array([fit[0][0] for fit in fits])
     peak_channels = np.array([fit[0][1] for fit in fits])
-    charges = peaks * np.polyval(cal_coeff, peak_channels) * cal_gain / gains
-    return charges
+    charges = counts * np.polyval(cal_coeff, peak_channels) * cal_gain / gains
+    charges_std = np.empty_like(charges)
+    # Partial derivatives
+    A_N = (cal_coeff[0] * counts + cal_coeff[1]) * cal_gain / gains
+    A_M = counts * cal_coeff[0] * cal_gain / gains
+    A_g = counts * peak_channels * cal_gain / gains
+    A_h = counts * cal_gain / gains
+    A_gc = counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) / gains
+    A_gm = - counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) * cal_gain / gains**2
+    # This could be done without a loop but it's easier to understand this way
+    for i, fit in enumerate(fits):
+        # Order: N, M, g, h, gc, gm
+        A = np.array([A_N[i], A_M[i], A_g[i], A_h[i], A_gc[i], A_gm[i]])
+        V = scipy.linalg.block_diag(fit[1][:2, :2], cal_coeff_covar, gain_rel_std**2 * cal_gain, gain_rel_std**2 * gains[i])
+        # print(A.shape)
+        # print(V.shape)
+        # print(fit[1].shape)
+        # print(cal_coeff_covar.shape)
+        # print(V)
+        U = A @ V @ A.T
+        charges_std[i] = U
+
+    return charges, charges_std
 
 
 def hv_scan(
@@ -46,7 +76,7 @@ def hv_scan(
         int_nonlin: float,
         voltage_std: float,
         gain_rel_std: float = 0,
-        ):
+        ) -> tp.Tuple[np.array, np.array, tp.List[MeasMCA]]:
     """Analyze HV scan data"""
     print(f"{prefix} HV scan")
     gains, voltages, mcas = read_hv_scan(folder, prefix, diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
@@ -56,21 +86,36 @@ def hv_scan(
     print(voltages)
     print(f"Voltage range: {min(voltages)} - {max(voltages)} V")
 
-    gains = unp.uarray(gains, gains*gain_rel_std)
-    voltages = unp.uarray(voltages, voltage_std)
+    # gains = unp.uarray(gains, gains*gain_rel_std)
+    # voltages = unp.uarray(voltages, voltage_std)
+    # gains_std = gains * gain_rel_std
     return gains, voltages, mcas
 
 
 def hv_scans(
         folder: str,
         cal_coeff: np.ndarray,
+        cal_coeff_covar: np.ndarray,
         cal_gain: float,
         diff_nonlin: float,
         int_nonlin: float,
-        voltage_std: float):
+        voltage_std: float,
+        gain_rel_std: float):
     utils.print_title("HV scans")
-    am_gains, am_voltages, am_mcas = hv_scan(folder, "Am", diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
-    fe_gains, fe_voltages, fe_mcas = hv_scan(folder, "Fe", diff_nonlin=diff_nonlin, int_nonlin=int_nonlin)
+    am_gains, am_voltages, am_mcas = hv_scan(
+        folder, "Am",
+        diff_nonlin=diff_nonlin,
+        int_nonlin=int_nonlin,
+        voltage_std=voltage_std,
+        gain_rel_std=gain_rel_std
+    )
+    fe_gains, fe_voltages, fe_mcas = hv_scan(
+        folder, "Fe",
+        diff_nonlin=diff_nonlin,
+        int_nonlin=int_nonlin,
+        voltage_std=voltage_std,
+        gain_rel_std=gain_rel_std
+    )
 
     am_fits = fitting.fit_am_hv_scan(am_mcas)
     fe_fits = fitting.fit_fe_hv_scan(fe_mcas)
@@ -80,8 +125,12 @@ def hv_scans(
 
     # TODO: find where the fixing 100 comes from
     fix = 1e-4
-    am_charges = get_peak_charges(am_fits, am_gains, cal_coeff, cal_gain) * fix
-    fe_charges = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_gain) * fix
+    am_charges, am_charges_std = get_peak_charges(am_fits, am_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
+    fe_charges, fe_charges_std = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
+    am_charges *= fix
+    am_charges_std *= fix
+    fe_charges *= fix
+    fe_charges_std *= fix
 
     ###
     # Measured charges
@@ -91,11 +140,15 @@ def hv_scans(
     ax.errorbar(
         am_voltages,
         am_charges / const.ELEMENTARY_CHARGE,
+        yerr=am_charges_std,
+        fmt=".", capsize=3,
         label=r"$\gamma$ (59.5 keV) of $^{241}$Am"
     )
     ax.errorbar(
         fe_voltages,
         fe_charges / const.ELEMENTARY_CHARGE,
+        yerr=fe_charges_std,
+        fmt=".", capsize=3,
         label=r"$\gamma$ (5.9 keV) of $^{55}$Fe"
     )
     ax.set_yscale("log")
@@ -110,15 +163,17 @@ def hv_scans(
     ###
     fig2: plt.Figure = plt.figure()
     ax2: plt.Axes = fig.add_subplot()
-    theor_gas_mult = utils.diethorn(
-        V=voltages
-    )
+    # theor_gas_mult = utils.diethorn(
+    #     V=voltages
+    # )
 
     ###
     # Resolution
     ###
     fig3: plt.Figure = plt.figure()
     ax: plt.Axes = fig.add_subplot()
+
+    print()
 
 
 def read_hv_scan(

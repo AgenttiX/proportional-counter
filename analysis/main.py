@@ -103,6 +103,7 @@ cal_data = [
         file="cal_10_145"
     )
 ]
+pulser_voltage_rel_std = 0.05
 
 ###
 # HV scan
@@ -132,20 +133,34 @@ def main():
     """
     analysis.analyze_sizes(sizes)
 
-    cal_coeff = analysis.calibration(cal_data)
+    cal_coeff, cal_coeff_covar = analysis.calibration(
+        cal_data,
+        mca_diff_nonlin=mca_diff_nonlin,
+        pulser_voltage_rel_std=pulser_voltage_rel_std
+    )
     # plt.show()
     # return
 
     data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
     hv_scan_folder = os.path.join(data_folder, "hv_scan")
-    analysis.hv_scans(hv_scan_folder, cal_coeff, cal_gain)
+    analysis.hv_scans(
+        hv_scan_folder,
+        cal_coeff=cal_coeff,
+        cal_coeff_covar=cal_coeff_covar,
+        cal_gain=cal_gain,
+        diff_nonlin=mca_diff_nonlin,
+        int_nonlin=mca_int_nonlin,
+        voltage_std=hv_adjustment_std,
+        gain_rel_std=spec_amp_int_nonlin
+    )
 
     analysis.spectra(
         os.path.join(data_folder, "spectra", "Am_10_1810_long_meas.mca"),
         os.path.join(data_folder, "spectra", "Fe_10_1810_long_meas.mca"),
         os.path.join(data_folder, "spectra", "Noise_1810.mca"),
         gain=10,
-        voltage=1810
+        voltage=1810,
+        voltage_std=hv_std
     )
 
     plt.show()

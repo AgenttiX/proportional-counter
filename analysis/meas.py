@@ -57,6 +57,7 @@ class MeasCal:
 
     @property
     def peak_height(self):
+        """Peak heights and stds of the oscilloscope traces"""
         peak_heights = np.array([meas_osc.peak_height for meas_osc in self.traces])
         return np.mean(peak_heights), np.std(peak_heights)
 

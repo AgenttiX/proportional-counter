@@ -130,12 +130,10 @@ TODO
 \subsection{Error analysis methods}
 \label{error_analysis}
 The detector consists of various components, each of which has its manufacturing imperfections.
-In addition, each of the measurements systems used has inaccuracies.
-Together these provide various sources of uncertainties for the measurements.
-Combining these into uncertainties of the end results is known as error propagation.
+In addition, each of the measurement systems used has inaccuracies.
+Together these provide various sources of uncertainties for the measurements, and combining these into uncertainties of the end results is known as error propagation.
 
-By Taylor expanding the function in question around the mean values of the random variables we get an expression which depends on the 
-
+By Taylor expanding the function in question around the mean values of the random variables we can relate the covariance matrices and therefore the uncertainties of the input and output variables.
 In the general case the covariance matrix of the output variables is given by
 \begin{equation}
 U_{kl}
@@ -146,6 +144,10 @@ where $U$ is the covariance matrix of the output variables $y$ and $V$ is the co
 Consequently the variances for each of the output variables are
 \begin{equation}
 \sigma_{y_k}^2 \approx \sum_{i,j=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\partial y_k}{\partial x_j} \right)_{\mathbf{x}=\mathbf{\mu}} V_{ij}.
+\end{equation}
+This can be written in matrix notation as
+\begin{equation}
+U = AVA^T
 \end{equation}
 \cite[p. 20--22]{cowan_statistical_1998}
 

@@ -7,7 +7,7 @@ import plot
 import utils
 
 
-def spectra(am_path, fe_path, noise_path, gain, voltage):
+def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
     """Analyze spectral measurement"""
     utils.print_title("Spectra")
     am = MeasMCA(am_path)

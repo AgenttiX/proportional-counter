@@ -1,6 +1,10 @@
 import numpy as np
 
 
+def gain_std(gain_pre, gain_spec, gain_std_pre, gain_std_spec):
+    return np.sqrt((gain_spec*gain_std_pre)**2 + (gain_pre*gain_std_spec)**2)
+
+
 def gas_mult_factor(Q, E_rad, E_ion_pair, e):
     """
     Get the gas multiplication factor M.
