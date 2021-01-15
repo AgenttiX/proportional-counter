@@ -129,7 +129,7 @@ hv_std = 1  # volts
 def main():
     """
     The main analysis function.
-    Comment out sections as needed.
+    This will pop up quite a few plots, so comment out sections as needed.
     """
     analysis.analyze_sizes(sizes)
 

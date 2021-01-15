@@ -73,6 +73,7 @@ def plot_osc(meas: MeasOsc, ax: plt.Axes):
 
 
 def save_fig(fig: plt.Figure, name: str):
+    """Save a figure in multiple formats"""
     fig.savefig(os.path.join(FIG_FOLDER, f"{name}.eps"))
     fig.savefig(os.path.join(FIG_FOLDER, f"{name}.png"))
     fig.savefig(os.path.join(FIG_FOLDER, f"{name}.svg"))
