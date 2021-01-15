@@ -1,0 +1,9 @@
+Big thanks to Riku Raivio for these values!
+
+2020-12-01
+Temperature 21,5 +/- 0,1 deg C
+Pressure 1014 +/- 1 mbar
+
+2020-12-07
+Temperature 21 +/- 0,5 deg C
+Pressure 1022 +/- mbar
