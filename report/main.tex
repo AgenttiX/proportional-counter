@@ -12,11 +12,20 @@
 \usepackage{placeins}
 \usepackage{subcaption}
 \usepackage{tabularx}
+\usepackage{xcolor}
 
 \title{PAP328 project work: proportional counter}
 \author{Mika Mäki}
 \date{2021-01-XX}
 % TODO add date when the report was handed in
+
+\newenvironment{todo}{
+% \hline
+\color{red}
+}
+{
+% \hline
+}
 
 
 \begin{document}
@@ -37,6 +46,10 @@ TODO add main results here.
 The detector was also tested with a self-built pre-amplifier.
 However, these results were inconclusive due to unexpected degradation of the detector.
 These measurements are discussed in the appendix \ref{pre_amp}.
+
+\begin{todo}
+The red sections include parts on which I'd prefer to have comments on whether I'm on the right track and whether those should be included in the report.
+\end{todo}
 
 \tableofcontents
 
@@ -126,6 +139,12 @@ Schockley \cite{shockley_currents_1938}
 Ramo \cite{ramo_currents_1939}
 TODO
 
+Diethorn formula \cite[eq. 6.10]{knoll_radiation_2010}
+\begin{equation}
+\ln M = \frac{V}{\ln b/a} \frac{\ln 2}{\Delta V}
+\left( \ln \frac{V}{pa \ln (b/a)} - \ln K \right)
+\end{equation}
+
 
 \subsection{Error analysis methods}
 \label{error_analysis}
@@ -147,7 +166,11 @@ Consequently the variances for each of the output variables are
 \end{equation}
 This can be written in matrix notation as
 \begin{equation}
-U = AVA^T.
+U = AVA^T,
+\end{equation}
+where
+\begin{equation}
+A_{ij} = \frac{\partial y_i}{\partial x_j} \vert_{\boldsymbol{x}=\boldsymbol{\mu}}.
 \end{equation}
 \cite[p. 20--22]{cowan_statistical_1998}
 
@@ -165,6 +188,7 @@ and the variances are
 
 
 \subsection{Error analysis}
+\begin{todo}
 The total gain of the amplifiers is a product of the gains of the pre-amplifier and the spectral amplifier.
 Therefore the uncertainty of the gain using equation \ref{eq:variance} is
 \begin{equation}
@@ -173,6 +197,7 @@ Therefore the uncertainty of the gain using equation \ref{eq:variance} is
 TODO: the gain of the spectral amplifier was varied from $10\cdot1=10$ to $10\cdot100=1000$, but what was the gain of the pre-amplifier?
 Since they were two parts of the same device, was the setting already a total of these?
 Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spectral amplifier?
+\end{todo}
 
 
 \subsection{Read-out electronics}
