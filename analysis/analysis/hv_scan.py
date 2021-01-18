@@ -140,6 +140,9 @@ def hv_scans(
     ###
     # Measured charges
     ###
+    am_text = r"$\gamma$ (59.5 keV) of $^{241}$Am"
+    fe_text = r"$\gamma$ (5.9 keV) of $^{55}$Fe"
+
     fig: plt.Figure = plt.figure()
     ax: plt.Axes = fig.add_subplot()
     ax.errorbar(
@@ -147,19 +150,19 @@ def hv_scans(
         am_charges / const.ELEMENTARY_CHARGE,
         yerr=am_charges_std,
         fmt=".", capsize=3,
-        label=r"$\gamma$ (59.5 keV) of $^{241}$Am"
+        label=am_text
     )
     ax.errorbar(
         fe_voltages,
         fe_charges / const.ELEMENTARY_CHARGE,
         yerr=fe_charges_std,
         fmt=".", capsize=3,
-        label=r"$\gamma$ (5.9 keV) of $^{55}$Fe"
+        label=fe_text
     )
     ax.set_yscale("log")
     ax.set_xlabel("Voltage (V)")
     ax.set_ylabel("Number of electrons")
-    ax.set_title("TODO fix y-scale")
+    # ax.set_title("TODO fix y-scale")
     ax.legend()
     plot.save_fig(fig, "hv_scans")
 
@@ -168,6 +171,8 @@ def hv_scans(
     ###
     fig2: plt.Figure = plt.figure()
     ax2: plt.Axes = fig2.add_subplot()
+
+    # Theoretical
     volt_range = np.linspace(1100, 2400)
     theor_gas_mult_log = np.array([
         utils.log_gas_mult_factor_p10(
@@ -179,8 +184,32 @@ def hv_scans(
     print(theor_gas_mult_log[1])
     ax2.plot(volt_range, np.exp(theor_gas_mult_log[0]), label="theoretical prediction")
     ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] + theor_gas_mult_log[1]), linestyle=":", label=r"$1\sigma$ upper limit")
+
+    # Observed
     # For Argon
     E_pair = 26  # eV
+    E_fe = 5.9e3  # eV
+    E_am = 59.54e3  # eV
+    mult_am = utils.gas_mult_factor(am_charges, E_rad=E_am, E_ion_pair=E_pair)
+    mult_fe = utils.gas_mult_factor(fe_charges, E_rad=E_fe, E_ion_pair=E_pair)
+    # The equation is proportional to the charge, so the error propagation works directly like this
+    mult_am_std = utils.gas_mult_factor(am_charges_std, E_rad=E_am, E_ion_pair=E_pair)
+    mult_fe_std = utils.gas_mult_factor(fe_charges_std, E_rad=E_fe, E_ion_pair=E_pair)
+    ax2.errorbar(
+        am_voltages,
+        mult_am,
+        yerr=mult_am_std,
+        fmt=".", capsize=3,
+        label=am_text
+    )
+    ax2.errorbar(
+        fe_voltages,
+        mult_fe,
+        yerr=mult_fe_std,
+        fmt=".", capsize=3,
+        label=fe_text,
+    )
+
     ax2.set_yscale("log")
     ax2.set_ylabel("M")
     ax2.set_xlabel("Voltage (V)")
@@ -191,7 +220,32 @@ def hv_scans(
     # Resolution
     ###
     fig3: plt.Figure = plt.figure()
-    ax: plt.Axes = fig.add_subplot()
+    ax3: plt.Axes = fig3.add_subplot()
+    am_peak_locs = np.array([fit[0][1] for fit in am_fits])
+    fe_peak_locs = np.array([fit[0][1] for fit in fe_fits])
+    # am_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in am_fits]))
+    # fe_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in fe_fits]))
+    am_peak_stds = np.array([fit[0][2] for fit in am_fits])
+    fe_peak_stds = np.array([fit[0][2] for fit in fe_fits])
+    am_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in am_fits]))
+    fe_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in fe_fits]))
+
+    ax3.errorbar(
+        am_voltages,
+        am_peak_stds / am_peak_locs,
+        fmt=".", capsize=3,
+        label=am_text
+    )
+    ax3.errorbar(
+        fe_voltages,
+        fe_peak_stds / fe_peak_locs,
+        fmt=".", capsize=3,
+        label=fe_text
+    )
+    ax3.set_xlabel("Voltage (V)")
+    ax3.set_ylabel("Peak width ($1\sigma$) / peak channel")
+    ax3.legend()
+    plot.save_fig(fig3, "resolution")
 
     print()
 

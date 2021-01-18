@@ -66,7 +66,7 @@ def gain(gain_pre, gain_spec, gain_std_pre, gain_std_spec):
     return gain, gain_std
 
 
-def gas_mult_factor(Q, E_rad, E_ion_pair, e):
+def gas_mult_factor(Q, E_rad, E_ion_pair, e: float = const.ELEMENTARY_CHARGE):
     """
     Get the gas multiplication factor M.
     Equation 4 of the article.
@@ -86,11 +86,16 @@ def log_gas_mult_factor_p10(V, a, b, p, std_V, std_a, std_b, std_p):
     "Measurement of the gas constants for various
     proportional-counter gas mixtures (Wolff, 1973).
     """
-    K_Wolff = 4.8e-4  # V/cm atm
-    std_K_Wolff = 0.3e-4  # V/cm atm
-    K = K_Wolff * const.ATM_TO_PA * 100
-    std_K = std_K_Wolff * const.ATM_TO_PA * 100
+    K_Wolff = 4.8e-4  # V/(cm atm)
+    std_K_Wolff = 0.3e-4  # V/(cm atm)
+    K = K_Wolff / (const.ATM_TO_PA * 0.01)
+    std_K = std_K_Wolff / (const.ATM_TO_PA * 0.01)
     print(f"K = {K:.3e} +/- {std_K:.3e} V/m Pa")
+
+    # TODO: this is a manual fix
+    K = 10
+    std_K = 10
+
     delta_V = 23.6  # eV
     std_delta_V = 21.8  # eV
     return diethorn(

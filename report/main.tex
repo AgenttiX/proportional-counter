@@ -48,7 +48,8 @@ However, these results were inconclusive due to unexpected degradation of the de
 These measurements are discussed in the appendix \ref{pre_amp}.
 
 \begin{todo}
-The red sections include parts on which I'd prefer to have comments on whether I'm on the right track and whether those should be included in the report.
+The red sections include preliminary parts which may be left out from the final report.
+Unfortunately due to various reasons I wasn't able to concentrate on the report during the past week, so its quality still has a lot of room for improvement, which I would prefer to do, but on the other hand I understand that the course schedule may require hard deadlines.
 \end{todo}
 
 \tableofcontents
@@ -482,11 +483,37 @@ For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/python/hv_scans.eps}
-\caption{Measured charge ASDF}
+\caption{Measured charge as a function of voltage}
 \label{fig:hv_scans}
 \end{figure}
 
-TODO: plot 1) charge multiplication vs. voltage, 2) resolution vs. voltage
+\FloatBarrier
+For the $^{55}$Fe source the measured charge increases exponentially for the entire measured range.
+On the other hand, for the $^241$Am there is a change of voltage dependence at about 1500 V.
+Consequently it appears that the detector reaches the desired proportional region at about 1500 V.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/gas_mult.eps}
+\caption{Gas multiplication factor as a function of voltage}
+\label{fig:gas_mult}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/resolution.eps}
+\caption{Resolution as a function of voltage}
+\label{fig:gas_mult}
+\end{figure}
+
+\FloatBarrier
+\begin{todo}
+TODO: In the multiplication figure the values of K and std\_K have been temporarily and manually set to 10, because otherwise the order of magnitude of the results I got from the Diethorn formula didn't make sense.
+At first it was caused by using wrong units for K, but after fixing that the issue still persists.
+I should look further into it.
+
+TODO: Would FWHM be better than $1 \sigma$
+\end{todo}
 
 
 \clearpage
@@ -499,11 +526,13 @@ The energy axis has been determined by fitting Gaussians to the primary peaks an
 
 The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
 
+\begin{todo}
 TODO: The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
 
 TODO: the red dotted lines are for debugging fit cuts and therefore temporary
 
 TODO: analyze the secondary peaks of the Am-241 spectrum.
+\end{todo}
 
 \begin{figure}[ht!]
 \centering
