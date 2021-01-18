@@ -7,24 +7,27 @@ For example the high voltage scan is based on the charge calibration of the MCA.
 import os.path
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 import analysis
+import const
 from meas import MeasCal
 
 ###
 # Size measurements
 ###
 # From the file "size_measurements.txt"
-can_diam_outer = [66.01, 65.74, 65.81, 65.70, 65.89]
-can_top_diam_inner = [47.50, 47.78, 47.58, 47.76, 47.47]
-can_top_diam_outer = [53.84, 53.88, 53.98, 53.89, 53.82]
-can_bottom_diam_inner = [45.51, 44.93, 45.40, 45.43, 45.47]
-can_thickness_top = [240, 250, 240, 250, 280]
-can_thickness_opened = [102, 103, 102, 100, 102]
-long_brass_tube_length = [29.25, 29.26, 29.27, 29.27, 29.25]
-short_brass_tube_length = [10.05, 9.98, 9.99, 10.04]
-brass_tube_diameter = [992, 990, 991, 990, 987]
-brass_tube_with_connector = [27.30, 27.15, 27.32, 27.59, 27.23]
+can_diam_outer = np.array([66.01, 65.74, 65.81, 65.70, 65.89])
+can_top_diam_inner = np.array([47.50, 47.78, 47.58, 47.76, 47.47])
+can_top_diam_outer = np.array([53.84, 53.88, 53.98, 53.89, 53.82])
+can_bottom_diam_inner = np.array([45.51, 44.93, 45.40, 45.43, 45.47])
+can_thickness_top = np.array([240, 250, 240, 250, 280])
+can_thickness_opened = np.array([102, 103, 102, 100, 102])
+long_brass_tube_length = np.array([29.25, 29.26, 29.27, 29.27, 29.25])
+short_brass_tube_length = np.array([10.05, 9.98, 9.99, 10.04])
+brass_tube_diameter = np.array([992, 990, 991, 990, 987])
+brass_tube_with_connector = np.array([27.30, 27.15, 27.32, 27.59, 27.23])
+wire_diameter = np.array([50, 50, 50, 45, 50])
 sizes = {
     "Can outer diameter (mm)": can_diam_outer,
     "Can top end inner diameter (mm)": can_top_diam_inner,
@@ -120,6 +123,11 @@ mca_int_nonlin = 0.02e-2
 preamp_int_nonlin = 0.05e-2
 spec_amp_int_nonlin = 0.05e-2
 
+pressure_mbar = 1014  # mbar
+pressure_std_mbar = 5
+pressure = pressure_mbar * const.MBAR_TO_PA
+pressure_std = pressure_std_mbar * const.MBAR_TO_PA
+
 ###
 # Spectral
 ###
@@ -151,7 +159,11 @@ def main():
         diff_nonlin=mca_diff_nonlin,
         int_nonlin=mca_int_nonlin,
         voltage_std=hv_adjustment_std,
-        gain_rel_std=spec_amp_int_nonlin
+        gain_rel_std=spec_amp_int_nonlin,
+        can_diameter=can_diam_outer*1e-3,
+        wire_diameter=wire_diameter*1e-6,
+        pressure=pressure,
+        pressure_std=pressure_std
     )
 
     analysis.spectra(

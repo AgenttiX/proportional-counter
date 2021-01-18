@@ -6,4 +6,4 @@ Pressure 1014 +/- 1 mbar
 
 2020-12-07
 Temperature 21 +/- 0,5 deg C
-Pressure 1022 +/- mbar
+Pressure 1022 +/- 1 mbar

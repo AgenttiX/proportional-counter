@@ -100,7 +100,11 @@ def hv_scans(
         diff_nonlin: float,
         int_nonlin: float,
         voltage_std: float,
-        gain_rel_std: float):
+        gain_rel_std: float,
+        can_diameter: np.ndarray,
+        wire_diameter: np.ndarray,
+        pressure: float,
+        pressure_std: float):
     utils.print_title("HV scans")
     am_gains, am_voltages, am_mcas = hv_scan(
         folder, "Am",
@@ -163,11 +167,25 @@ def hv_scans(
     # Gas multiplication factors
     ###
     fig2: plt.Figure = plt.figure()
-    ax2: plt.Axes = fig.add_subplot()
-    theor = utils.
-    # theor_gas_mult = utils.diethorn(
-    #     V=voltages
-    # )
+    ax2: plt.Axes = fig2.add_subplot()
+    volt_range = np.linspace(1100, 2400)
+    theor_gas_mult_log = np.array([
+        utils.log_gas_mult_factor_p10(
+            V=volt, a=wire_diameter.mean(), b=can_diameter.mean(), p=pressure,
+            std_V=0, std_a=wire_diameter.std(), std_b=can_diameter.std(), std_p=pressure_std)
+        for volt in volt_range
+    ]).T
+    print(theor_gas_mult_log[0])
+    print(theor_gas_mult_log[1])
+    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0]), label="theoretical prediction")
+    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] + theor_gas_mult_log[1]), linestyle=":", label=r"$1\sigma$ upper limit")
+    # For Argon
+    E_pair = 26  # eV
+    ax2.set_yscale("log")
+    ax2.set_ylabel("M")
+    ax2.set_xlabel("Voltage (V)")
+    ax2.legend()
+    plot.save_fig(fig2, "gas_mult")
 
     ###
     # Resolution
