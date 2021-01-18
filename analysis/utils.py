@@ -44,11 +44,17 @@ def error_propagation(
         raise ValueError("Give either covariances or stds")
     if covar is None:
         covar = np.diag(stds)**2
+
+    # Variables and their means in a form that SymPy understands
     subs = list(zip(syms, vals))
+    # Value of the function at the means
     val = func.subs(subs)
 
+    # Partial derivatives for each variable
     A_sym = [func.diff(sym) for sym in syms]
+    # Numerical values for the partial derivatives (equation 1.56 of Cowan, 1998)
     A_vec = np.array([A.subs(subs) for A in A_sym])
+    # Error propagation according to equation 1.55 of Cowan, 1998
     U = A_vec @ covar @ A_vec
     return val, U
 
