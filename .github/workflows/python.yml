@@ -61,8 +61,8 @@ jobs:
         pip --cache-dir=.pip install -r analysis/requirements.txt
     - name: Run Pyreverse
       run: |
-        pyreverse ./analysis/devices ./analysis/analysis.py ./analysis/main.py ./analysis/plot.py -o svg
-        pyreverse ./analysis/devices ./analysis/analysis.py ./analysis/main.py ./analysis/plot.py -o png
+        pyreverse ./analysis/devices ./analysis/analysis ./analysis/main.py ./analysis/plot.py -o svg
+        pyreverse ./analysis/devices ./analysis/analysis ./analysis/main.py ./analysis/plot.py -o png
     - name: Upload results
       uses: actions/upload-artifact@v2
       with:
