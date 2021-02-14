@@ -41,16 +41,11 @@ Close to the wire the field strength is high enough for avalanche formation, and
 The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
 This setup demonstrated sufficient resolution to distinguish the TODO peaks.
 
-TODO add main results here.
+% TODO add main results here.
 
 The detector was also tested with a self-built pre-amplifier.
 However, these results were inconclusive due to unexpected degradation of the detector.
 These measurements are discussed in the appendix \ref{pre_amp}.
-
-\begin{todo}
-The red sections include preliminary parts which may be left out from the final report.
-Unfortunately due to various reasons I wasn't able to concentrate on the report during the past week, so its quality still has a lot of room for improvement, which I would prefer to do, but on the other hand I understand that the course schedule may require hard deadlines.
-\end{todo}
 
 \tableofcontents
 
@@ -232,8 +227,6 @@ The parts were provided by the course organizers, except for the drink can.
 \label{fig:schematic}
 \end{figure}
 
-TODO: which form is the best: active or passive, and we or I? Is it a bad practice to use both active and passive?
-
 First we prepared the parts of the detector by removing a single strand from a copper wire and cutting two pieces of brass tube for the wire mounting.
 The course organizers removed the top of the can and drilled two holes to its bottom, one to the center and one off-center.
 We then smoothened the cutting edges and grinded away the anti-corrosion layer from the inside of the walls of the can.
@@ -297,14 +290,23 @@ This established an electrical connection between the ground and the can.
 It should be noted that the copper tape should be put on a different side than on which the radiation source is placed, as the copper tape would otherwise absorb some of the radiation.
 A piece of aluminum foil was put over the bottom of the can to provide additional shielding from electromagnetic interference, as the end of the anode wire slightly extrudes from within the can.
 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/P1170847-cropped.jpg}
+\caption{Setup for tightening the anode wire}
+\label{fig:tightening}
+\end{figure}
+
 
 \clearpage
 \subsection{Calibration}
 \label{setup_calibration}
 To establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation, the detector and readout electronics had to be calibrated.
 The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}, except that for the electronics calibration the oscilloscope was connected directly to the output of the output of the pulser.
-
-TODO add device models here from the pictures (when I can reboot my crashed file server back in Helsinki, probably on 11.1.2021)
+We used the
+\href{https://www.ortec-online.com/products/electronics/preamplifiers/142a-b-c}{Ortec 142 pre-amplifier}
+and the
+\href{https://www.ortec-online.com/products/electronics/amplifiers/855}{Ortec 855 spectral amplifier}.
 
 \begin{figure}[ht!]
 \centering
@@ -443,7 +445,7 @@ For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152
 
 \FloatBarrier
 For the $^{55}$Fe source the measured charge increases exponentially for the entire measured range.
-On the other hand, for the $^241$Am there is a change of voltage dependence at about 1500 V.
+On the other hand, for the $^{241}$Am there is a change of voltage dependence at about 1500 V.
 Consequently it appears that the detector reaches the desired proportional region at about 1500 V.
 
 \begin{figure}[ht!]
@@ -512,10 +514,40 @@ Is the mesurement precise enough to discuss ASDF?
 
 \section{Pre-amplifier}
 \label{pre_amp}
+In addition to using the amplifier available at the lab, we constructed a pre-amplifier ourselves.
+This pre-amplifier required a power supply, which we also constructed ourselves, as the operational amplifier used in the pre-amplifier requires supplies of both positive and negative voltage of 5 V.
+We started by testing the power supply components on a breadboard, as in figure \ref{fig:pre_amp_psu_testing}.
+Once we had verified that the components worked, we soldered them on a PCB, resulting in the device in figure \ref{fig:pre_amp_psu}
 
-Construction and detailed characterization here
+Figure \ref{fig:pre_amp_schematic} provides a schematic of this pre-amplifier.
+Its core is the
+\href{https://www.ti.com/product/OPA657}{Texas Instruments OPA657}
+\href{https://en.wikipedia.org/wiki/Operational_amplifier}{operational amplifier}, which is configured for the gain value $G = 21$ with a suitable choice of resistors.
+The assembled pre-amplifier is shown in figure \ref{fig:pre_amp_board}, and its mounting is illustrated in figure \ref{fig:pre_amp_mounting}.
+We also built a switch panel of figure \ref{fig:pre_amp_switch} for the power supply.
+The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
 
-According to \ref{fig:pre_amp_schematic}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201005_104331-cropped.jpg}
+\caption{Preliminary testing of the components of the pre-amplifier power supply}
+\label{fig:pre_amp_psu_testing}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\subcaptionbox{}{
+	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121635.jpg}
+	\includegraphics[width=\textwidth]{fig/P1170891-cropped.jpg}
+}
+\subcaptionbox{}{
+	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121625.jpg}
+	\includegraphics[width=\textwidth]{fig/P1170894-cropped.jpg}
+}
+\caption{Power supply for the pre-amplifier}
+\label{fig:pre_amp_psu}
+\end{figure}
 
 \begin{figure}[ht!]
 \centering
@@ -524,44 +556,46 @@ According to \ref{fig:pre_amp_schematic}.
 \label{fig:pre_amp_schematic}
 \end{figure}
 
-
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{fig/IMG_20201005_104331.jpg}
-\caption{Preliminary testing of the pre-amplifier components}
-\end{figure}
-
-
-\begin{figure}[ht!]
-\centering
-\subcaptionbox{}{
-	\includegraphics[width=\textwidth]{fig/IMG_20201201_121635.jpg}
-}
-\subcaptionbox{}{
-	\includegraphics[width=\textwidth]{fig/IMG_20201201_121625.jpg}
-}
-\caption{Power supply for the pre-amplifier}
-\end{figure}
-
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/IMG_20201207_121010.jpg}
+% \includegraphics[width=\textwidth]{fig/IMG_20201207_121010.jpg}
+\includegraphics[width=0.9\textwidth]{fig/P1170917-cropped.jpg}
 \caption{Pre-amplifier board}
+\label{fig:pre_amp_board}
 \end{figure}
-
 
 \begin{figure}[ht!]
 \centering
 \subcaptionbox{}{
-	\includegraphics[width=\textwidth]{fig/IMG_20201201_121735.jpg}
+	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121735.jpg}
+	\includegraphics[width=\textwidth]{fig/P1170915-cropped.jpg}
 }
 \subcaptionbox{}{
 	\includegraphics[width=\textwidth]{fig/IMG_20201201_121845.jpg}
 }
 \caption{Mounting of the pre-amplifier board}
+\label{fig:pre_amp_mounting}
 \end{figure}
 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/P1170907-cropped.jpg}
+\caption{Pre-amplifier switch panel}
+\label{fig:pre_amp_switch}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/P1170874-cropped.jpg}
+\caption{Pre-amplifier}
+\label{fig:pre_amp}
+\end{figure}
+
+
+\clearpage
+Once the pre-amplifier was assembled, we tested its frequency response with an external pulser.
+These results are plotted in figure \ref{fig:pre_amp_freq_response}.
+The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, as the reflections of the signal within the amplifier become significant.
 
 \begin{figure}[ht!]
 \centering
