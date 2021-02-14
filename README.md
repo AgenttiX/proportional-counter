@@ -11,12 +11,11 @@ project work:
 
 In this project we built a radiation detector based on a
 [drink can](https://en.wikipedia.org/wiki/Drink_can).
-
 ![Detector](report/fig/P1170853-cropped.jpg)
 
 We also built a pre-amplifier for the signal produced by the detector.
 ![Pre-amplifier](report/fig/P1170874-cropped.jpg)
 
 The setup was tested with radioactive sources of both
-<sup>241</sup>Am and <sup>55</sup> isotopes.
+<sup>241</sup>Am and <sup>55</sup>Fe isotopes.
 ![Lab setup](report/fig/IMG_20201130_144418.jpg)
