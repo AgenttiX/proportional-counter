@@ -37,8 +37,15 @@ def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
         fe_subtracted,
         label="$^{55}$Fe", color="peru")[0]
     # line_noise = ax1.plot(noise.data, label="noise", color="orange")[0]
-    fit_am = fitting.fit_am(am, ax1)
-    fit_fe = fitting.fit_fe(fe, ax2)
+    fit_am = fitting.fit_am(am, ax1, subtracted=am_subtracted)
+    fit_fe = fitting.fit_fe(fe, ax2, subtracted=fe_subtracted)
+
+    am_sec_fits = [
+        fitting.fit_manual(am, ax1, 250, 300, subtracted=am_subtracted),
+        fitting.fit_manual(am, ax1, 300, 360, subtracted=am_subtracted),
+        fitting.fit_manual(am, ax1, 380, 440, subtracted=am_subtracted),
+        fitting.fit_manual(am, ax1, 710, 830, subtracted=am_subtracted)
+    ]
 
     ind_am_peak = fit_am[0][1]
     ind_fe_peak = fit_fe[0][0][1]
@@ -49,11 +56,18 @@ def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
     a = (am_peak - fe_peak)/(ind_am_peak - ind_fe_peak)
     b = am_peak - a*ind_am_peak
 
-    def ind_conv_func(vals):
-        return [f"{(a*x + b) / 1000:.2f}" for x in vals]
+    def ind_conv_func(channel: int):
+        return (a*channel + b) / 1000
+
+    def ind_label_func(channels):
+        return [f"{ind_conv_func(x):.2f}" for x in channels]
+
+    for i_fit, fit in enumerate(am_sec_fits):
+        ch = fit[0][1]
+        print(f"Am secondary peak {i_fit+1}: ch {ch}, {ind_conv_func(ch)} keV")
 
     # The correspondence of the values is dependent on the manual limits
-    ax3 = plot.double_x_axis(ax1, tick_locs=np.arange(0, am.channels[-1], 200), tick_label_func=ind_conv_func)
+    ax3 = plot.double_x_axis(ax1, tick_locs=np.arange(0, am.channels[-1], 200), tick_label_func=ind_label_func)
     ax3.set_xlabel("Energy (keV)")
 
     ax1.set_xlabel("MCA channel")

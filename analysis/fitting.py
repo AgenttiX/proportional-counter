@@ -63,12 +63,18 @@ def fit_am(
         mca: MeasMCA,
         ax: plt.Axes,
         threshold_level: float = THRESHOLD_LEVEL,
-        cut_width_mult: float = CUT_WIDTH_MULT):
+        cut_width_mult: float = CUT_WIDTH_MULT,
+        subtracted: np.ndarray = None):
     """Fit the peaks of an Am-241 spectrum"""
-    peak = np.max(mca.counts)
-    above_threshold = np.where(mca.counts > threshold_level * peak)[0]
+    if subtracted is not None:
+        counts = subtracted
+    else:
+        counts = mca.counts
+
+    peak = np.max(counts)
+    above_threshold = np.where(counts > threshold_level * peak)[0]
     half_ind = (above_threshold[0] + above_threshold[-1]) // 2
-    filtered = mca.counts.copy()
+    filtered = counts.copy()
     filtered[:half_ind] = 0
     # ax.plot(filtered)
 
@@ -80,7 +86,7 @@ def fit_am(
     fit = curve_fit(
         stats.gaussian_scaled,
         cut_inds,
-        mca.counts[cut_inds],
+        counts[cut_inds],
         p0=(peak, peak_ind, threshold_width)
     )
     ax.plot(
@@ -120,12 +126,18 @@ def fit_fe(
         ax: plt.Axes,
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
-        secondary: bool = True):
+        secondary: bool = True,
+        subtracted: np.ndarray = None):
     """Fit the peaks of an Fe-55 spectrum
 
     TODO: this could be combined to the HV scan fitting function
     """
-    cut_inds, threshold_width, peak_ind, peak = get_cut(mca.counts, threshold_level, cut_width_mult)
+    if subtracted is not None:
+        counts = subtracted
+    else:
+        counts = mca.counts
+
+    cut_inds, threshold_width, peak_ind, peak = get_cut(counts, threshold_level, cut_width_mult)
 
     # Vertical lines according to the cuts
     ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
@@ -133,7 +145,7 @@ def fit_fe(
     fit = curve_fit(
         stats.gaussian_scaled,
         cut_inds,
-        mca.counts[cut_inds],
+        counts[cut_inds],
         p0=(peak, peak_ind, threshold_width)
     )
     if not secondary:
@@ -146,12 +158,12 @@ def fit_fe(
         return fit
 
     # The secondary peak is the Argon escape peak and therefore not a property of the Fe-55 source itself
-    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(mca.counts[:cut_inds[0]], threshold_level, cut_width_mult)
+    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(counts[:cut_inds[0]], threshold_level, cut_width_mult)
     ax.vlines((cut_inds2[0], cut_inds2[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
     fit2 = curve_fit(
         stats.gaussian_scaled,
         cut_inds2,
-        mca.counts[cut_inds2],
+        counts[cut_inds2],
         p0=(peak2, peak_ind, threshold_width)
     )
     fit1_data = fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:])
@@ -213,3 +225,38 @@ def fit_fe_hv_scan(
     plot.save_fig(fig, "fe_scan_fits")
 
     return fits
+
+
+def fit_manual(
+        mca: MeasMCA,
+        ax: plt.Axes,
+        min_ind: int,
+        max_ind: int,
+        subtracted: np.ndarray = None):
+    """Fit the peaks of an Am-241 spectrum"""
+    if subtracted is not None:
+        counts = subtracted
+    else:
+        counts = mca.counts
+
+    cut_inds = np.arange(min_ind, max_ind)
+    peak_ind = min_ind + np.argmax(counts[cut_inds])
+    peak = counts[peak_ind]
+    threshold_width = max_ind - min_ind
+
+    # Vertical lines according to the cuts
+    ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+
+    fit = curve_fit(
+        stats.gaussian_scaled,
+        cut_inds,
+        counts[cut_inds],
+        p0=(peak, peak_ind, threshold_width)
+    )
+    ax.plot(
+        mca.channels,
+        fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:]),
+        linestyle="--",
+        label="Fe-55 fit"
+    )
+    return fit
