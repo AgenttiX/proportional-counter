@@ -140,11 +140,13 @@ def main():
     This will pop up quite a few plots, so comment out sections as needed.
     """
     analysis.analyze_sizes(sizes)
+    fig_titles = True
 
     cal_coeff, cal_coeff_covar = analysis.calibration(
         cal_data,
         mca_diff_nonlin=mca_diff_nonlin,
-        pulser_voltage_rel_std=pulser_voltage_rel_std
+        pulser_voltage_rel_std=pulser_voltage_rel_std,
+        fig_titles=fig_titles
     )
     # plt.show()
     # return
@@ -163,7 +165,8 @@ def main():
         can_diameter=can_diam_outer*1e-3,
         wire_diameter=wire_diameter*1e-6,
         pressure=pressure,
-        pressure_std=pressure_std
+        pressure_std=pressure_std,
+        fig_titles=fig_titles
     )
 
     analysis.spectra(
@@ -172,7 +175,8 @@ def main():
         os.path.join(data_folder, "spectra", "Noise_1810.mca"),
         gain=10,
         voltage=1810,
-        voltage_std=hv_std
+        voltage_std=hv_std,
+        fig_titles=fig_titles
     )
 
     plt.show()

@@ -7,7 +7,7 @@ import plot
 import utils
 
 
-def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
+def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std, fig_titles: bool = True):
     """Analyze spectral measurement"""
     utils.print_title("Spectra")
     am = MeasMCA(am_path)
@@ -15,7 +15,8 @@ def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
     noise = MeasMCA(noise_path)
 
     fig: plt.Figure = plt.figure()
-    fig.suptitle("Spectral measurements")
+    if fig_titles:
+        fig.suptitle("Spectral measurements")
     fig.subplots_adjust(bottom=0.2, right=0.85)
     ax1: plt.Axes = fig.add_subplot()
     ax2: plt.Axes = ax1.twinx()
@@ -51,6 +52,7 @@ def spectra(am_path, fe_path, noise_path, gain, voltage, voltage_std):
     ind_fe_peak = fit_fe[0][0][1]
     print("Am peak index:", ind_am_peak)
     print("Fe peak index:", ind_fe_peak)
+    print("Fe escape peak index:", fit_fe[0][1][1])
     am_peak = 59.5409e3
     fe_peak = 5.90e3
     a = (am_peak - fe_peak)/(ind_am_peak - ind_fe_peak)

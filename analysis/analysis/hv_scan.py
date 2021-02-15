@@ -104,25 +104,26 @@ def hv_scans(
         can_diameter: np.ndarray,
         wire_diameter: np.ndarray,
         pressure: float,
-        pressure_std: float):
+        pressure_std: float,
+        fig_titles: bool = True):
     utils.print_title("HV scans")
     am_gains, am_voltages, am_mcas = hv_scan(
         folder, "Am",
         diff_nonlin=diff_nonlin,
         int_nonlin=int_nonlin,
         voltage_std=voltage_std,
-        gain_rel_std=gain_rel_std
+        gain_rel_std=gain_rel_std,
     )
     fe_gains, fe_voltages, fe_mcas = hv_scan(
         folder, "Fe",
         diff_nonlin=diff_nonlin,
         int_nonlin=int_nonlin,
         voltage_std=voltage_std,
-        gain_rel_std=gain_rel_std
+        gain_rel_std=gain_rel_std,
     )
 
-    am_fits = fitting.fit_am_hv_scan(am_mcas)
-    fe_fits = fitting.fit_fe_hv_scan(fe_mcas)
+    am_fits = fitting.fit_am_hv_scan(am_mcas, fig_titles=fig_titles)
+    fe_fits = fitting.fit_fe_hv_scan(fe_mcas, fig_titles=fig_titles)
 
     # am_charges = get_charges(am_mcas, am_gains, cal_coeff, cal_gain)
     # fe_charges = get_charges(fe_mcas, fe_gains, cal_coeff, cal_gain)
@@ -144,6 +145,8 @@ def hv_scans(
     fe_text = r"$\gamma$ (5.9 keV) of $^{55}$Fe"
 
     fig: plt.Figure = plt.figure()
+    if fig_titles:
+        fig.suptitle("Measured charges")
     ax: plt.Axes = fig.add_subplot()
     ax.errorbar(
         am_voltages,
@@ -170,6 +173,8 @@ def hv_scans(
     # Gas multiplication factors
     ###
     fig2: plt.Figure = plt.figure()
+    if fig_titles:
+        fig2.suptitle("Gas multiplication factors")
     ax2: plt.Axes = fig2.add_subplot()
 
     # Theoretical
@@ -220,6 +225,8 @@ def hv_scans(
     # Resolution
     ###
     fig3: plt.Figure = plt.figure()
+    if fig_titles:
+        fig3.suptitle("Resolution")
     ax3: plt.Axes = fig3.add_subplot()
     am_peak_locs = np.array([fit[0][1] for fit in am_fits])
     fe_peak_locs = np.array([fit[0][1] for fit in fe_fits])

@@ -98,10 +98,11 @@ def fit_am(
     return fit
 
 
-def fit_am_hv_scan(mcas: tp.List[MeasMCA]):
+def fit_am_hv_scan(mcas: tp.List[MeasMCA], fig_titles: bool = True):
     """Create fits for the Am-241 HV scan measurements"""
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
-    # fig.suptitle("Am fits")
+    if fig_titles:
+        fig.suptitle("Am fits")
 
     max_peak_height = np.max([np.max(mca.counts) for mca in mcas])
     max_ch = np.max([mca.channels[-1] for mca in mcas])
@@ -180,11 +181,14 @@ def fit_fe(
 def fit_fe_hv_scan(
         mcas: tp.List[MeasMCA],
         threshold_level: float = THRESHOLD_LEVEL,
-        cut_width_mult: float = CUT_WIDTH_MULT) -> tp.List[type_hints.CURVE_FIT]:
+        cut_width_mult: float = CUT_WIDTH_MULT,
+        fig_titles: bool = True
+        ) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for Fe-55 HV scan measurements"""
 
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
-    # fig.suptitle("Fe fits")
+    if fig_titles:
+        fig.suptitle("Fe fits")
     # fig.tight_layout()
 
     # peak_channels = np.zeros(len(mcas))

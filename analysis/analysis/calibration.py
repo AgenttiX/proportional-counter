@@ -17,12 +17,16 @@ def calibration(
         pulser_voltage_rel_std: float,
         # coarse_gain: float = 10,
         # fine_gain: float = 10,
-        preamp_capacitance: float = 1e-12) -> tp.Tuple[np.ndarray, np.ndarray]:
+        preamp_capacitance: float = 1e-12,
+        fig_titles: bool = True
+        ) -> tp.Tuple[np.ndarray, np.ndarray]:
     """Analyze calibration data"""
     utils.print_title("Calibration")
 
     # Oscilloscope example
     fig: plt.Figure = plt.figure()
+    if fig_titles:
+        fig.suptitle("Oscilloscope trace")
     ax: plt.Axes = fig.add_subplot()
     meas = cal_data[0]
     osc = meas.traces[0]
@@ -41,7 +45,8 @@ def calibration(
     # Pulser calibration
     #####
     fig2: plt.Figure = plt.figure()
-    # fig2.suptitle("Pulser calibration")
+    if fig_titles:
+        fig2.suptitle("Pulser calibration")
     ax: plt.Axes = fig2.add_subplot()
 
     ax.errorbar(
@@ -97,7 +102,8 @@ def calibration(
     mca_peak_inds = np.array([np.argmax(cal.mca.counts) for cal in cal_data])
 
     fig3: plt.Figure = plt.figure()
-    # fig3.suptitle("MCA calibration")
+    if fig_titles:
+        fig3.suptitle("MCA calibration")
     gs = gridspec.GridSpec(2, 1, height_ratios=[3, 1])
     ax3: plt.Axes = fig3.add_subplot(gs[0])
     ax4: plt.Axes = fig3.add_subplot(gs[1])
