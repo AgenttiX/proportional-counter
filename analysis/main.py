@@ -178,6 +178,26 @@ def main():
         voltage_std=hv_std,
         fig_titles=fig_titles
     )
+    analysis.spectra(
+        os.path.join(data_folder, "preamp", "Am_custom_preamp_2285.mca"),
+        os.path.join(data_folder, "preamp", "Fe_custom_preamp_2286.mca"),
+        os.path.join(data_folder, "preamp", "Noise_custom_preamp_2286.mca"),
+        gain=10,
+        voltage=2286,
+        voltage_std=hv_std,
+        fig_titles=fig_titles,
+        name="custom_preamp"
+    )
+    analysis.spectra(
+        os.path.join(data_folder, "preamp", "Am_custom_preamp_2192_Nikitas_detector.mca"),
+        os.path.join(data_folder, "preamp", "Fe_custom_preamp_2192_Nikitas_detector.mca"),
+        os.path.join(data_folder, "preamp", "Noise_custom_preamp_2192_Nikitas_detector.mca"),
+        gain=10,
+        voltage=2192,
+        voltage_std=hv_std,
+        fig_titles=fig_titles,
+        name="custom_preamp_Nikitas_detector"
+    )
 
     plt.show()
 
