@@ -12,14 +12,19 @@ DATA_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 PREAMP_FOLDER = os.path.join(DATA_FOLDER, "preamp")
 
 
-def analyze_attenuator(path: str = os.path.join(DATA_FOLDER, "attenuator_test.csv")):
+def analyze_attenuator(
+        path: str = os.path.join(DATA_FOLDER, "attenuator_test.csv"),
+        fig_titles: bool = True):
     data = read_csv(path)
     att_setting = data["Attenuation setting"]
     a_in = data["Input A (V)"]
     a_out = data["Output A (V)"]
     attenuation = a_out / a_in
+    print("Attenuation:", attenuation)
 
     fig: plt.Figure() = plt.figure()
+    if fig_titles:
+        fig.suptitle("Attenuator calibration")
     ax: plt.Axes = fig.add_subplot()
     ax.scatter(att_setting, attenuation)
     fit = curve_fit(
@@ -45,7 +50,9 @@ def analyze_attenuator(path: str = os.path.join(DATA_FOLDER, "attenuator_test.cs
     return attenuation
 
 
-def analyze_preamp_freq_response(path: str = os.path.join(PREAMP_FOLDER, "preamp_frequency_response.csv")):
+def analyze_preamp_freq_response(
+        path: str = os.path.join(PREAMP_FOLDER, "preamp_frequency_response.csv"),
+        fig_titles: bool = True):
     data = read_csv(path)
     f = data["f (Hz)"].to_numpy()
     a_in = data["Input A (V)"].to_numpy()
@@ -56,6 +63,8 @@ def analyze_preamp_freq_response(path: str = os.path.join(PREAMP_FOLDER, "preamp
 
     x_mult = 1e-3
     fig: plt.Figure = plt.figure()
+    if fig_titles:
+        fig.suptitle("Frequency response of the pre-amplifier")
     ax: plt.Axes = fig.add_subplot()
     ax.scatter(f*x_mult, gain, label="data")
     ax.plot(f_axis*x_mult, spline(f_axis), label="cubic spline")
@@ -67,15 +76,21 @@ def analyze_preamp_freq_response(path: str = os.path.join(PREAMP_FOLDER, "preamp
 
 def analyze_preamp_gain(
         attenuation,
-        path: str = os.path.join(PREAMP_FOLDER, "gain_test.csv")):
+        path: str = os.path.join(PREAMP_FOLDER, "gain_test.csv"),
+        fig_titles: bool = True):
     data = read_csv(path)
     att_setting = data["Attenuation setting"].to_numpy()
     a_in = data["Input A (V)"].to_numpy()
     a_out = data["Output A (V)"].to_numpy()
     att_a_in = a_in * attenuation
     gain = a_out / att_a_in
+    print("Gains:", gain)
+    print("Gain mean:", np.mean(gain))
+    print("Gain std:", np.std(gain))
 
     fig: plt.Figure = plt.figure()
+    if fig_titles:
+        fig.suptitle("Pre-amplifier gain")
     ax: plt.Axes = fig.add_subplot()
     ax.scatter(att_a_in, gain)
     ax.set_xlabel("Attenuated input amplitude (V)")
@@ -84,7 +99,8 @@ def analyze_preamp_gain(
 
 
 if __name__ == "__main__":
-    analyze_preamp_freq_response()
-    attenuation = analyze_attenuator()
-    analyze_preamp_gain(attenuation)
+    fig_titles = True
+    analyze_preamp_freq_response(fig_titles=fig_titles)
+    attenuation = analyze_attenuator(fig_titles=fig_titles)
+    analyze_preamp_gain(attenuation, fig_titles=fig_titles)
     plt.show()
