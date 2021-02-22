@@ -1,0 +1,6 @@
+According to the course organizers, these are the models of the devices used in the measurements.
+- Iseg NHR 42 60r (high voltage power supply)
+- Ortec 142IH Preamplifier
+- Ortec 855 Dual Spec Amp (shaping amplifier)
+- Amptek MCA 8000D (multichannel analyzer)
+- Lecroy wavesurfer 3024z (200MHz oscilloscope)
