@@ -9,10 +9,20 @@
 \usepackage{appendix}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage{placeins}
 \usepackage{subcaption}
 \usepackage{tabularx}
 \usepackage{xcolor}
+
+% \DeclareUnicodeCharacter{03BC}{\textmu}
+% \DeclareUnicodeCharacter{B5}{\textmu}
+
+% For fixing unicode errors with lstinputlisting
+% https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings#Encoding_issue
+\lstset{literate=
+	{µ}{{\textmu}}1
+}
 
 \title{PAP328 project work: proportional counter}
 \author{Mika Mäki}
@@ -684,6 +694,28 @@ Brass tube + connector length from acryl (mm)
 \end{tabular}
 \label{table:sizes}
 \end{table}
+
+
+\clearpage
+\section{Measurement notes}
+
+This appendix contains copies of some of the original measurement note files.
+The rest are formatted as large spreadsheets and could not therefore be included here.
+However, all of the files are available in the GitHub repository.
+\cite{repo}
+
+\subsection{Environmental measurements}
+\lstinputlisting{../analysis/data/notes/environment.txt}
+
+\subsection{Gas leakage test}
+\lstinputlisting{../analysis/data/notes/gas_leakage_test.txt}
+
+\subsection{Size measurements}
+{
+% \UseRawInputEncoding
+\lstinputlisting{../analysis/data/notes/size_measurements.txt}
+}
+
 
 \end{appendices}
 
