@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg
 from scipy.optimize import curve_fit
-import uncertainties as unc
-import uncertainties.unumpy as unp
+# import uncertainties as unc
+# import uncertainties.unumpy as unp
 
 import const
 from devices.mca import MeasMCA
@@ -46,6 +46,8 @@ def get_peak_charges(
     counts = np.array([fit[0][0] for fit in fits])
     peak_channels = np.array([fit[0][1] for fit in fits])
     charges = counts * np.polyval(cal_coeff, peak_channels) * cal_gain / gains
+
+    # Error analysis
     charges_std = np.empty_like(charges)
     # Partial derivatives
     A_N = (cal_coeff[0] * counts + cal_coeff[1]) * cal_gain / gains
@@ -281,7 +283,7 @@ def read_hv_scan(
     def compare(data1, data2):
         if data1[0] != data2[0]:
             return -1 + 2*int(data1[0] < data2[0])
-        elif data1[1] != data2[1]:
+        if data1[1] != data2[1]:
             return -1 + 2*int(data1[1] > data2[1])
         raise ValueError("Measurements have same settings:", data1, data2)
 

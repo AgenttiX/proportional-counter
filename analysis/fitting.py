@@ -33,8 +33,8 @@ def create_subplot_grid(
     axes_flat: tp.List[plt.Axes] = [item for sublist in axes for item in sublist]
 
     # Remove unnecessary axes
-    for i in range(num_plots, len(axes_flat)):
-        fig.delaxes(axes_flat[i])
+    for ax in axes_flat[num_plots:]:
+        fig.delaxes(ax)
 
     for i, ax in enumerate(axes_flat):
         if xlabel is not None:

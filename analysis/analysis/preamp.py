@@ -98,9 +98,13 @@ def analyze_preamp_gain(
     plot.save_fig(fig, "preamp_gain")
 
 
-if __name__ == "__main__":
+def main():
     fig_titles = True
     analyze_preamp_freq_response(fig_titles=fig_titles)
     attenuation = analyze_attenuator(fig_titles=fig_titles)
     analyze_preamp_gain(attenuation, fig_titles=fig_titles)
     plt.show()
+
+
+if __name__ == "__main__":
+    main()

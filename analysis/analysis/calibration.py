@@ -94,7 +94,7 @@ def calibration(
 
     plot.plot_failed_cals(cal_data)
     # Prevent accidental use of old variables
-    del fit, coeff, coeff_stds, data, out
+    # del fit, coeff, coeff_stds, data, out
 
     #####
     # MCA calibration
