@@ -181,6 +181,8 @@ def main():
         gain=10,
         voltage=1810,
         voltage_std=hv_std,
+        mca_int_nonlin=mca_int_nonlin,
+        mca_diff_nonlin=mca_diff_nonlin,
         fig_titles=fig_titles,
         vlines=vlines
     )
@@ -191,6 +193,8 @@ def main():
         gain=10,
         voltage=2286,
         voltage_std=hv_std,
+        mca_int_nonlin=mca_int_nonlin,
+        mca_diff_nonlin=mca_diff_nonlin,
         fig_titles=fig_titles,
         name="custom_preamp",
         vlines=vlines
@@ -202,6 +206,8 @@ def main():
         gain=10,
         voltage=2192,
         voltage_std=hv_std,
+        mca_int_nonlin=mca_int_nonlin,
+        mca_diff_nonlin=mca_diff_nonlin,
         fig_titles=fig_titles,
         name="custom_preamp_Nikitas_detector",
         vlines=vlines

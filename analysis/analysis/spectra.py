@@ -12,14 +12,18 @@ def spectra(
         am_path: str,
         fe_path: str,
         noise_path: str,
-        gain, voltage, voltage_std,
+        gain: float,
+        voltage: float,
+        voltage_std: float,
+        mca_diff_nonlin: float = None,
+        mca_int_nonlin: float = None,
         fig_titles: bool = True,
         name: str = None,
-        vlines: bool = True):
+        vlines: bool = True) -> None:
     """Analyze spectral measurement"""
     utils.print_title("Spectra")
-    am = MeasMCA(am_path)
-    fe = MeasMCA(fe_path)
+    am = MeasMCA(am_path, diff_nonlin=mca_diff_nonlin, int_nonlin=mca_int_nonlin)
+    fe = MeasMCA(fe_path, diff_nonlin=mca_diff_nonlin, int_nonlin=mca_int_nonlin)
     noise = MeasMCA(noise_path)
 
     fig: plt.Figure = plt.figure()
