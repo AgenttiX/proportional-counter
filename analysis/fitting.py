@@ -13,6 +13,14 @@ THRESHOLD_LEVEL = 0.5
 CUT_WIDTH_MULT = 2
 
 
+# Functions to be fit
+
+def poly2(x, a, b, c):
+    return a*x**2 + b*x + c
+
+
+# Other functions
+
 def create_subplot_grid(
         num_plots: int,
         grid_aspect_ratio: float = 1,
@@ -64,7 +72,7 @@ def fit_am(
         ax: plt.Axes,
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
-        subtracted: np.ndarray = None):
+        subtracted: np.ndarray = None) -> type_hints.CURVE_FIT:
     """Fit the peaks of an Am-241 spectrum"""
     if subtracted is not None:
         counts = subtracted
@@ -128,7 +136,8 @@ def fit_fe(
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
         secondary: bool = True,
-        subtracted: np.ndarray = None):
+        subtracted: np.ndarray = None) \
+        -> tp.Union[type_hints.CURVE_FIT, tp.Tuple[type_hints.CURVE_FIT, type_hints.CURVE_FIT]]:
     """Fit the peaks of an Fe-55 spectrum
 
     TODO: this could be combined to the HV scan fitting function
@@ -264,3 +273,10 @@ def fit_manual(
         label="Fe-55 fit"
     )
     return fit
+
+
+def poly2_fit_text(fit: type_hints.CURVE_FIT, prec: str = "3e", err_prec: str = "3e"):
+    return \
+        f"{fit[0][0]:.{prec}}±{fit[1][0, 0]:.{err_prec}}x^2 + " \
+        f"{fit[0][1]:.{prec}}±{fit[1][1, 1]:.{err_prec}}x + " \
+        f"{fit[0][2]:.{prec}}±{fit[1][2, 2]:.{err_prec}}"

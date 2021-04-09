@@ -6,6 +6,7 @@ import typing as tp
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg
+from scipy.optimize import curve_fit
 import uncertainties as unc
 import uncertainties.unumpy as unp
 
@@ -228,33 +229,73 @@ def hv_scans(
     if fig_titles:
         fig3.suptitle("Resolution")
     ax3: plt.Axes = fig3.add_subplot()
-    am_peak_locs = np.array([fit[0][1] for fit in am_fits])
-    fe_peak_locs = np.array([fit[0][1] for fit in fe_fits])
-    # am_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in am_fits]))
-    # fe_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in fe_fits]))
-    am_peak_stds = np.array([fit[0][2] for fit in am_fits])
-    fe_peak_stds = np.array([fit[0][2] for fit in fe_fits])
-    am_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in am_fits]))
-    fe_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in fe_fits]))
+    hv_scan_resolution(ax3, am_voltages, am_fits, am_text)
+    hv_scan_resolution(ax3, fe_voltages, fe_fits, fe_text)
 
-    ax3.errorbar(
-        am_voltages,
-        am_peak_stds / am_peak_locs,
-        fmt=".", capsize=3,
-        label=am_text
-    )
-    ax3.errorbar(
-        fe_voltages,
-        fe_peak_stds / fe_peak_locs,
-        fmt=".", capsize=3,
-        label=fe_text
-    )
+    # am_peak_locs = np.array([fit[0][1] for fit in am_fits])
+    # fe_peak_locs = np.array([fit[0][1] for fit in fe_fits])
+    # # am_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in am_fits]))
+    # # fe_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in fe_fits]))
+    # am_peak_stds = np.array([fit[0][2] for fit in am_fits])
+    # fe_peak_stds = np.array([fit[0][2] for fit in fe_fits])
+    # am_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in am_fits]))
+    # fe_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in fe_fits]))
+    # am_rel_fwhms = am_peak_stds * const.STD_TO_FWHM / am_peak_locs
+    # fe_rel_fwhms = fe_peak_stds * const.STD_TO_FWHM / fe_peak_locs
+    #
+    # am_fit = curve_fit(
+    #     fitting.poly2,
+    #     am_voltages,
+    #     am_rel_fwhms,
+    # )
+    # fe_fit = curve_fit(
+    #     fitting.poly2,
+    #     am_voltages,
+    #     am_rel_fwhms
+    # )
+    # am_fit_x = np.linspace(np.min(am_peak_locs), np.max(am_peak_locs), 100)
+    # am_fit_eval = np.linspace(np.min(fe_peak_locs), np.max(fe_peak_locs), 100)
+    #
+    # ax3.errorbar(
+    #     am_voltages,
+    #     am_rel_fwhms,
+    #     fmt=".", capsize=3,
+    #     label=am_text
+    # )
+    # ax3.errorbar(
+    #     fe_voltages,
+    #     fe_rel_fwhms,
+    #     fmt=".", capsize=3,
+    #     label=fe_text
+    # )
     ax3.set_xlabel("Voltage (V)")
-    ax3.set_ylabel("Peak width ($1\sigma$) / peak channel")
+    ax3.set_ylabel("Peak width (FWHM) / peak channel")
     ax3.legend()
     plot.save_fig(fig3, "resolution")
 
     print()
+
+
+def hv_scan_resolution(ax: plt.Axes, voltages: np.ndarray, fits: tp.List[type_hints.CURVE_FIT], label: str):
+    peak_locs = np.array([fit[0][1] for fit in fits])
+    peak_stds = np.array([fit[0][2] for fit in fits])
+    rel_fwhms = peak_stds * const.STD_TO_FWHM / peak_locs
+    fit = curve_fit(
+        fitting.poly2,
+        voltages,
+        rel_fwhms,
+    )
+    fit_x = np.linspace(np.min(voltages), np.max(voltages), 1000)
+    fit_eval = fitting.poly2(fit_x, *fit[0])
+    ax.errorbar(
+        voltages,
+        rel_fwhms,
+        fmt=".", capsize=3,
+        label=label
+    )
+    ax.plot(fit_x, fit_eval)
+    print("Resolution fit:", label)
+    print(fitting.poly2_fit_text(fit))
 
 
 def read_hv_scan(
