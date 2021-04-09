@@ -77,7 +77,12 @@ def get_peak_charges(
     # for i, fit in enumerate(fits):
     #     # Order: N, M, g, h, gc, gm
     #     A = np.array([A_N[i], A_M[i], A_g[i], A_h[i], A_gc[i], A_gm[i]])
-    #     V = scipy.linalg.block_diag(fit[1][:2, :2], cal_coeff_covar, gain_rel_std**2 * cal_gain, gain_rel_std**2 * gains[i])
+    #     V = scipy.linalg.block_diag(
+    #         fit[1][:2, :2],
+    #         cal_coeff_covar,
+    #         gain_rel_std**2 * cal_gain,
+    #         gain_rel_std**2 * gains[i]
+    #     )
     #     # print(A.shape)
     #     # print(V.shape)
     #     # print(fit[1].shape)
@@ -142,8 +147,8 @@ def hv_scans(
         gain_rel_std=gain_rel_std,
     )
 
-    am_fits = fitting.fit_am_hv_scan(am_mcas, fig_titles=fig_titles)
-    fe_fits = fitting.fit_fe_hv_scan(fe_mcas, fig_titles=fig_titles)
+    am_fits = fitting.fit_am_hv_scan(am_mcas, voltages=am_voltages, gains=am_gains, fig_titles=fig_titles)
+    fe_fits = fitting.fit_fe_hv_scan(fe_mcas, voltages=fe_voltages, gains=fe_gains, fig_titles=fig_titles)
 
     am_charges, am_charges_std = get_peak_charges(am_fits, am_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
     fe_charges, fe_charges_std = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)

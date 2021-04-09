@@ -15,6 +15,10 @@ CUT_WIDTH_MULT = 2
 
 # Functions to be fit
 
+def poly1(x, a, b):
+    return a*x + b
+
+
 def poly2(x, a, b, c):
     return a*x**2 + b*x + c
 
@@ -106,7 +110,11 @@ def fit_am(
     return fit
 
 
-def fit_am_hv_scan(mcas: tp.List[MeasMCA], fig_titles: bool = True):
+def fit_am_hv_scan(
+        mcas: tp.List[MeasMCA],
+        voltages: np.ndarray,
+        gains: np.ndarray,
+        fig_titles: bool = True) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for the Am-241 HV scan measurements"""
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     if fig_titles:
@@ -123,6 +131,7 @@ def fit_am_hv_scan(mcas: tp.List[MeasMCA], fig_titles: bool = True):
         ax.plot(mca.counts)
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)
+        ax.text(0.05, 0.8, f"V={voltages[i]} V, g={gains[i]}", transform=ax.transAxes, fontdict={"size": 8})
 
         fits.append(fit_am(mca, ax))
 
@@ -189,6 +198,8 @@ def fit_fe(
 
 def fit_fe_hv_scan(
         mcas: tp.List[MeasMCA],
+        voltages: np.ndarray,
+        gains: np.ndarray,
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
         fig_titles: bool = True
@@ -215,6 +226,7 @@ def fit_fe_hv_scan(
 
         ax.set_xlim(0, max_ch)
         ax.set_ylim(0, max_peak_height_round)
+        ax.text(0.05, 0.8, f"V={voltages[i]} V, g={gains[i]}", transform=ax.transAxes, fontdict={"size": 8})
 
         fit = fit_fe(mca, ax, threshold_level, cut_width_mult, secondary=False)
 

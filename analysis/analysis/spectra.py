@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.optimize import curve_fit
 
 from devices.mca import MeasMCA
 import fitting
@@ -62,13 +63,52 @@ def spectra(
     if fit_fe is not None and fit_am is not None:
         ind_am_peak = fit_am[0][1]
         ind_fe_peak = fit_fe[0][0][1]
+        ind_fe_escape_peak = fit_fe[1][0][1]
         print("Am peak index:", ind_am_peak)
         print("Fe peak index:", ind_fe_peak)
-        print("Fe escape peak index:", fit_fe[0][1][1])
+        print("Fe escape peak index:", ind_fe_escape_peak)
         am_peak = 59.5409e3
         fe_peak = 5.90e3
-        a = (am_peak - fe_peak) / (ind_am_peak - ind_fe_peak)
-        b = am_peak - a*ind_am_peak
+        fe_escape_peak = 3.19e3
+        cal_x = np.array([ind_am_peak, ind_fe_peak, ind_fe_escape_peak])
+        cal_y = np.array([am_peak, fe_peak, fe_escape_peak])
+        cal_yerr = np.sqrt([fit_am[1][1, 1], fit_fe[0][1][1, 1], fit_fe[1][1][1, 1]])
+        fit = curve_fit(
+            fitting.poly1,
+            cal_x,
+            cal_y,
+            sigma=cal_yerr
+        )
+        a = fit[0][0]
+        b = fit[0][1]
+
+        cal_fig: plt.Figure = plt.figure()
+        cal_ax: plt.Axes = cal_fig.add_subplot()
+        cal_fit_x = np.array([0, 1024])
+        cal_ax.errorbar(
+            cal_x, cal_y / 1000,
+            yerr=cal_yerr / 1000,
+            fmt=".", capsize=3,
+            label="centroids of measured peaks"
+        )
+        cal_ax.plot(
+            cal_fit_x,
+            fitting.poly1(cal_fit_x, a, b) / 1000,
+            label=f"linear fit (y = {fit[0][0]:.2e}±{np.sqrt(fit[1][0, 0]):.2e}x + "
+                  f"{fit[0][1]:.2e}±{np.sqrt(fit[1][1, 1]):.2e})"
+        )
+        if fig_titles:
+            cal_suptitle = "Spectral calibration"
+            if name:
+                cal_suptitle += f" ({name})"
+            cal_fig.suptitle(cal_suptitle)
+        cal_ax.set_xlabel("MCA channel")
+        cal_ax.set_ylabel("Energy (keV)")
+        cal_ax.legend(fontsize=8)
+        cal_filename = "spectral_calibration"
+        if name:
+            cal_filename += f"_{name}"
+        plot.save_fig(cal_fig, cal_filename)
     else:
         a = 0
         b = 0
