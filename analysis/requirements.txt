@@ -1,6 +1,7 @@
-matplotlib >= 3.4.0
+# EPS figure generation is broken in Matplotlib 3.4 for some reason
+matplotlib >= 3.3.4, < 3.4
 # numba >= 0.52.0
-numpy >= 1.20.1
+numpy >= 1.20.2
 pandas >= 1.2.3
 scipy >= 1.6.2
 sympy >= 1.7.1
