@@ -146,12 +146,12 @@ def calibration(
     ax3.plot(
         mca_peak_inds,
         np.polyval(coeff, mca_peak_inds) * y_mult,
-        label=f"fit (y = {coeff[0]*y_mult:.3e}±{coeff_stds[1]*y_mult:.3e}x + {coeff[1]*y_mult:.3e}±{coeff_stds[1]*y_mult:.3e})",
+        label=f"fit (y = {coeff[0]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e}x + {coeff[1]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e})",
         color="tab:blue"
     )
     # ax3.set_xlabel("MCA channel")
     ax3.set_ylabel("Collected charge (pC)")
-    ax3.legend()
+    ax3.legend(prop={"size": 9})
 
     for meas in cal_data:
         ax4.plot(meas.mca.channels, meas.mca.counts, color="tab:blue")
