@@ -39,6 +39,7 @@ sizes = {
     "Short brass tube length (mm)": short_brass_tube_length,
     "Brass tube diameter (µm)": brass_tube_diameter,
     "Brass tube with connector (mm)": brass_tube_with_connector,
+    "Anode wire diameter (µm)": wire_diameter,
 }
 
 ###
