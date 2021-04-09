@@ -26,7 +26,7 @@
 
 \title{PAP328 project work: proportional counter}
 \author{Mika Mäki}
-\date{2021-01-XX}
+\date{2021-04-10}
 % TODO add date when the report was handed in
 
 \newenvironment{todo}{
@@ -44,9 +44,10 @@
 
 \section*{Abstract}
 In this project we assembled a gas-based proportional counter for X-ray and $\gamma$-ray detection.
-The detector consists of a cylindrical cathode, for which we used a beverage can, and a thin anode wire along its center.
-When high voltage is applied between the cathode and the anode and incoming high-energy radiation ionizes the gas inside, the resulting electrons drift towards the anode wire.
-Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with read-out electronics.
+The detector consists of a drink can that serves as the cathode, and a thin anode wire along its center.
+
+% When high voltage is applied between the cathode and the anode and incoming high-energy radiation ionizes the gas inside, the resulting electrons drift towards the anode wire.
+% Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with read-out electronics.
 
 The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
 This setup demonstrated sufficient resolution to distinguish the TODO peaks.
@@ -55,7 +56,6 @@ This setup demonstrated sufficient resolution to distinguish the TODO peaks.
 
 The detector was also tested with a self-built pre-amplifier.
 However, these results were inconclusive due to unexpected degradation of the detector.
-These measurements are discussed in the appendix \ref{pre_amp}.
 
 \tableofcontents
 
@@ -65,22 +65,63 @@ These measurements are discussed in the appendix \ref{pre_amp}.
 Radiation detectors are devices that measure the rate of incoming ionizing radiation such as $\alpha$, $\beta$, $\gamma$ and neutrino radiation and optionally measure its kinetic energies.
 They are widely used on various fields from nuclear energy production to medicine.
 The properties of ionizing radiation and the needs of applications vary, and so do the detector principles and constructions used.
-TODO add a brief listing of particle detector types here?
 
 However, a common feature of particle detectors has been that they are expensive and require various specific tools and materials to manufacture.
 In this project work we followed in the footsteps of
 \href{https://www.helsinki.fi/en/people/people-finder/alexander-winkler-9110087}{Winkler}
 et al. \cite{winkler_gaseous_2015} to demonstrate that proportional counters can be an exception to this by manufacturing a relatively simple proportional counter based on a conventional drink can.
 Proportional counters are gas-based radiation detectors, which as their name suggests, produce electric pulses with amplitudes proportional to the energies of the incoming ionizing radiation.
+Their operation principles are discussed in section \ref{theory}.
 
-TODO expand the introduction
+The construction of the proportional counter is discussed in section \ref{assembly}.
+To obtain accurate and meaningful results, the system had to be calibrated as in section \ref{assembly} and configured for the measurements as in section \ref{setup_testing}.
+The results for the calibration, high voltage sweep and spectral measurements are discussed in section \ref{results}.
+
+We also constructed our own pre-amplifier, but the results were inconclusive due to unexpected degradation of the detector.
+These measurements are discussed in the appendix \ref{pre_amp}.
 
 
 \section{Theory}
 \label{theory}
 
-% \subsection{The proportional counter}
-% \label{counter}
+\subsection{Radiation sources and interaction of their radiation with matter}
+Radiation can be categorized to ionizing and non-ionizing radiation depending on its capability of exciting electrons out of matter.
+In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
+Non-ionizing radiation refers primarily to electromagnetic radiation of visible and longer wavelengths.
+In addition to these there are other forms of radiation such as neutrons and neutrinos.
+
+The effects of electromagnetic radiation vary significantly by wavelength.
+Whereas the longer wavelengths are mostly capable of inducing thermal motion, other excitations and electric currents, the shorter wavelengths from ultraviolet radiation onwards have enough energy to remove an electron from an atom or a molecule and are therefore ionizing.
+
+Radiation can be characterized
+\cite{knoll_radiation_2010}
+
+However, the details of the interaction of high-energy photons with matter vary significantly by wavelength.
+
+Alpha and beta radiation are the most prominent types of particle radiation.
+Alpha radiation consists of 
+
+In this project work we used $^{55}$Fe and $^{241}$Am sources.
+Both emit various types of radiation in their decay processes, but due to their closed packaging, only electromagnetic radiation was allowed to escape the sources.
+$^{55}$Fe decays by electron capture of the innermost shell (K-shell) into $^{55}$Mn with a half-life of 2.75 a.
+This results in an electron vacancy, which gets filled by an electron from the outer shells, resulting in a sequence of electron transfers, the energy of which is released as Auger electrons and X-ray emissions.
+
+
+\begin{equation}
+^{241}_{95}\text{Am} \rightarrow ^{237}_{93}\text{Np} + ^4_2 \alpha + \gamma (59.24 \text{keV})
+\end{equation}
+
+
+
+In this project we used an
+
+In this project we focus on x-rays and alpha, beta and gamma radiation.
+
+
+
+
+\subsection{The proportional counter}
+\label{counter}
 
 In this project the particle detection was done using a proportional counter, which is a gas-filled particle detector with a high electric field inside.
 \cite{instructions}
@@ -97,12 +138,11 @@ A schematic of the proportional counter is given in figure \ref{fig:theory_schem
 When ionizing radiation passes through the detector, it collides with the gas inside, causing ionization of the gas.
 Due to the electric field the electrons drift towards the anode, and the positive ions drift towards the cathode.
 This causes a pulse of electric current, which is detectable with the readout electronics.
-The detector of this project has the shape of a cylinder and therefore circular symmetry.
-Therefore the electric field strength can be approximated as
+The detector is cylindrically symmetric, and the electric field strength can therefore be approximated as
 \begin{equation}
 E(r) = \frac{U}{r \ln(b/a) },
 \end{equation}
-where $U$ is the potential between the electrodes, $r$ is the radius of the can, $a$ is the outer radius of the anode wire, and $b$ is the inner radius of the cathode tube.
+where $U$ is the potential between the electrodes, $r$ is the radius of the can, $a$ is the outer radius of the anode wire and $b$ is the inner radius of the cathode tube.
 Consequently, the electric field strength increases when approaching the anode wire, and close to the anode ($\approx$ 30 \textmu m) it reaches sufficient level for
 \href{https://en.wikipedia.org/wiki/Townsend_discharge}{Townsend avalanche} formation.
 In a Townsend avalanche the kinetic energy of a drifting electron is sufficient to ionize the gas upon collisions, and this results in the multiplication of the incomng electron.
@@ -185,14 +225,24 @@ Then the covariance matrix is given by
 \begin{equation}
 U_{kl} \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \frac{\partial y_l}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}} \sigma_i^2,
 \end{equation}
-and the variances are
+and the variances are \cite[p. 20--22]{cowan_statistical_1998}
 \begin{equation}
-\sigma_{y_k}^2 \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}}^2 \sigma_i^2
+\sigma_{y_k}^2 \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}}^2 \sigma_i^2.
 \label{eq:variance}
 \end{equation}
-\cite[p. 20--22]{cowan_statistical_1998}
+In the analysis code of this project the general case of this error propagation has been implemented symbolically using
+\href{https://www.sympy.org/}{SymPy}
+for use with the computation of the collected charges and the Diethorn formula.
+The error propagation of fit functions is handled directly by the
+\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html}{scipy.optimize.curve\_fit}
+and
+\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.ODR.html}{scipy.odr.ODR} utilities of
+\href{https://www.scipy.org/}{SciPy}
+that are used to generate the fits.
+\cite{repo}
 
 
+\iffalse
 \subsection{Error analysis}
 \begin{todo}
 The total gain of the amplifiers is a product of the gains of the pre-amplifier and the spectral amplifier.
@@ -204,6 +254,7 @@ TODO: the gain of the spectral amplifier was varied from $10\cdot1=10$ to $10\cd
 Since they were two parts of the same device, was the setting already a total of these?
 Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spectral amplifier?
 \end{todo}
+\fi
 
 
 \subsection{Read-out electronics}
@@ -226,12 +277,12 @@ Answer the questions on page 5 of the instructions!
 
 \subsection{Detector assembly}
 \label{assembly}
-The detector of this project was made from an aluminum drink can according to the schematic of figure \ref{fig:schematic}.
+We manufactured the detector of this project from an aluminum drink can according to the schematic of figure \ref{fig:schematic}.
 The parts were provided by the course organizers, except for the drink can.
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{fig/instructions/schematic.png}
+\includegraphics[width=0.8\textwidth]{fig/instructions/schematic.png}
 \caption{Schematic of the detector \cite{instructions}}
 % TODO draw own one with vector graphics
 \label{fig:schematic}
@@ -239,7 +290,7 @@ The parts were provided by the course organizers, except for the drink can.
 
 First we prepared the parts of the detector by removing a single strand from a copper wire and cutting two pieces of brass tube for the wire mounting.
 The course organizers removed the top of the can and drilled two holes to its bottom, one to the center and one off-center.
-We then smoothened the cutting edges and grinded away the anti-corrosion layer from the inside of the walls of the can.
+We then smoothened the cutting edges to avoid sharp edges that could cause sparking, and grinded away the anti-corrosion layer for long-term stability of the detector.
 Table \ref{table:sizes} contains size measurements of the can and the brass tubes.
 Each of the results is averaged from five measurements.
 The can thickness and brass tube diameter were measured using a
@@ -256,9 +307,33 @@ The screw was then attached to the can with a plastic nut, as in figure \ref{fig
 
 \begin{figure}[ht!]
 \centering
+\begin{subfigure}[t]{0.48\textwidth}
 \includegraphics[width=\textwidth]{fig/IMG_20201123_103327.jpg}
 \caption{A brass tube within a plastic screw serves as the other end of the anode wire}
 \label{fig:anode_mounting}
+\end{subfigure}
+%
+\begin{subfigure}[t]{0.48\textwidth}
+\includegraphics[width=\textwidth]{fig/IMG_20201117_121044.jpg}
+\caption{The anode wire is soldered to the connector}
+\label{fig:connector}
+\end{subfigure}
+
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig/IMG_20201123_104201.jpg}
+\caption{Setup for tightening the anode wire}
+\label{fig:tightening}
+\end{subfigure}
+%
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig/P1170847-cropped.jpg}
+\caption{Finished detector}
+\label{fig:detector}
+\end{subfigure}
+%
+\caption{Detector construction steps}
 \end{figure}
 
 The electric connection of the anode would be supplied by a high-voltage coaxial connector, which we attached to one of the
@@ -268,27 +343,13 @@ The nut is sufficient to keep the connector in place, but the glue makes the con
 Once the connector was in place, we pushed the anode wire through the brass tube at the bottom of the can and pulled it out of the top of the can.
 We then pushed the wire through the shorter brass tube and twisted it into a hook so that it stayed in place when we pushed the brass tube into the connector.
 The electrical connection was then formed by soldering the brass tube and therefore also the wire to the connector as in figure \ref{fig:connector}
-In this step one should be careful not to leave the end of the wire exposed from the solder, as such a sharp tip would cause high electric fields and therefore undesired reactions within the detector.
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/IMG_20201117_121044.jpg}
-\caption{The anode wire is soldered to the connector}
-\label{fig:connector}
-\end{figure}
+In this step one should be careful not to leave the end of the wire exposed from the solder, as such a sharp tip would cause high electric fields and therefore sparking.
 
 Now the wire was in place, but it had to be tightened.
 This was accomplished by taping the top cap to the can, knotting the wire around a nut and placing the wire over a wheel, as in figure \ref{fig:tightening}.
 We then secured the tightening by soldering the wire to the brass tube, and then we cut the remaining wire.
 In this step one should be careful to solder only as long as is needed for the solder to melt, as heating the wire for too long will cause it to break, as happened once during the manufacturing of this detector.
-In the case of such an accident, a new wire has to be soldered to the high voltage connector.
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/IMG_20201123_104201.jpg}
-\caption{Setup for tightening the anode wire}
-\label{fig:tightening}
-\end{figure}
+In the case of such an incident, a new wire has to be soldered to the high voltage connector.
 
 Now the wire was in place, and the detector had to be sealed.
 We used large amounts of epoxy to attach the end caps, and office tape to hold the caps in place.
@@ -300,23 +361,23 @@ This established an electrical connection between the ground and the can.
 It should be noted that the copper tape should be put on a different side than on which the radiation source is placed, as the copper tape would otherwise absorb some of the radiation.
 A piece of aluminum foil was put over the bottom of the can to provide additional shielding from electromagnetic interference, as the end of the anode wire slightly extrudes from within the can.
 
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/P1170847-cropped.jpg}
-\caption{Setup for tightening the anode wire}
-\label{fig:tightening}
-\end{figure}
 
 
 \clearpage
 \subsection{Calibration}
 \label{setup_calibration}
-To establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation, the detector and readout electronics had to be calibrated.
-The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}, except that for the electronics calibration the oscilloscope was connected directly to the output of the output of the pulser.
-We used the
-\href{https://www.ortec-online.com/products/electronics/preamplifiers/142a-b-c}{Ortec 142 pre-amplifier}
-and the
-\href{https://www.ortec-online.com/products/electronics/amplifiers/855}{Ortec 855 spectral amplifier}.
+The detector and readout electronics had to be calibrated to establish a relationship between the channels of the multichannel analyzer and the energies of the incoming radiation.
+The setup consisted of an
+\href{https://iseg-hv.com/en/products/detail/NHR}{Iseg NHR 42 60r}
+high voltage power supply,
+\href{https://www.ortec-online.com/products/electronics/preamplifiers/142a-b-c}{Ortec 142}
+pre-amplifier,
+\href{https://www.ortec-online.com/products/electronics/amplifiers/855}{Ortec 855}
+dual spectral amplifier,
+\href{https://www.amptek.com/products/multichannel-analyzers/mca-8000d-digital-multichannel-analyzer}{Amptek MCA-8000D}
+digital multichannel analyzer and
+\href{https://teledynelecroy.com/oscilloscope/wavesurfer-3000z-oscilloscopes/wavesurfer-3024z}{Lecroy WaveSurfer 3024z} oscilloscope (200 MHz).
+The electrical connections of the setup used for both calibration and the measurements are illustrated in figure \ref{fig:connections}, except that for the electronics calibration the oscilloscope was connected directly to the output of the pulser.
 
 \begin{figure}[ht!]
 \centering
@@ -329,26 +390,14 @@ and the
 \FloatBarrier
 The first step was the calibration of the multichannel analyzer to the collected charge.
 This was done by setting the bias voltage to zero and attaching a pulse generator to the amplifier input, and an oscilloscope and the multichannel analyzer to its output, as in figure \ref{fig:pulser_setup}.
-The voltage over a capacitor is defined by the equation
-\begin{equation}
-V = \frac{Q}{C},
-\end{equation}
-where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier.
-Therefore the collected charge is defined by
-\begin{equation}
-Q = CV,
-\end{equation}
-where $V$ is the output pulse height measured with the oscilloscope.
+The voltage over a capacitor is defined by the equation $V = \frac{Q}{C}$, where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier.
+Therefore the collected charge is defined by $Q = CV$, where $V$ is the output pulse height measured with the oscilloscope.
 The pulse height was determined by comparing the value of an exponential fit at the peak time to the average voltage before the pulse.
 These are illustrated in figure \ref{fig:cal_trace}.
 
-TODO: It was said that all formulas should be in the theory section, but I suppose this is an exception.
-
-NOTE: The necessity of these formulas is also questionable, but at least for me the workings of the setup weren't obvious from the beginning.
-
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{fig/IMG_20201130_135000.jpg}
+\includegraphics[width=0.8\textwidth]{fig/IMG_20201130_135000.jpg}
 \caption{Setup for testing with an external pulser}
 \label{fig:pulser_setup}
 \end{figure}
@@ -363,59 +412,49 @@ NOTE: The necessity of these formulas is also questionable, but at least for me 
 
 
 \FloatBarrier
-\subsection{Testing}
+\subsection{Measurements with radiation sources}
 \label{setup_testing}
-For the testing with radiation sources the electrical connections were the same except that the pulse generator was removed and that the oscilloscope was attached to the output of the spectral amplifier.
-The detector was placed within lead shielding, and the radioactive source was placed on top, as in figure \ref{fig:setup_testing}.
+For the testing with radiation sources the electrical connections were the same as for the calibration, except that the pulse generator was removed and that the oscilloscope was attached to the output of the spectral amplifier.
+The detector was placed within a lead shielding that consisted of two lead-acid batteries, and the radioactive source was placed on top, as in figure \ref{fig:setup_testing}.
 For the $^{241}$Am source we had to use a thick metal sheet with a thin slit as a collimator to reduce the intensity of the radiation.
 Without the attenuator the pulses would pile up so that individual pulses would no longer be detectable separately for energy measurement.
-The $^{241}$Am source also required the use of additional lead shielding around the detector due to its different enclosure.
+Due to its different enclosure and higher activity, the $^{241}$Am source also required the use of additional lead shielding around the setup to prevent unnecessary user exposure to the radiation.
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{fig/IMG_20201130_144418.jpg}
+\includegraphics[width=0.8\textwidth]{fig/IMG_20201130_144418.jpg}
 \caption{Setup for testing with an $^{55}$Fe source and the rack-mounted amplifier}
 \label{fig:setup_testing}
 \end{figure}
+
 
 
 \clearpage
 \section{Results and discussion}
 \label{results}
 In this chapter we discuss the measurement results of the setups described in chapter \ref{assembly}.
-The code used for the data analysis is available at the GitHub repository. \cite{repo}
+The code used for the data analysis is available in the GitHub repository. \cite{repo}
 
 
 \subsection{Calibration}
 \label{results_calibration}
 By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in \ref{fig:mca_calibration}.
-The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two.
+The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two due to technical issues.
 To this data we can make the linear fit
 \begin{equation}
 Q = g \cdot \text{Channel}_\text{MCA} + h,
 \end{equation}
-and for the fit parameters we get the values $g = MOVEFROMPLOTLEGEND$ and $h = MOVEFROMPLOTLEGEND$.
-
-TODO: What would be reasonable errors for C and G?
-Perhaps 5 \% for both?
-Currently the resulting overall errors seem too small.
-
-TODO: the charge scale is different than in the article.
-Could it be due to differences in the setup or the settings?
-
-TODO: Move fit values from plot legends to the text when the fits are ok
+and for the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \cdot 10^{-7}$ pC/channel and $h = -1.04 \cdot 10^{-4} \pm 6.99 \cdot 10^{-5}$ pC.
 
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/python/mca_calibration.eps}
-\caption{MCA calibration}
+\caption{MCA calibration: collected charge as a function of the MCA channel with a linear fit, and a histogram of the measured detection counts}
 \label{fig:mca_calibration}
 \end{figure}
 
 It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
-The relationship between these is illustrated in figure \ref{fig:pulser_calibration}
-
-TODO: drop the second-last point from the fit
+The relationship between these is illustrated in figure \ref{fig:pulser_calibration}.
 
 \begin{figure}[ht!]
 \centering
@@ -472,14 +511,6 @@ Consequently it appears that the detector reaches the desired proportional regio
 \label{fig:gas_mult}
 \end{figure}
 
-\FloatBarrier
-\begin{todo}
-TODO: In the multiplication figure the values of K and std\_K have been temporarily and manually set to 10, because otherwise the order of magnitude of the results I got from the Diethorn formula didn't make sense.
-At first it was caused by using wrong units for K, but after fixing that the issue still persists.
-I should look further into it.
-
-TODO: Would FWHM be better than $1 \sigma$
-\end{todo}
 
 
 \clearpage
@@ -494,8 +525,6 @@ The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
 
 \begin{todo}
 TODO: The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
-
-TODO: the red dotted lines are for debugging fit cuts and therefore temporary
 
 TODO: analyze the secondary peaks of the Am-241 spectrum.
 \end{todo}
@@ -541,10 +570,16 @@ Figure \ref{fig:pre_amp_schematic} provides a schematic of this pre-amplifier.
 Its core is the
 \href{https://www.ti.com/product/OPA657}{Texas Instruments OPA657}
 \href{https://en.wikipedia.org/wiki/Operational_amplifier}{operational amplifier}, which is configured for the gain value $G = 21$ with a suitable choice of resistors.
+
+TODO GAIN FORMULA HERE
+
 The assembled pre-amplifier is shown in figure \ref{fig:pre_amp_board}, and its mounting is illustrated in figure \ref{fig:pre_amp_mounting}.
 We also built a switch panel of figure \ref{fig:pre_amp_switch} for the power supply.
 The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
 
+\begin{todo}
+Describe preamp construction and what was planned to do with it
+\end{todo}
 
 \begin{figure}[ht!]
 \centering
@@ -555,14 +590,15 @@ The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
 
 \begin{figure}[ht!]
 \centering
-\subcaptionbox{}{
-	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121635.jpg}
-	\includegraphics[width=\textwidth]{fig/P1170891-cropped.jpg}
-}
-\subcaptionbox{}{
-	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121625.jpg}
-	\includegraphics[width=\textwidth]{fig/P1170894-cropped.jpg}
-}
+
+\begin{subfigure}[t]{0.48\textwidth}
+\includegraphics[width=\textwidth]{fig/P1170891-cropped.jpg}
+\end{subfigure}
+%
+\begin{subfigure}[t]{0.48\textwidth}
+\includegraphics[width=\textwidth]{fig/P1170894-cropped.jpg}
+\end{subfigure}
+%
 \caption{Power supply for the pre-amplifier}
 \label{fig:pre_amp_psu}
 \end{figure}
@@ -584,29 +620,28 @@ The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
 
 \begin{figure}[ht!]
 \centering
-\subcaptionbox{}{
-	% \includegraphics[width=\textwidth]{fig/IMG_20201201_121735.jpg}
-	\includegraphics[width=\textwidth]{fig/P1170915-cropped.jpg}
-}
-\subcaptionbox{}{
-	\includegraphics[width=\textwidth]{fig/IMG_20201201_121845.jpg}
-}
-\caption{Mounting of the pre-amplifier board}
-\label{fig:pre_amp_mounting}
-\end{figure}
+\begin{subfigure}[t]{0.48\textwidth}
+\includegraphics[width=\textwidth]{fig/P1170915-cropped.jpg}
+\end{subfigure}
+%
+\begin{subfigure}[t]{0.48\textwidth}
+\includegraphics[width=\textwidth]{fig/IMG_20201201_121845.jpg}
+\end{subfigure}
 
-\begin{figure}[ht!]
-\centering
+\begin{subfigure}[t]{0.48\textwidth}
 \includegraphics[width=\textwidth]{fig/P1170907-cropped.jpg}
 \caption{Pre-amplifier switch panel}
 \label{fig:pre_amp_switch}
-\end{figure}
-
-\begin{figure}[ht!]
-\centering
+\end{subfigure}
+%
+\begin{subfigure}[t]{0.48\textwidth}
 \includegraphics[width=\textwidth]{fig/P1170874-cropped.jpg}
 \caption{Pre-amplifier}
 \label{fig:pre_amp}
+\end{subfigure}
+%
+\caption{Pre-amplifier case and mounting}
+\label{fig:pre_amp_mounting}
 \end{figure}
 
 
@@ -656,7 +691,7 @@ The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, a
 
 \clearpage
 \section{Measurement data}
-This section contains additional information on the measurement results.
+This appendix contains additional information on the measurement results.
 The numerical values of the size measurements discussed in section \ref{assembly} are provided in table \ref{table:sizes}.
 
 \begin{table}[ht!]
@@ -698,6 +733,8 @@ Brass tube diameter (µm)
 Brass tube + connector length from acryl (mm)
 % & 27.30 & 27.15 & 27.32 & 27.59 & 27.23
 & 27.32 & 0.15 \\
+Anode wire diameter (\textmu m)
+& 49.0 & 2.0 \\
 % \end{tabularx}
 \end{tabular}
 \label{table:sizes}
