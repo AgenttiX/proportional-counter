@@ -14,7 +14,8 @@ def spectra(
         noise_path: str,
         gain, voltage, voltage_std,
         fig_titles: bool = True,
-        name: str = None):
+        name: str = None,
+        vlines: bool = True):
     """Analyze spectral measurement"""
     utils.print_title("Spectra")
     am = MeasMCA(am_path)
@@ -50,12 +51,12 @@ def spectra(
     # line_noise = ax1.plot(noise.data, label="noise", color="orange")[0]
 
     try:
-        fit_am = fitting.fit_am(am, ax1, subtracted=am_subtracted)
+        fit_am = fitting.fit_am(am, ax1, subtracted=am_subtracted, vlines=vlines)
     except RuntimeError:
         print("WARNING! Am fit failed.")
         fit_am = None
     try:
-        fit_fe = fitting.fit_fe(fe, ax2, subtracted=fe_subtracted)
+        fit_fe = fitting.fit_fe(fe, ax2, subtracted=fe_subtracted, vlines=vlines)
     except (RuntimeError, IndexError):
         print("WARNING! Fe fit failed.")
         fit_fe = None
@@ -125,10 +126,10 @@ def spectra(
 
     try:
         am_sec_fits = [
-            fitting.fit_manual(am, ax1, 250, 300, subtracted=am_subtracted),
-            fitting.fit_manual(am, ax1, 300, 360, subtracted=am_subtracted),
-            fitting.fit_manual(am, ax1, 380, 440, subtracted=am_subtracted),
-            fitting.fit_manual(am, ax1, 710, 830, subtracted=am_subtracted)
+            fitting.fit_manual(am, ax1, 250, 300, subtracted=am_subtracted, vlines=vlines),
+            fitting.fit_manual(am, ax1, 300, 360, subtracted=am_subtracted, vlines=vlines),
+            fitting.fit_manual(am, ax1, 380, 440, subtracted=am_subtracted, vlines=vlines),
+            fitting.fit_manual(am, ax1, 710, 830, subtracted=am_subtracted, vlines=vlines)
         ]
     except RuntimeError:
         print("WARNING! Secondary fits failed.")

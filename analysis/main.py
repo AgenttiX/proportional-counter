@@ -143,6 +143,7 @@ def main():
     """
     analysis.analyze_sizes(sizes)
     fig_titles = True
+    vlines = True
 
     cal_coeff, cal_coeff_covar = analysis.calibration(
         cal_data,
@@ -169,7 +170,8 @@ def main():
         wire_diameter=wire_diameter*1e-6,
         pressure=pressure,
         pressure_std=pressure_std,
-        fig_titles=fig_titles
+        fig_titles=fig_titles,
+        vlines=vlines
     )
 
     analysis.spectra(
@@ -179,7 +181,8 @@ def main():
         gain=10,
         voltage=1810,
         voltage_std=hv_std,
-        fig_titles=fig_titles
+        fig_titles=fig_titles,
+        vlines=vlines
     )
     analysis.spectra(
         os.path.join(data_folder, "preamp", "Am_custom_preamp_2285.mca"),
@@ -189,7 +192,8 @@ def main():
         voltage=2286,
         voltage_std=hv_std,
         fig_titles=fig_titles,
-        name="custom_preamp"
+        name="custom_preamp",
+        vlines=vlines
     )
     analysis.spectra(
         os.path.join(data_folder, "preamp", "Am_custom_preamp_2192_Nikitas_detector.mca"),
@@ -199,7 +203,8 @@ def main():
         voltage=2192,
         voltage_std=hv_std,
         fig_titles=fig_titles,
-        name="custom_preamp_Nikitas_detector"
+        name="custom_preamp_Nikitas_detector",
+        vlines=vlines
     )
 
     plt.show()

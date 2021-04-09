@@ -81,15 +81,15 @@ def calibration(
     # coeff_covar = out.cov_beta
     # coeff_stds = out.sd_beta
     coeff = np.array([fit[0][0], fit[0][1]])
-    coeff_stds = np.array([fit[1][0, 0], fit[1][1, 1]])
+    coeff_stds = np.sqrt(np.array([fit[1][0, 0], fit[1][1, 1]]))
     ax.plot(
         set_voltages,
         np.polyval(coeff, set_voltages),
-        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[1]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})"
+        label=f"fit (y = {coeff[0]:.3e}±{coeff_stds[0]:.3e}x + {coeff[1]:.3e}±{coeff_stds[1]:.3e})"
     )
     ax.set_xlabel("Pulser voltage setting (V)")
     ax.set_ylabel("Pulse height (V)")
-    ax.legend()
+    ax.legend(fontsize=9)
     plot.save_fig(fig2, "pulser_calibration")
 
     plot.plot_failed_cals(cal_data)
@@ -143,15 +143,17 @@ def calibration(
     # coeff = np.array([fit[0][0], fit[0][1]])
     # coeff_covar = fit[1]
     # coeff_stds = np.array([coeff_covar[0, 0], coeff_covar[1, 1]])
+    fit_label = f"fit (y = {coeff[0]*y_mult:.2e}±{coeff_stds[0]*y_mult:.2e}x + {coeff[1]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e})"
+    print(fit_label)
     ax3.plot(
         mca_peak_inds,
         np.polyval(coeff, mca_peak_inds) * y_mult,
-        label=f"fit (y = {coeff[0]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e}x + {coeff[1]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e})",
+        label=fit_label,
         color="tab:blue"
     )
     # ax3.set_xlabel("MCA channel")
     ax3.set_ylabel("Collected charge (pC)")
-    ax3.legend(prop={"size": 9})
+    ax3.legend(fontsize=9)
 
     for meas in cal_data:
         ax4.plot(meas.mca.channels, meas.mca.counts, color="tab:blue")

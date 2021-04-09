@@ -76,7 +76,8 @@ def fit_am(
         ax: plt.Axes,
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
-        subtracted: np.ndarray = None) -> type_hints.CURVE_FIT:
+        subtracted: np.ndarray = None,
+        vlines: bool = True) -> type_hints.CURVE_FIT:
     """Fit the peaks of an Am-241 spectrum"""
     if subtracted is not None:
         counts = subtracted
@@ -93,7 +94,8 @@ def fit_am(
     cut_inds, threshold_width, peak_ind, peak = get_cut(filtered, threshold_level, cut_width_mult)
 
     # Vertical lines according to the cuts
-    ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+    if vlines:
+        ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
     fit = curve_fit(
         stats.gaussian_scaled,
@@ -114,7 +116,8 @@ def fit_am_hv_scan(
         mcas: tp.List[MeasMCA],
         voltages: np.ndarray,
         gains: np.ndarray,
-        fig_titles: bool = True) -> tp.List[type_hints.CURVE_FIT]:
+        fig_titles: bool = True,
+        vlines: bool = True) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for the Am-241 HV scan measurements"""
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     if fig_titles:
@@ -133,7 +136,7 @@ def fit_am_hv_scan(
         ax.set_ylim(0, max_peak_height_round)
         ax.text(0.05, 0.8, f"V={voltages[i]} V, g={gains[i]}", transform=ax.transAxes, fontdict={"size": 8})
 
-        fits.append(fit_am(mca, ax))
+        fits.append(fit_am(mca, ax, vlines=vlines))
 
     plot.save_fig(fig, "am_scan_fits")
     return fits
@@ -145,7 +148,8 @@ def fit_fe(
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
         secondary: bool = True,
-        subtracted: np.ndarray = None) \
+        subtracted: np.ndarray = None,
+        vlines: bool = True) \
         -> tp.Union[type_hints.CURVE_FIT, tp.Tuple[type_hints.CURVE_FIT, type_hints.CURVE_FIT]]:
     """Fit the peaks of an Fe-55 spectrum
 
@@ -159,7 +163,8 @@ def fit_fe(
     cut_inds, threshold_width, peak_ind, peak = get_cut(counts, threshold_level, cut_width_mult)
 
     # Vertical lines according to the cuts
-    ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+    if vlines:
+        ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
     fit = curve_fit(
         stats.gaussian_scaled,
@@ -178,7 +183,8 @@ def fit_fe(
 
     # The secondary peak is the Argon escape peak and therefore not a property of the Fe-55 source itself
     cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(counts[:cut_inds[0]], threshold_level, cut_width_mult)
-    ax.vlines((cut_inds2[0], cut_inds2[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+    if vlines:
+        ax.vlines((cut_inds2[0], cut_inds2[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
     fit2 = curve_fit(
         stats.gaussian_scaled,
         cut_inds2,
@@ -202,7 +208,8 @@ def fit_fe_hv_scan(
         gains: np.ndarray,
         threshold_level: float = THRESHOLD_LEVEL,
         cut_width_mult: float = CUT_WIDTH_MULT,
-        fig_titles: bool = True
+        fig_titles: bool = True,
+        vlines: bool = True
         ) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for Fe-55 HV scan measurements"""
 
@@ -228,7 +235,7 @@ def fit_fe_hv_scan(
         ax.set_ylim(0, max_peak_height_round)
         ax.text(0.05, 0.8, f"V={voltages[i]} V, g={gains[i]}", transform=ax.transAxes, fontdict={"size": 8})
 
-        fit = fit_fe(mca, ax, threshold_level, cut_width_mult, secondary=False)
+        fit = fit_fe(mca, ax, threshold_level, cut_width_mult, secondary=False, vlines=vlines)
 
         # Double Gaussian fitting is too error-prone
         # fit = curve_fit(
@@ -257,7 +264,8 @@ def fit_manual(
         ax: plt.Axes,
         min_ind: int,
         max_ind: int,
-        subtracted: np.ndarray = None):
+        subtracted: np.ndarray = None,
+        vlines: bool = True):
     """Fit the peaks of an Am-241 spectrum"""
     if subtracted is not None:
         counts = subtracted
@@ -270,7 +278,8 @@ def fit_manual(
     threshold_width = max_ind - min_ind
 
     # Vertical lines according to the cuts
-    ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
+    if vlines:
+        ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
     fit = curve_fit(
         stats.gaussian_scaled,

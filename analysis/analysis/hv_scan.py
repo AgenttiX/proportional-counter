@@ -130,7 +130,8 @@ def hv_scans(
         wire_diameter: np.ndarray,
         pressure: float,
         pressure_std: float,
-        fig_titles: bool = True):
+        fig_titles: bool = True,
+        vlines: bool = True):
     utils.print_title("HV scans")
     am_gains, am_voltages, am_mcas = hv_scan(
         folder, "Am",
@@ -147,8 +148,10 @@ def hv_scans(
         gain_rel_std=gain_rel_std,
     )
 
-    am_fits = fitting.fit_am_hv_scan(am_mcas, voltages=am_voltages, gains=am_gains, fig_titles=fig_titles)
-    fe_fits = fitting.fit_fe_hv_scan(fe_mcas, voltages=fe_voltages, gains=fe_gains, fig_titles=fig_titles)
+    am_fits = fitting.fit_am_hv_scan(
+        am_mcas, voltages=am_voltages, gains=am_gains, fig_titles=fig_titles, vlines=vlines)
+    fe_fits = fitting.fit_fe_hv_scan(
+        fe_mcas, voltages=fe_voltages, gains=fe_gains, fig_titles=fig_titles, vlines=vlines)
 
     am_charges, am_charges_std = get_peak_charges(am_fits, am_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
     fe_charges, fe_charges_std = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
