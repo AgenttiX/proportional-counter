@@ -126,18 +126,8 @@ def hv_scans(
     am_fits = fitting.fit_am_hv_scan(am_mcas, fig_titles=fig_titles)
     fe_fits = fitting.fit_fe_hv_scan(fe_mcas, fig_titles=fig_titles)
 
-    # am_charges = get_charges(am_mcas, am_gains, cal_coeff, cal_gain)
-    # fe_charges = get_charges(fe_mcas, fe_gains, cal_coeff, cal_gain)
-
-    # TODO: find where the fixing factor comes from
-    # fix = 1e-4
-    # fix = 1
     am_charges, am_charges_std = get_peak_charges(am_fits, am_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
     fe_charges, fe_charges_std = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
-    # am_charges *= fix
-    # am_charges_std *= fix
-    # fe_charges *= fix
-    # fe_charges_std *= fix
 
     ###
     # Measured charges
