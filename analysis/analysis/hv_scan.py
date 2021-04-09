@@ -131,13 +131,13 @@ def hv_scans(
 
     # TODO: find where the fixing factor comes from
     # fix = 1e-4
-    fix = 1
+    # fix = 1
     am_charges, am_charges_std = get_peak_charges(am_fits, am_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
     fe_charges, fe_charges_std = get_peak_charges(fe_fits, fe_gains, cal_coeff, cal_coeff_covar, cal_gain, gain_rel_std)
-    am_charges *= fix
-    am_charges_std *= fix
-    fe_charges *= fix
-    fe_charges_std *= fix
+    # am_charges *= fix
+    # am_charges_std *= fix
+    # fe_charges *= fix
+    # fe_charges_std *= fix
 
     ###
     # Measured charges
@@ -180,16 +180,19 @@ def hv_scans(
 
     # Theoretical
     volt_range = np.linspace(1100, 2400)
+    wire_radius = wire_diameter / 2
+    can_radius = can_diameter / 2
     theor_gas_mult_log = np.array([
         utils.log_gas_mult_factor_p10(
-            V=volt, a=wire_diameter.mean(), b=can_diameter.mean(), p=pressure,
-            std_V=0, std_a=wire_diameter.std(), std_b=can_diameter.std(), std_p=pressure_std)
+            V=volt, a=wire_radius.mean(), b=can_radius.mean(), p=pressure,
+            std_V=0, std_a=wire_radius.std(), std_b=can_radius.std(), std_p=pressure_std)
         for volt in volt_range
     ]).T
     print(theor_gas_mult_log[0])
     print(theor_gas_mult_log[1])
-    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0]), label="theoretical prediction")
-    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] + theor_gas_mult_log[1]), linestyle=":", label=r"$1\sigma$ upper limit")
+    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0]), label="theoretical prediction", color="g")
+    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] + theor_gas_mult_log[1]), linestyle=":", color="g", label=r"$1\sigma$ limits")
+    ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] - theor_gas_mult_log[1]), linestyle=":", color="g")
 
     # Observed
     # For Argon
@@ -232,42 +235,6 @@ def hv_scans(
     hv_scan_resolution(ax3, am_voltages, am_fits, am_text)
     hv_scan_resolution(ax3, fe_voltages, fe_fits, fe_text)
 
-    # am_peak_locs = np.array([fit[0][1] for fit in am_fits])
-    # fe_peak_locs = np.array([fit[0][1] for fit in fe_fits])
-    # # am_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in am_fits]))
-    # # fe_peak_loc_stds = np.sqrt(np.array([fit[1][1, 1] for fit in fe_fits]))
-    # am_peak_stds = np.array([fit[0][2] for fit in am_fits])
-    # fe_peak_stds = np.array([fit[0][2] for fit in fe_fits])
-    # am_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in am_fits]))
-    # fe_peak_std_stds = np.sqrt(np.array([fit[1][2, 2] for fit in fe_fits]))
-    # am_rel_fwhms = am_peak_stds * const.STD_TO_FWHM / am_peak_locs
-    # fe_rel_fwhms = fe_peak_stds * const.STD_TO_FWHM / fe_peak_locs
-    #
-    # am_fit = curve_fit(
-    #     fitting.poly2,
-    #     am_voltages,
-    #     am_rel_fwhms,
-    # )
-    # fe_fit = curve_fit(
-    #     fitting.poly2,
-    #     am_voltages,
-    #     am_rel_fwhms
-    # )
-    # am_fit_x = np.linspace(np.min(am_peak_locs), np.max(am_peak_locs), 100)
-    # am_fit_eval = np.linspace(np.min(fe_peak_locs), np.max(fe_peak_locs), 100)
-    #
-    # ax3.errorbar(
-    #     am_voltages,
-    #     am_rel_fwhms,
-    #     fmt=".", capsize=3,
-    #     label=am_text
-    # )
-    # ax3.errorbar(
-    #     fe_voltages,
-    #     fe_rel_fwhms,
-    #     fmt=".", capsize=3,
-    #     label=fe_text
-    # )
     ax3.set_xlabel("Voltage (V)")
     ax3.set_ylabel("Peak width (FWHM) / peak channel")
     ax3.legend()

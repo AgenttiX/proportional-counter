@@ -127,6 +127,7 @@ pressure_mbar = 1014  # mbar
 pressure_std_mbar = 5
 pressure = pressure_mbar * const.MBAR_TO_PA
 pressure_std = pressure_std_mbar * const.MBAR_TO_PA
+print(f"Air pressure: {pressure:.3e}±{pressure_std:.3e} Pa")
 
 ###
 # Spectral
@@ -162,6 +163,7 @@ def main():
         int_nonlin=mca_int_nonlin,
         voltage_std=hv_adjustment_std,
         gain_rel_std=spec_amp_int_nonlin,
+        # All values should be converted to SI standard units before passing them on to the analysis functions
         can_diameter=can_diam_outer*1e-3,
         wire_diameter=wire_diameter*1e-6,
         pressure=pressure,
