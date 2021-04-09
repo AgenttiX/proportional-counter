@@ -80,6 +80,10 @@ def error_propagation(
         raise ValueError("Give either covariances or stds")
     if covar is None:
         covar = np.diag(stds)**2
+    if covar.ndim != 2 or covar.shape[0] != covar.shape[1]:
+        raise ValueError("Covariance matrix has invalid dimensions")
+    if len(syms) != vals.size or len(syms) != covar.shape[0]:
+        raise ValueError("Inputs must be of the same size")
 
     # Variables and their means in a form that SymPy understands
     subs = list(zip(syms, vals))

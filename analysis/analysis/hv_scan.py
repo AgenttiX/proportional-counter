@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg
 from scipy.optimize import curve_fit
+import sympy as sp
 # import uncertainties as unc
 # import uncertainties.unumpy as unp
 
@@ -33,7 +34,7 @@ def get_peak_charges(
         cal_coeff_covar: np.ndarray,
         cal_gain: float,
         gain_rel_std: float):
-    """Get the charge corresponding to an MCA peak
+    """Get the charge of an individual event corresponding to an MCA peak location
 
     In the article:
     "The centroids of the peaks were converted to total charge or the number readout
@@ -43,31 +44,47 @@ def get_peak_charges(
     """
     if cal_coeff.size != 2:
         raise NotImplementedError
-    counts = np.array([fit[0][0] for fit in fits])
+    # counts = np.array([fit[0][0] for fit in fits])
     peak_channels = np.array([fit[0][1] for fit in fits])
-    charges = counts * np.polyval(cal_coeff, peak_channels) * cal_gain / gains
+    # charges = np.polyval(cal_coeff, peak_channels) * cal_gain / gains
 
-    # Error analysis
+    ch, c0, c1, gc, g = sp.symbols("ch c0 c1 gc g")
+    syms = [ch, c0, c1, gc, g]
+    func = (c0*ch + c1)*gc/g
+
+    charges = np.empty_like(peak_channels)
     charges_std = np.empty_like(charges)
-    # Partial derivatives
-    A_N = (cal_coeff[0] * counts + cal_coeff[1]) * cal_gain / gains
-    A_M = counts * cal_coeff[0] * cal_gain / gains
-    A_g = counts * peak_channels * cal_gain / gains
-    A_h = counts * cal_gain / gains
-    A_gc = counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) / gains
-    A_gm = - counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) * cal_gain / gains**2
-    # This could be done without a loop but it's easier to understand this way
     for i, fit in enumerate(fits):
-        # Order: N, M, g, h, gc, gm
-        A = np.array([A_N[i], A_M[i], A_g[i], A_h[i], A_gc[i], A_gm[i]])
-        V = scipy.linalg.block_diag(fit[1][:2, :2], cal_coeff_covar, gain_rel_std**2 * cal_gain, gain_rel_std**2 * gains[i])
-        # print(A.shape)
-        # print(V.shape)
-        # print(fit[1].shape)
-        # print(cal_coeff_covar.shape)
-        # print(V)
-        U = A @ V @ A.T
-        charges_std[i] = U
+        charge, charge_std = utils.error_propagation(
+            func,
+            syms=syms,
+            vals=np.array([peak_channels[i], cal_coeff[0], cal_coeff[1], cal_gain, gains[i]]),
+            covar=scipy.linalg.block_diag(fit[1][1, 1], cal_coeff_covar, gain_rel_std**2 * cal_gain, gain_rel_std**2 * gains[i])
+        )
+        charges[i] = charge
+        charges_std[i] = charge_std
+
+    # # Manual error analysis
+    # charges_std = np.empty_like(charges)
+    # # Partial derivatives
+    # A_N = (cal_coeff[0] * counts + cal_coeff[1]) * cal_gain / gains
+    # A_M = counts * cal_coeff[0] * cal_gain / gains
+    # A_g = counts * peak_channels * cal_gain / gains
+    # A_h = counts * cal_gain / gains
+    # A_gc = counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) / gains
+    # A_gm = - counts * (cal_coeff[0] * peak_channels + cal_coeff[1]) * cal_gain / gains**2
+    # # This could be done without a loop but it's easier to understand this way
+    # for i, fit in enumerate(fits):
+    #     # Order: N, M, g, h, gc, gm
+    #     A = np.array([A_N[i], A_M[i], A_g[i], A_h[i], A_gc[i], A_gm[i]])
+    #     V = scipy.linalg.block_diag(fit[1][:2, :2], cal_coeff_covar, gain_rel_std**2 * cal_gain, gain_rel_std**2 * gains[i])
+    #     # print(A.shape)
+    #     # print(V.shape)
+    #     # print(fit[1].shape)
+    #     # print(cal_coeff_covar.shape)
+    #     # print(V)
+    #     U = A @ V @ A.T
+    #     charges_std[i] = U
 
     return charges, charges_std
 
@@ -158,9 +175,32 @@ def hv_scans(
     ax.set_yscale("log")
     ax.set_xlabel("Voltage (V)")
     ax.set_ylabel("Number of electrons")
-    # ax.set_title("TODO fix y-scale")
     ax.legend()
     plot.save_fig(fig, "hv_scans")
+
+    fig12: plt.Figure = plt.figure()
+    if fig_titles:
+        fig12.suptitle("Measured charges (with units)")
+    ax12: plt.Axes = fig12.add_subplot()
+    ax12.errorbar(
+        am_voltages,
+        am_charges,
+        yerr=am_charges_std,
+        fmt=".", capsize=3,
+        label=am_text
+    )
+    ax12.errorbar(
+        fe_voltages,
+        fe_charges,
+        yerr=fe_charges_std,
+        fmt=".", capsize=3,
+        label=fe_text
+    )
+    ax12.set_yscale("log")
+    ax12.set_xlabel("Voltage (V)")
+    ax12.set_ylabel("Collected charge (C)")
+    ax12.legend()
+    plot.save_fig(fig, "hv_scans_units")
 
     ###
     # Gas multiplication factors

@@ -163,5 +163,9 @@ def calibration(
     ax4.set_ylabel("Counts")
     plot.save_fig(fig3, "mca_calibration")
 
+    print("Calibration coefficients:")
+    print(coeff)
+    print("Calibration covariances:")
+    print(coeff_covar)
     print()
     return coeff, coeff_covar
