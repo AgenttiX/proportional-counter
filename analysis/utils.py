@@ -97,9 +97,9 @@ def error_propagation(
 
 def gain(gain_pre, gain_spec, gain_std_pre, gain_std_spec):
     """Total gain for a system consisting of a pre-amplifier and a spectral amplifier"""
-    gain = gain_pre * gain_spec
+    gain_val = gain_pre * gain_spec
     gain_std = np.sqrt((gain_spec*gain_std_pre)**2 + (gain_pre*gain_std_spec)**2)
-    return gain, gain_std
+    return gain_val, gain_std
 
 
 def gas_mult_factor(Q, E_rad, E_ion_pair, e: float = const.ELEMENTARY_CHARGE):
