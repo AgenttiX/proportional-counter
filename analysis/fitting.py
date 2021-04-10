@@ -2,6 +2,7 @@ import typing as tp
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.odr
 from scipy.optimize import curve_fit
 
 from devices.mca import MeasMCA
@@ -9,8 +10,9 @@ import plot
 import stats
 import type_hints
 
+# Adjusting these may result in failed fits
 THRESHOLD_LEVEL = 0.5
-CUT_WIDTH_MULT = 2
+CUT_WIDTH_MULT = 1.7
 
 
 # Functions to be fit
@@ -30,6 +32,7 @@ def create_subplot_grid(
         grid_aspect_ratio: float = 1,
         xlabel: str = None,
         ylabel: str = None) -> tp.Tuple[plt.Figure, tp.List[plt.Axes], int, int]:
+    """Create a figure with a grid of subplots"""
     fig: plt.Figure
     num_plots_x = int(np.sqrt(num_plots)*grid_aspect_ratio)
     num_plots_y = int(np.ceil(num_plots / num_plots_x))
@@ -64,8 +67,8 @@ def get_cut(
     peak = data[peak_ind]
     threshold_inds = np.where(data > peak * threshold_level)[0]
     threshold_width = threshold_inds[-1] - threshold_inds[0]
-    cut_ind_min = max(0, peak_ind - cut_width_mult * (peak_ind - threshold_inds[0]))
-    cut_ind_max = min(data.size, peak_ind + cut_width_mult * (threshold_inds[-1] - peak_ind) + 1)
+    cut_ind_min = int(round(max(0, peak_ind - cut_width_mult * (peak_ind - threshold_inds[0]))))
+    cut_ind_max = int(round(min(data.size, peak_ind + cut_width_mult * (threshold_inds[-1] - peak_ind) + 1)))
     cut_inds = np.arange(cut_ind_min, cut_ind_max)
 
     return cut_inds, threshold_width, peak_ind, peak
@@ -95,17 +98,15 @@ def fit_am(
 
     # Vertical lines according to the cuts
     if vlines:
+        # ax.scatter(peak_ind, peak, color="r")
         ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
-    fit = curve_fit(
-        stats.gaussian_scaled,
-        cut_inds,
-        counts[cut_inds],
-        p0=(peak, peak_ind, threshold_width)
-    )
+    fit = fit_mca_gaussian(mca, cut_inds, counts[cut_inds], peak, peak_ind, threshold_width)
+
     ax.plot(
         mca.channels,
-        fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:]),
+        stats.gaussian_scaled_odr(fit[0], mca.channels),
+        # fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:]),
         linestyle="--",
         label="Fe-55 fit"
     )
@@ -119,6 +120,7 @@ def fit_am_hv_scan(
         fig_titles: bool = True,
         vlines: bool = True) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for the Am-241 HV scan measurements"""
+    print("Fitting Am HV scan")
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     if fig_titles:
         fig.suptitle("Am fits")
@@ -164,14 +166,10 @@ def fit_fe(
 
     # Vertical lines according to the cuts
     if vlines:
+        # ax.scatter(peak_ind, peak, color="r")
         ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
-    fit = curve_fit(
-        stats.gaussian_scaled,
-        cut_inds,
-        counts[cut_inds],
-        p0=(peak, peak_ind, threshold_width)
-    )
+    fit = fit_mca_gaussian(mca, cut_inds, counts[cut_inds], peak, peak_ind, threshold_width)
     if not secondary:
         ax.plot(
             mca.channels,
@@ -182,15 +180,12 @@ def fit_fe(
         return fit
 
     # The secondary peak is the Argon escape peak and therefore not a property of the Fe-55 source itself
-    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(counts[:cut_inds[0]], threshold_level, cut_width_mult)
+    cut_inds2, threshold_width2, peak_ind2, peak2 = get_cut(counts[:cut_inds[0]-10], threshold_level, cut_width_mult)
     if vlines:
         ax.vlines((cut_inds2[0], cut_inds2[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
-    fit2 = curve_fit(
-        stats.gaussian_scaled,
-        cut_inds2,
-        counts[cut_inds2],
-        p0=(peak2, peak_ind, threshold_width)
-    )
+    fit2 = fit_mca_gaussian(mca, cut_inds2, counts[cut_inds2], peak2, peak_ind2, threshold_width2)
+    # print("fit:", fit)
+    # print("fit2:", fit2)
     fit1_data = fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:])
     fit2_data = fit2[0][0] * stats.gaussian(mca.channels, *fit2[0][1:])
     ax.plot(
@@ -212,7 +207,7 @@ def fit_fe_hv_scan(
         vlines: bool = True
         ) -> tp.List[type_hints.CURVE_FIT]:
     """Create fits for Fe-55 HV scan measurements"""
-
+    print("Fitting Fe HV scan")
     fig, axes, num_plots_x, num_plots_y = create_subplot_grid(len(mcas), xlabel="MCA ch.", ylabel="Count")
     if fig_titles:
         fig.suptitle("Fe fits")
@@ -281,12 +276,7 @@ def fit_manual(
     if vlines:
         ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
 
-    fit = curve_fit(
-        stats.gaussian_scaled,
-        cut_inds,
-        counts[cut_inds],
-        p0=(peak, peak_ind, threshold_width)
-    )
+    fit = fit_mca_gaussian(mca, cut_inds, counts[cut_inds], peak, peak_ind, threshold_width)
     ax.plot(
         mca.channels,
         fit[0][0] * stats.gaussian(mca.channels, *fit[0][1:]),
@@ -296,7 +286,60 @@ def fit_manual(
     return fit
 
 
-def poly2_fit_text(fit: type_hints.CURVE_FIT, prec: str = "3e", err_prec: str = "3e"):
+def fit_odr(
+        func: callable,
+        x: np.ndarray, y: np.ndarray,
+        std_x: tp.Union[float, np.ndarray] = None,
+        std_y: np.ndarray = None,
+        p0: tp.Union[tuple, np.ndarray] = None) -> type_hints.CURVE_FIT:
+    """Generic ODR fitting
+
+    Fitting function should have parameters of the form x, coeff1, coeff2 etc.
+    """
+    fit = curve_fit(func, x, y, p0=p0, sigma=std_y)
+    if np.any(np.isinf(fit[1])):
+        print("Warning! Least squares covariances could not be estimated. This may indicate a failed fit!")
+
+    def func_odr(coeff, x):
+        return func(x, *coeff)
+
+    model = scipy.odr.Model(func_odr)
+    data = scipy.odr.RealData(x=x, y=y, sx=std_x, sy=std_y)
+    odr = scipy.odr.ODR(data, model, beta0=fit[0])
+    out = odr.run()
+    coeff = out.beta
+    coeff_covar = out.cov_beta
+    if not np.any(coeff_covar):
+        print(
+            "Warning! The ODR covariances could not be estimated, "
+            "so reverting back to curve_fit parameters and covariances."
+        )
+        # coeff = fit[0]
+        coeff_covar = fit[1]
+    # coeff_stds = out.sd_beta
+    return coeff, coeff_covar
+
+
+def fit_mca_gaussian(
+        mca: MeasMCA, inds: np.ndarray, counts: np.ndarray,
+        peak: float = None, peak_ind: float = None, threshold_width: float = None) -> type_hints.CURVE_FIT:
+    """Get a Gaussian ODR fit for MCA data
+
+    Result is in the same format as for scipy.optimize.curve_fit
+    """
+    if mca.diff_nonlin is None or mca.int_nonlin is None:
+        raise ValueError("The MCA measurement should have nonlinearities configured")
+
+    return fit_odr(
+        stats.gaussian_scaled,
+        inds, counts,
+        std_x=mca.diff_nonlin,
+        std_y=mca.int_nonlin * counts,
+        p0=(peak, peak_ind, 0.4*threshold_width),
+    )
+
+
+def poly2_fit_text(fit: type_hints.CURVE_FIT, prec: str = "3e", err_prec: str = "3e") -> str:
     return \
         f"{fit[0][0]:.{prec}}±{fit[1][0, 0]:.{err_prec}}x^2 + " \
         f"{fit[0][1]:.{prec}}±{fit[1][1, 1]:.{err_prec}}x + " \

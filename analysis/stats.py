@@ -30,6 +30,10 @@ def gaussian_scaled(x, a, mu, sigma):
     return a*scipy.stats.norm.pdf(x, mu, sigma)
 
 
+def gaussian_scaled_odr(coeff: np.ndarray, x):
+    return gaussian_scaled(x, coeff[0], coeff[1], coeff[2])
+
+
 # Utilities
 
 def gaussian_fwhm(sigma):

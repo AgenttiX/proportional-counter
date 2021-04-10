@@ -131,7 +131,7 @@ def log_gas_mult_factor_p10(V, a, b, p, std_V, std_a, std_b, std_p):
     # Converting atm to pa and cm to m
     K = K_Wolff / (const.ATM_TO_PA * 0.01)
     std_K = std_K_Wolff / (const.ATM_TO_PA * 0.01)
-    print(f"K = {K:.3e} +/- {std_K:.3e} V/m Pa")
+    # print(f"K = {K:.3e} +/- {std_K:.3e} V/m Pa")
 
     delta_V = 23.6  # eV
     std_delta_V = 5.4  # eV

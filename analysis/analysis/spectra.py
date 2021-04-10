@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.odr
 from scipy.optimize import curve_fit
 
 from devices.mca import MeasMCA
@@ -21,10 +22,13 @@ def spectra(
         name: str = None,
         vlines: bool = True) -> None:
     """Analyze spectral measurement"""
-    utils.print_title("Spectra")
+    title = "Spectra"
+    if name:
+        title += f" ({name})"
+    utils.print_title(title)
     am = MeasMCA(am_path, diff_nonlin=mca_diff_nonlin, int_nonlin=mca_int_nonlin)
     fe = MeasMCA(fe_path, diff_nonlin=mca_diff_nonlin, int_nonlin=mca_int_nonlin)
-    noise = MeasMCA(noise_path)
+    noise = MeasMCA(noise_path, diff_nonlin=mca_diff_nonlin, int_nonlin=mca_int_nonlin)
 
     fig: plt.Figure = plt.figure()
     if fig_titles:
@@ -77,13 +81,11 @@ def spectra(
         fe_escape_peak = 3.19e3
         cal_x = np.array([ind_am_peak, ind_fe_peak, ind_fe_escape_peak])
         cal_y = np.array([am_peak, fe_peak, fe_escape_peak])
-        cal_yerr = np.sqrt([fit_am[1][1, 1], fit_fe[0][1][1, 1], fit_fe[1][1][1, 1]])
-        fit = curve_fit(
-            fitting.poly1,
-            cal_x,
-            cal_y,
-            sigma=cal_yerr
-        )
+        cal_xerr = np.sqrt([fit_am[1][1, 1], fit_fe[0][1][1, 1], fit_fe[1][1][1, 1]])
+        print("Energy calibration x errors:")
+        print(cal_xerr)
+        fit = fitting.fit_odr(fitting.poly1, cal_x, cal_y, std_x=cal_xerr)
+
         a = fit[0][0]
         b = fit[0][1]
 
@@ -92,7 +94,7 @@ def spectra(
         cal_fit_x = np.array([0, 1024])
         cal_ax.errorbar(
             cal_x, cal_y / 1000,
-            yerr=cal_yerr / 1000,
+            xerr=cal_xerr / 1000,
             fmt=".", capsize=3,
             label="centroids of measured peaks"
         )
@@ -119,9 +121,11 @@ def spectra(
         b = 0
 
     def ind_conv_func(channel: int):
+        """Convert MCA index to energy (keV)"""
         return (a * channel + b) / 1000
 
     def ind_label_func(channels: np.ndarray):
+        """Convert energy value to text label"""
         return [f"{ind_conv_func(x):.2f}" for x in channels]
 
     # The correspondence of the values is dependent on the manual limits

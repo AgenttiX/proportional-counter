@@ -228,8 +228,10 @@ def hv_scans(
             std_V=0, std_a=wire_radius.std(), std_b=can_radius.std(), std_p=pressure_std)
         for volt in volt_range
     ]).T
-    print(theor_gas_mult_log[0])
-    print(theor_gas_mult_log[1])
+    # print("Theoretical gas multiplication factors (natural logarithm)")
+    # print(theor_gas_mult_log[0])
+    # print("Stds for theoretical gas multiplication factors (natural logarithm)")
+    # print(theor_gas_mult_log[1])
     ax2.plot(volt_range, np.exp(theor_gas_mult_log[0]), label="theoretical prediction", color="g")
     ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] + theor_gas_mult_log[1]), linestyle=":", color="g", label=r"$1\sigma$ limits")
     ax2.plot(volt_range, np.exp(theor_gas_mult_log[0] - theor_gas_mult_log[1]), linestyle=":", color="g")

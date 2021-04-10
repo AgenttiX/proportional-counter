@@ -116,6 +116,8 @@ cal_gain = 10
 # Adjustment has a higher uncertainty than a single measurement
 hv_adjustment_std = 5  # volts
 
+# These values are from the MCA specifications
+# https://www.amptek.com/-/media/ametekamptek/documents/products/mca-8000d-digital-multichannel-analyzer-specifications.pdf?la=en&revision=8a383ad0-454e-40d6-9bd7-04748889d667
 # Differential nonlinearity: relative x axis error
 mca_diff_nonlin = 0.6e-2
 # Integral nonlinearity: relative y axis error
