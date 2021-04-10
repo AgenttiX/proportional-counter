@@ -6,6 +6,7 @@ import numpy as np
 import scipy.odr
 from scipy.optimize import curve_fit
 
+import fitting
 import plot
 from meas import MeasCal
 import utils
@@ -49,37 +50,23 @@ def calibration(
         fig2.suptitle("Pulser calibration")
     ax: plt.Axes = fig2.add_subplot()
 
+    # ODR fitting requires that all errors are non-zero
+    std_x = set_voltages * pulser_voltage_rel_std
+    std_x[std_x < 0.01] += 0.01
     ax.errorbar(
         set_voltages,
         peak_heights,
-        xerr=set_voltages * pulser_voltage_rel_std,
+        xerr=std_x,
         yerr=peak_stds,
         fmt=".", capsize=3, label="data"
     )
-    fit = curve_fit(
-        lambda x, a, b: a*x + b,
-        xdata=set_voltages,
-        ydata=peak_heights,
-        sigma=peak_stds,
+    fit = fitting.fit_odr(
+        fitting.poly1,
+        set_voltages, peak_heights,
+        std_x=std_x,
+        std_y=peak_stds,
+        debug=True
     )
-    print("Pulser calibration fit: least squares")
-    print(fit[0])
-    print(fit[1])
-    model = scipy.odr.Model(lambda coeff, x: coeff[0]*x + coeff[1])
-    data = scipy.odr.RealData(
-        x=set_voltages,
-        y=peak_heights,
-        sx=set_voltages * pulser_voltage_rel_std,
-        sy=peak_stds
-    )
-    odr = scipy.odr.ODR(data, model, beta0=fit[0])
-    out = odr.run()
-    print("Pulser calibration fit: ODR")
-    print(out.pprint())
-    # ODR results in a numerical error, so its results are not used
-    # coeff = out.beta
-    # coeff_covar = out.cov_beta
-    # coeff_stds = out.sd_beta
     coeff = np.array([fit[0][0], fit[0][1]])
     coeff_stds = np.sqrt(np.array([fit[1][0, 0], fit[1][1, 1]]))
     ax.plot(
@@ -117,32 +104,15 @@ def calibration(
         yerr=charges_std*y_mult,
         fmt=".", capsize=3, label="data", color="black"
     )
-    fit = curve_fit(
-        lambda x, a, b: a*x + b,
-        xdata=mca_peak_inds,
-        ydata=charges,
-        sigma=charges_std,
+    fit = fitting.fit_odr(
+        fitting.poly1,
+        mca_peak_inds, charges,
+        std_x=mca_peak_inds * mca_diff_nonlin,
+        std_y=charges_std,
+        debug=True
     )
-    print("MCA calibration fit: least squares")
-    print(fit[0])
-    print(fit[1])
-    model = scipy.odr.Model(lambda coeff, x: coeff[0]*x + coeff[1])
-    data = scipy.odr.RealData(
-        x=mca_peak_inds,
-        y=charges,
-        sx=mca_peak_inds * mca_diff_nonlin,
-        sy=charges_std
-    )
-    odr = scipy.odr.ODR(data, model, beta0=fit[0])
-    out = odr.run()
-    print("MCA calibration fit: ODR")
-    print(out.pprint())
-    coeff = out.beta
-    coeff_covar = out.cov_beta
-    coeff_stds = out.sd_beta
-    # coeff = np.array([fit[0][0], fit[0][1]])
-    # coeff_covar = fit[1]
-    # coeff_stds = np.array([coeff_covar[0, 0], coeff_covar[1, 1]])
+    coeff = fit[0]
+    coeff_covar = fit[1]
     fit_label = f"fit (y = {coeff[0]*y_mult:.2e}±{coeff_stds[0]*y_mult:.2e}x + {coeff[1]*y_mult:.2e}±{coeff_stds[1]*y_mult:.2e})"
     print(fit_label)
     ax3.plot(

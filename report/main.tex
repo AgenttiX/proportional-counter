@@ -49,10 +49,9 @@ The detector consists of a drink can that serves as the cathode, and a thin anod
 % When high voltage is applied between the cathode and the anode and incoming high-energy radiation ionizes the gas inside, the resulting electrons drift towards the anode wire.
 % Close to the wire the field strength is high enough for avalanche formation, and the electrons are multiplied, resulting in an electrical pulse that can be detected with read-out electronics.
 
-The system was tested with Fe-55 and Am-241 sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
-This setup demonstrated sufficient resolution to distinguish the TODO peaks.
-
-% TODO add main results here.
+The system was tested with $^{55}$Fe and $^{241}$Am sources, and a multichannel analyzer was used to collect the emission spectra, which were then analyzed with self-developed software.
+The setup was calibrated using the primary $^{55}$Fe and $^{241}$Am X-ray emission peaks, and it demonstrated sufficient resolution  and sensitivity to distinguish two of the the $^{237}$Np L-peaks and one $^{241}$Am peak that belong to the $^{241}$Am decay process.
+The voltage dependence of the gas multiplication factor was also investigated.
 
 The detector was also tested with a self-built pre-amplifier.
 However, these results were inconclusive due to unexpected degradation of the detector.
@@ -230,9 +229,10 @@ and the variances are \cite[p. 20--22]{cowan_statistical_1998}
 \sigma_{y_k}^2 \approx \sum_{i=1}^n \left( \frac{\partial y_k}{\partial x_i} \right)_{\mathbf{x}=\mathbf{\mu}}^2 \sigma_i^2.
 \label{eq:variance}
 \end{equation}
-In the analysis code of this project the general case of this error propagation has been implemented symbolically using
-\href{https://www.sympy.org/}{SymPy}
-for use with the computation of the collected charges and the Diethorn formula.
+In the analysis code of this project the general case of this error propagation has been implemented using
+\href{https://www.sympy.org/}{SymPy},
+which calculates the necessary partial derivatives symbolically.
+This is used for the computation of the collected charges and the Diethorn formula.
 The error propagation of fit functions is handled directly by the
 \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html}{scipy.optimize.curve\_fit}
 and
@@ -257,6 +257,7 @@ Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spec
 \fi
 
 
+\iffalse
 \subsection{Read-out electronics}
 \label{electronics}
 
@@ -264,6 +265,7 @@ Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spec
 Capacitive decoupling \ref{fig:theory_schematic}
 
 The detector was also tested with a custom pre-amplifier, and the results are in appendix \ref{pre_amp}.
+\fi
 
 
 \clearpage
@@ -277,7 +279,7 @@ Answer the questions on page 5 of the instructions!
 
 \subsection{Detector assembly}
 \label{assembly}
-We manufactured the detector of this project from an aluminum drink can according to the schematic of figure \ref{fig:schematic}.
+The detector of this project was manufactured from an aluminum drink can according to the schematic of figure \ref{fig:schematic}.
 The parts were provided by the course organizers, except for the drink can.
 
 \begin{figure}[ht!]
@@ -288,20 +290,19 @@ The parts were provided by the course organizers, except for the drink can.
 \label{fig:schematic}
 \end{figure}
 
-First we prepared the parts of the detector by removing a single strand from a copper wire and cutting two pieces of brass tube for the wire mounting.
+First the parts were prepared by removing a single strand from a copper wire and cutting two pieces of brass tube for the wire mounting.
 The course organizers removed the top of the can and drilled two holes to its bottom, one to the center and one off-center.
-We then smoothened the cutting edges to avoid sharp edges that could cause sparking, and grinded away the anti-corrosion layer for long-term stability of the detector.
+The cutting edges were then smoothened to avoid sharp edges that could cause sparking, and the anti-corrosion layer was grinded away for long-term stability of the detector.
 Table \ref{table:sizes} contains size measurements of the can and the brass tubes.
 Each of the results is averaged from five measurements.
 The can thickness and brass tube diameter were measured using a
 \href{https://en.wikipedia.org/wiki/Micrometer}{micrometer}, and the rest were measured with a
 \href{https://en.wikipedia.org/wiki/Calipers}{caliper}.
 
-Once the can and the other parts were ready, we put them to an ultrasonic cleaner for grease removal, as any leftover grease in the detector could interact due to the high-voltage conditions, causing degradation of detector performance.
+Once the can and the other parts were ready, they were put to an ultrasonic cleaner for grease removal, as any leftover grease in the detector could interact due to the high-voltage conditions, causing degradation of detector performance.
 To avoid contaminating the cleaned parts, every step from now on had to performed with rubber gloves.
 
-We prepared the anode mounting by gluing the longer brass tube 
-to the hole in the center of a plastic screw.
+The anode mounting was prepared by gluing the longer brass tube to the hole in the center of a plastic screw.
 To avoid filling the hole within the brass tube, the outside of the brass tube was coated with glue, and the tube was then pushed into the hole.
 The screw was then attached to the can with a plastic nut, as in figure \ref{fig:anode_mounting}.
 
@@ -336,27 +337,28 @@ The screw was then attached to the can with a plastic nut, as in figure \ref{fig
 \caption{Detector construction steps}
 \end{figure}
 
-The electric connection of the anode would be supplied by a high-voltage coaxial connector, which we attached to one of the
+The electric connection of the anode would be supplied by a high-voltage coaxial connector, which was attached to one of the
 \href{https://en.wikipedia.org/wiki/Poly(methyl_methacrylate)}{plexiglass}
 end caps with a nut and some epoxy glue.
 The nut is sufficient to keep the connector in place, but the glue makes the connection airtight.
-Once the connector was in place, we pushed the anode wire through the brass tube at the bottom of the can and pulled it out of the top of the can.
-We then pushed the wire through the shorter brass tube and twisted it into a hook so that it stayed in place when we pushed the brass tube into the connector.
+Once the connector was in place, the anode wire was pushed through the brass tube at the bottom of the can and pulled out of the top of the can.
+The wire was then pushed through the shorter brass tube and twisted into a hook so that it stayed in place when the brass tube was pushed into the connector.
 The electrical connection was then formed by soldering the brass tube and therefore also the wire to the connector as in figure \ref{fig:connector}
 In this step one should be careful not to leave the end of the wire exposed from the solder, as such a sharp tip would cause high electric fields and therefore sparking.
 
 Now the wire was in place, but it had to be tightened.
 This was accomplished by taping the top cap to the can, knotting the wire around a nut and placing the wire over a wheel, as in figure \ref{fig:tightening}.
-We then secured the tightening by soldering the wire to the brass tube, and then we cut the remaining wire.
+The tightening was then secured by soldering the wire to the brass tube, and then the remaining wire was cut.
 In this step one should be careful to solder only as long as is needed for the solder to melt, as heating the wire for too long will cause it to break, as happened once during the manufacturing of this detector.
 In the case of such an incident, a new wire has to be soldered to the high voltage connector.
 
 Now the wire was in place, and the detector had to be sealed.
-We used large amounts of epoxy to attach the end caps, and office tape to hold the caps in place.
+Large amounts of epoxy were used to attach the end caps, and office tape to hold the caps in place.
 In this step one should wait for the epoxy to dry properly before removing the top cap, as otherwise the cap may move and break the strained anode wire.
-Once the epoxy of the caps was dry, we added some more to ensure airtightness, and then attached a pipe to the hole on each of the end caps.
+Once the epoxy of the caps was dry, some more was added to ensure airtightness.
+Then a pipe was attached to the hole on each of the end caps.
 
-Finally we brushed one side of the can with sandpaper and attached a piece of copper tape so that it went all the way to the shielding of the high voltage connector.
+Finally one side of the can was brushed with sandpaper and attached a piece of copper tape so that it went all the way to the shielding of the high voltage connector.
 This established an electrical connection between the ground and the can.
 It should be noted that the copper tape should be put on a different side than on which the radiation source is placed, as the copper tape would otherwise absorb some of the radiation.
 A piece of aluminum foil was put over the bottom of the can to provide additional shielding from electromagnetic interference, as the end of the anode wire slightly extrudes from within the can.
@@ -390,7 +392,7 @@ The electrical connections of the setup used for both calibration and the measur
 \FloatBarrier
 The first step was the calibration of the multichannel analyzer to the collected charge.
 This was done by setting the bias voltage to zero and attaching a pulse generator to the amplifier input, and an oscilloscope and the multichannel analyzer to its output, as in figure \ref{fig:pulser_setup}.
-The voltage over a capacitor is defined by the equation $V = \frac{Q}{C}$, where $Q$ is the collected charge, $C$ is the capacitance of the pre-amplifier.
+The voltage over a capacitor is defined by the equation $V = \frac{Q}{C}$, where $Q$ is the collected charge, $C$ is the 1 pF test input capacitance of the pre-amplifier.
 Therefore the collected charge is defined by $Q = CV$, where $V$ is the output pulse height measured with the oscilloscope.
 The pulse height was determined by comparing the value of an exponential fit at the peak time to the average voltage before the pulse.
 These are illustrated in figure \ref{fig:cal_trace}.
@@ -416,7 +418,7 @@ These are illustrated in figure \ref{fig:cal_trace}.
 \label{setup_testing}
 For the testing with radiation sources the electrical connections were the same as for the calibration, except that the pulse generator was removed and that the oscilloscope was attached to the output of the spectral amplifier.
 The detector was placed within a lead shielding that consisted of two lead-acid batteries, and the radioactive source was placed on top, as in figure \ref{fig:setup_testing}.
-For the $^{241}$Am source we had to use a thick metal sheet with a thin slit as a collimator to reduce the intensity of the radiation.
+For the $^{241}$Am source a thick metal sheet with a thin slit had to be used as a collimator to reduce the intensity of the radiation.
 Without the attenuator the pulses would pile up so that individual pulses would no longer be detectable separately for energy measurement.
 Due to its different enclosure and higher activity, the $^{241}$Am source also required the use of additional lead shielding around the setup to prevent unnecessary user exposure to the radiation.
 
@@ -432,19 +434,28 @@ Due to its different enclosure and higher activity, the $^{241}$Am source also r
 \clearpage
 \section{Results and discussion}
 \label{results}
-In this chapter we discuss the measurement results of the setups described in chapter \ref{assembly}.
+This chapter discusses the measurement results of the setups described in chapter \ref{assembly}.
 The code used for the data analysis is available in the GitHub repository. \cite{repo}
 
 
 \subsection{Calibration}
 \label{results_calibration}
-By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in \ref{fig:mca_calibration}.
-The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two due to technical issues.
+By varying the voltage of the test pulse we get the relationship between the peak MCA channel and the collected charge as in figure \ref{fig:mca_calibration}.
+The error bars represent the standard deviation of five measurements except for one data point which had four successful measurement and one data point which had only two due failed data captures that were not noticed until analyzing the data.
 To this data we can make the linear fit
 \begin{equation}
-Q = g \cdot \text{Channel}_\text{MCA} + h,
+Q = g \cdot \text{Channel}_\text{MCA} + h.
+\label{eq:calibration}
 \end{equation}
-and for the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \cdot 10^{-7}$ pC/channel and $h = -1.04 \cdot 10^{-4} \pm 6.99 \cdot 10^{-5}$ pC.
+We used orthogonal distance regression to account for both the differential nonlinearity of the MCA and the standard deviation of the measured voltages for each pulser setting.
+The
+\href{https://en.wikipedia.org/wiki/Differential_nonlinearity}{differential nonlinearity}
+of the MCA is 0.6 \%, and the
+\href{https://en.wikipedia.org/wiki/Integral_nonlinearity}{integral nonlinearity}
+is 0.02 \%.
+The resulting error bars for the collected charge are significantly tighter than for Winkler et al., as we extracted the pulse heights and their standard deviations with software instead of measuring and estimating the error by eye.
+For the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \cdot 10^{-7}$ pC/channel and $h = -1.04 \cdot 10^{-4} \pm 6.99 \cdot 10^{-5}$ pC.
+
 
 \begin{figure}[ht!]
 \centering
@@ -455,6 +466,7 @@ and for the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \c
 
 It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
 The relationship between these is illustrated in figure \ref{fig:pulser_calibration}.
+The relative error of the pulser voltages was assumed to be 5 \% with a minimum error of 10 mV, and orthogonal distance regression was used for the fitting.
 
 \begin{figure}[ht!]
 \centering
@@ -470,6 +482,8 @@ The relationship between these is illustrated in figure \ref{fig:pulser_calibrat
 To find the optimal settings for the detector we tested it with several voltages and gain values.
 With the $^{241}$Am source we obtained the spectra in figure \ref{fig:am_scan_fits} and for the $^{55}$Fe source the data in figure \ref{fig:fe_scan_fits}.
 For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152--2301 V, as within this range suitable gain values were available to fit the signal within the range of the multichannel analyzer.
+The voltage and coarse gain values for each measurement are provided in the figures.
+The fine gain of the amplifier was held constant.
 
 \begin{figure}[ht!]
 \centering
@@ -485,6 +499,21 @@ For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152
 \label{fig:fe_scan_fits}
 \end{figure}
 
+\FloatBarrier
+
+Orthogonal distance regression was used to fit a Gaussian to the primary peak of each measurement.
+Nonlinearities of the MCA were included in the fitting as for the calibration.
+The channel numbers of the centroids of the peaks were extracted and the calibration was used to convert these to the collected charges with equation \ref{eq:calibration} multiplied by the ratio of the calibration and measurement gain values:
+\begin{equation}
+Q = (g \cdot \text{Channel}_\text{MCA} + h) \frac{g_c}{g_m},
+\end{equation}
+where $g_c$ is the gain used in the calibration, and $g_m$ is the gain of each measurement.
+Error propagation for this function was performed as in section \ref{error_analysis}.
+The relative uncertainty of the gain values was estimated to be 5 \%.
+The results are shown in figure \ref{fig:hv_scans}.
+For the $^{55}$Fe source the measured charge increases exponentially for the entire measured range, whereas for the $^{241}$Am there is a change of voltage dependence at about 1500 V.
+Consequently it appears that the detector reaches the desired proportional region at about 1500 V.
+
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/python/hv_scans.eps}
@@ -493,9 +522,10 @@ For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152
 \end{figure}
 
 \FloatBarrier
-For the $^{55}$Fe source the measured charge increases exponentially for the entire measured range.
-On the other hand, for the $^{241}$Am there is a change of voltage dependence at about 1500 V.
-Consequently it appears that the detector reaches the desired proportional region at about 1500 V.
+The measured charges were converted to gas multiplication factors with formula TODO, and the Diethorn formula was used to obtain theoretical predictions.
+The anode and cathode radii and their uncertainties are provided in table \ref{table:sizes}, and air pressure was measured to be $1014 \pm 5$ mbar.
+The results are plotted in figure \ref{fig:gas_mult}.
+The results fit within the error limits of the theoretical predictions, but are consistently slightly higher.
 
 \begin{figure}[ht!]
 \centering
@@ -504,30 +534,33 @@ Consequently it appears that the detector reaches the desired proportional regio
 \label{fig:gas_mult}
 \end{figure}
 
+\FloatBarrier
+The resolution of the detector was also investigated by analyzing the peak width as a function of the operation voltage as in figure \ref{fig:resolution}.
+For optimal resolution a small peak width is desired.
+The ideal operation voltage for $^{241}$Am appears to be around 1530 V, whereas for $^{55}$Fe the peak width slightly decreases, as voltage is lowered beyond the suitable operation range.
+Presumably this could mean that the ideal measurement voltage for $^{55}$Fe is in the same range as for $^{241}$Am, but improvements in the readout electronics are required for operation in this range.
+
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/python/resolution.eps}
 \caption{Resolution as a function of voltage}
-\label{fig:gas_mult}
+\label{fig:resolution}
 \end{figure}
+
+\FloatBarrier
+Overall the results indicate that the detector is operating as intended, and its behaviour corresponds to the theoretical predictions.
+They also provide some insights on the optimal operation conditions, but more measurements with different sources would be required to achieve conclusive results on the latter.
 
 
 
 \clearpage
 \subsection{Spectral measurement}
 \label{results_spectral}
-To obtain accurate spectral data, we ran long spectral measurements with both sources, and without any source for determining the noise level.
+To obtain accurate spectral data, long spectral measurements were made with both sources, and without any source for determining the noise level.
 The $^{241}$Am source was measured for 30 min, the $^{55}$Fe source for 15 min and the noise for 60 min.
 Figure \ref{fig:spectra} contains the noise-subtracted spectra.
-The energy axis has been determined by fitting Gaussians to the primary peaks and using their means as reference points corresponding to their known emission energies.
-
-The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
-
-\begin{todo}
-TODO: The uncertainty is not merely the width of the peak. We have to estimate all the uncertainties involved and propagate the errors.
-
-TODO: analyze the secondary peaks of the Am-241 spectrum.
-\end{todo}
+The energy axis has been determined by fitting Gaussians to the primary peak of $^{241}$Am and the two peaks of the $^{55}$Fe spectrum, and using their means as reference points corresponding to their known emission energies.
+This energy calibration is illustrated in figure \ref{fig:spectral_calibration}.
 
 \begin{figure}[ht!]
 \centering
@@ -543,17 +576,37 @@ TODO: analyze the secondary peaks of the Am-241 spectrum.
 \label{fig:spectral_calibration}
 \end{figure}
 
+\FloatBarrier
+The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
+On the 
+
+\begin{table}[ht!]
+\centering
+\caption{Measured spectral peaks}
+\begin{tabular}{lllll}
+Source	& MCA ch.	& $E_\text{est.}$ (keV)	& $E_\text{theor.}$ (keV)	& Origin \\
+\hline
+$^{55}$Fe	& 46.22			& -			& 3.19 			& Argon escape peak \cite{winkler_gaseous_2015} \\
+$^{55}$Fe	& 91.60			& -			& 5.90 			& $^{55}$Fe \cite{winkler_gaseous_2015} \\
+$^{241}$Am	& 276.88			& 17.84		& 17.751			& $^{237}$Np L$_\beta$ \cites{maeda_peak_2015}{am241_spectrum} \\
+$^{241}$Am	& 330.28			& 21.25		& 20.784			& $^{237}$Np L$_\gamma$ \cites{maeda_peak_2015}{am241_spectrum} \\
+$^{241}$Am	& 412.10			& 26.48		& 26			& $^{241}$Am \cite{am241_spectrum} \\
+$^{241}$Am	& 771.82			& 49.47		&				& \\
+$^{241}$Am	& 929.26			& -			& 59.5409		& Byproduct of $\alpha$-decay \cite{winkler_gaseous_2015} \\
+\end{tabular}
+\end{table}
+
+
 
 
 \clearpage
 \section{Conclusions}
 \label{conclusions}
-Discuss results in context.
-No need to repeat the results.
-Refer to the introduction.
-Was the aim fulfilled?
-Were the results as expected? If not, why?
-Is the mesurement precise enough to discuss ASDF?
+
+The detector works as intended, and has shown its capability of distinguishing the energies of new spectral peaks accurately.
+Therefore it is shown to be suitable for its intended purpose of being a cost-effective alternative for existing detectors.
+However, in the measurements of appendix \ref{pre_amp} the detector showed unexpected degradation, which casts doubt on its long-term stability.
+Additionally more error sources could be included in the error analysis, as at present the error bars are much tighter than the variations seen in the results.
 
 
 \clearpage
@@ -561,25 +614,10 @@ Is the mesurement precise enough to discuss ASDF?
 
 \section{Pre-amplifier}
 \label{pre_amp}
-In addition to using the amplifier available at the lab, we constructed a pre-amplifier ourselves.
-This pre-amplifier required a power supply, which we also constructed ourselves, as the operational amplifier used in the pre-amplifier requires supplies of both positive and negative voltage of 5 V.
-We started by testing the power supply components on a breadboard, as in figure \ref{fig:pre_amp_psu_testing}.
-Once we had verified that the components worked, we soldered them on a PCB, resulting in the device in figure \ref{fig:pre_amp_psu}
-
-Figure \ref{fig:pre_amp_schematic} provides a schematic of this pre-amplifier.
-Its core is the
-\href{https://www.ti.com/product/OPA657}{Texas Instruments OPA657}
-\href{https://en.wikipedia.org/wiki/Operational_amplifier}{operational amplifier}, which is configured for the gain value $G = 21$ with a suitable choice of resistors.
-
-TODO GAIN FORMULA HERE
-
-The assembled pre-amplifier is shown in figure \ref{fig:pre_amp_board}, and its mounting is illustrated in figure \ref{fig:pre_amp_mounting}.
-We also built a switch panel of figure \ref{fig:pre_amp_switch} for the power supply.
-The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
-
-\begin{todo}
-Describe preamp construction and what was planned to do with it
-\end{todo}
+A custom pre-amplifier was constructed to serve as a replacement for the commercial pre-amplifier used in the measurements of section \ref{results}.
+This pre-amplifier required a custom power supply, as the operational amplifier used in the pre-amplifier requires supplies of both positive and negative voltage of 5 V.
+The first step was to test the power supply components on a breadboard, as in figure \ref{fig:pre_amp_psu_testing}.
+Once it was verified that the components worked, they were soldered on a PCB, resulting in the device in figure \ref{fig:pre_amp_psu}
 
 \begin{figure}[ht!]
 \centering
@@ -590,7 +628,6 @@ Describe preamp construction and what was planned to do with it
 
 \begin{figure}[ht!]
 \centering
-
 \begin{subfigure}[t]{0.48\textwidth}
 \includegraphics[width=\textwidth]{fig/P1170891-cropped.jpg}
 \end{subfigure}
@@ -602,6 +639,17 @@ Describe preamp construction and what was planned to do with it
 \caption{Power supply for the pre-amplifier}
 \label{fig:pre_amp_psu}
 \end{figure}
+
+\FloatBarrier
+The pre-amplifier itself was assembled on another PCB according to the schematic in figure \ref{fig:pre_amp_schematic}.
+Its core is the
+\href{https://www.ti.com/product/OPA657}{Texas Instruments OPA657}
+\href{https://en.wikipedia.org/wiki/Operational_amplifier}{operational amplifier},
+and the values for the various resistors and capacitors have been set according to its specifications to achieve the gain value $G = 21$.
+The assembled pre-amplifier is shown in figure \ref{fig:pre_amp_board}, and its mounting is illustrated in figure \ref{fig:pre_amp_mounting}.
+We also built a switch panel of figure \ref{fig:pre_amp_switch} for the power supply.
+The final assembled pre-amplifier is shown in figure \ref{fig:pre_amp}.
+
 
 \begin{figure}[ht!]
 \centering
@@ -645,9 +693,9 @@ Describe preamp construction and what was planned to do with it
 \end{figure}
 
 
-\clearpage
-Once the pre-amplifier was assembled, we tested its frequency response with an external pulser.
-These results are plotted in figure \ref{fig:pre_amp_freq_response}.
+\FloatBarrier
+Once the pre-amplifier was assembled, its frequency response was tested with an external pulser.
+These results are plotted in figure \ref{fig:pre_amp_freq_response} with a cubic interpolation.
 The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, as the reflections of the signal within the amplifier become significant.
 
 \begin{figure}[ht!]
@@ -657,6 +705,13 @@ The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, a
 \label{fig:pre_amp_freq_response}
 \end{figure}
 
+The dependence of the gain on the input amplitude was also tested.
+For this an adjustable external attenuator was used, but it had to be calibrated first by measuring its attenuation as a function of the setting, which was an adjustable integer from 0 to 10.
+This gave the results of figure \ref{fig:attenuator}.
+We also established a linear fit to analyze the consistency of the results.
+The pre-amplifier was then connected in series with the attenuator, and the calibration fit was used to obtain the attenuated input amplitudes.
+The gain was then calculated as a ratio of the output and input amplitudes, and the results are plotted in figure \ref{fig:pre_amp_gain}.
+Since no significant trend was detected in the results, we can estimate the gain to be the mean of the measured values: $G=21.51 \pm 0.44$.
 
 \begin{figure}[ht!]
 \centering
@@ -669,9 +724,16 @@ The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, a
 \centering
 \includegraphics[width=\textwidth]{fig/python/preamp_gain}
 \caption{Pre-amplifier gain by input amplitude at $f$ = 10 kHz}
-\label{fig:attenuator}
+\label{fig:pre_amp_gain}
 \end{figure}
 
+\FloatBarrier
+Now that the gain of the pre-amplifier was known, it was installed to the setup to test its operation with the detector.
+However, unfortunately the detector had degraded between the measurements with the commercial amplifier and these measurements, and we were not able to measure good spectra.
+These failed results are plotted in \ref{fig:pre_amp_testing}.
+However, the same pre-amplifier was also measured with the detector of a fellow student, and the results are plotted in figure \ref{fig:pre_amp_testing_nikita}.
+The $^{55}$Fe spectrum and the primary peak of $^{241}$Am are clearly visible, but some of the secondary peaks of $^{241}$Am are lost in the noise.
+In this measurement the amplification was also not ideal, as the $^{241}$Am peak is only around the channel 791, leaving some of the higher MCA channels unused.
 
 \begin{figure}[ht!]
 \centering
@@ -683,10 +745,16 @@ The frequency reponse is flat up to 10 kHz, but then fluctuates significantly, a
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{fig/python/spectra_custom_preamp_Nikitas_detector}
-\caption{Measured spectra with the custom pre-amplifier and a coursemate's detector}
+\caption{Measured spectra with the custom pre-amplifier and the detector of a fellow student}
 \label{fig:pre_amp_testing_nikita}
 \end{figure}
 
+
+\FloatBarrier
+Overall, despite the unexpected degradation of the detector, these results prove that the pre-amplifier is useful for its intended purpose with the measurement setup.
+Its resolution is not as good as with the commercial amplifier, but it's highly cost-effective and compact, and has significant room for improvement.
+For example, the gain could be made adjustable by replacing one of the resistors on the amplifier PCB with a potentiometer.
+Additional improvements could also be made regarding the noise level, but on the other hand these can be worked around by increasing the measurement time.
 
 
 \clearpage
@@ -741,7 +809,6 @@ Anode wire diameter (\textmu m)
 \end{table}
 
 
-\clearpage
 \section{Measurement notes}
 
 This appendix contains copies of some of the original measurement note files.

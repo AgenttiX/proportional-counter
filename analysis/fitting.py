@@ -164,11 +164,6 @@ def fit_fe(
 
     cut_inds, threshold_width, peak_ind, peak = get_cut(counts, threshold_level, cut_width_mult)
 
-    # Vertical lines according to the cuts
-    if vlines:
-        # ax.scatter(peak_ind, peak, color="r")
-        ax.vlines((cut_inds[0], cut_inds[-1]), ymin=0, ymax=peak, label="fit cut", colors="r", linestyles=":")
-
     fit = fit_mca_gaussian(mca, cut_inds, counts[cut_inds], peak, peak_ind, threshold_width)
     if not secondary:
         ax.plot(
@@ -291,7 +286,8 @@ def fit_odr(
         x: np.ndarray, y: np.ndarray,
         std_x: tp.Union[float, np.ndarray] = None,
         std_y: np.ndarray = None,
-        p0: tp.Union[tuple, np.ndarray] = None) -> type_hints.CURVE_FIT:
+        p0: tp.Union[tuple, np.ndarray] = None,
+        debug: bool = False) -> type_hints.CURVE_FIT:
     """Generic ODR fitting
 
     Fitting function should have parameters of the form x, coeff1, coeff2 etc.
@@ -307,14 +303,16 @@ def fit_odr(
     data = scipy.odr.RealData(x=x, y=y, sx=std_x, sy=std_y)
     odr = scipy.odr.ODR(data, model, beta0=fit[0])
     out = odr.run()
+    if debug:
+        out.pprint()
     coeff = out.beta
     coeff_covar = out.cov_beta
     if not np.any(coeff_covar):
         print(
             "Warning! The ODR covariances could not be estimated, "
-            "so reverting back to curve_fit parameters and covariances."
+            "so reverting back to curve_fit results (both parameters and covariances)."
         )
-        # coeff = fit[0]
+        coeff = fit[0]
         coeff_covar = fit[1]
     # coeff_stds = out.sd_beta
     return coeff, coeff_covar

@@ -305,6 +305,7 @@ def hv_scan_resolution(ax: plt.Axes, voltages: np.ndarray, fits: tp.List[type_hi
     ax.plot(fit_x, fit_eval)
     print("Resolution fit:", label)
     print(fitting.poly2_fit_text(fit))
+    print("Minimum location:", -fit[0][1] / (2*fit[0][0]))
 
 
 def read_hv_scan(

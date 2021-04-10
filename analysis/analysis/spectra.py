@@ -20,7 +20,8 @@ def spectra(
         mca_int_nonlin: float = None,
         fig_titles: bool = True,
         name: str = None,
-        vlines: bool = True) -> None:
+        vlines: bool = True,
+        sec_fits: bool = True) -> None:
     """Analyze spectral measurement"""
     title = "Spectra"
     if name:
@@ -128,25 +129,27 @@ def spectra(
         """Convert energy value to text label"""
         return [f"{ind_conv_func(x):.2f}" for x in channels]
 
-    # The correspondence of the values is dependent on the manual limits
-    ax3 = plot.double_x_axis(ax1, tick_locs=np.arange(0, am.channels[-1], 200), tick_label_func=ind_label_func)
-    ax3.set_xlabel("Energy (keV)")
+    if a != 0:
+        # The correspondence of the values is dependent on the manual limits
+        ax3 = plot.double_x_axis(ax1, tick_locs=np.arange(0, am.channels[-1], 200), tick_label_func=ind_label_func)
+        ax3.set_xlabel("Energy (keV)")
 
-    try:
-        am_sec_fits = [
-            fitting.fit_manual(am, ax1, 250, 300, subtracted=am_subtracted, vlines=vlines),
-            fitting.fit_manual(am, ax1, 300, 360, subtracted=am_subtracted, vlines=vlines),
-            fitting.fit_manual(am, ax1, 380, 440, subtracted=am_subtracted, vlines=vlines),
-            fitting.fit_manual(am, ax1, 710, 830, subtracted=am_subtracted, vlines=vlines)
-        ]
-    except RuntimeError:
-        print("WARNING! Secondary fits failed.")
-        am_sec_fits = None
+    if sec_fits:
+        try:
+            am_sec_fits = [
+                fitting.fit_manual(am, ax1, 250, 300, subtracted=am_subtracted, vlines=vlines),
+                fitting.fit_manual(am, ax1, 300, 360, subtracted=am_subtracted, vlines=vlines),
+                fitting.fit_manual(am, ax1, 380, 440, subtracted=am_subtracted, vlines=vlines),
+                fitting.fit_manual(am, ax1, 710, 830, subtracted=am_subtracted, vlines=vlines)
+            ]
+        except RuntimeError:
+            print("WARNING! Secondary fits failed.")
+            am_sec_fits = None
 
-    if fit_fe is not None and fit_am is not None and am_sec_fits is not None:
-        for i_fit, fit in enumerate(am_sec_fits):
-            ch = fit[0][1]
-            print(f"Am secondary peak {i_fit+1}: ch {ch}, {ind_conv_func(ch)} keV")
+        if fit_fe is not None and fit_am is not None and am_sec_fits is not None:
+            for i_fit, fit in enumerate(am_sec_fits):
+                ch = fit[0][1]
+                print(f"Am secondary peak {i_fit+1}: ch {ch}, {ind_conv_func(ch)} keV")
 
     ax1.set_xlabel("MCA channel")
     ax1.set_ylabel(r"Count ($^{241}Am$)")

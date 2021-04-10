@@ -199,7 +199,8 @@ def main():
         mca_diff_nonlin=mca_diff_nonlin,
         fig_titles=fig_titles,
         name="custom_preamp",
-        vlines=vlines
+        vlines=vlines,
+        sec_fits=False
     )
     analysis.spectra(
         os.path.join(data_folder, "preamp", "Am_custom_preamp_2192_Nikitas_detector.mca"),
@@ -212,7 +213,8 @@ def main():
         mca_diff_nonlin=mca_diff_nonlin,
         fig_titles=fig_titles,
         name="custom_preamp_Nikitas_detector",
-        vlines=vlines
+        vlines=vlines,
+        sec_fits=False
     )
 
     plt.show()
