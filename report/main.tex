@@ -54,7 +54,7 @@ The setup was calibrated using the primary $^{55}$Fe and $^{241}$Am X-ray emissi
 The voltage dependence of the gas multiplication factor was also investigated.
 
 The detector was also tested with a self-built pre-amplifier.
-However, these results were inconclusive due to unexpected degradation of the detector.
+However, the detector experienced unexpected degradation, due to which the results were inconclusive, but testing the pre-amplifier with another detector was successful.
 
 \tableofcontents
 
@@ -84,37 +84,50 @@ These measurements are discussed in the appendix \ref{pre_amp}.
 \label{theory}
 
 \subsection{Radiation sources and interaction of their radiation with matter}
+\iffalse
 Radiation can be categorized to ionizing and non-ionizing radiation depending on its capability of exciting electrons out of matter.
 In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
 Non-ionizing radiation refers primarily to electromagnetic radiation of visible and longer wavelengths.
 In addition to these there are other forms of radiation such as neutrons and neutrinos.
+\cite{knoll_radiation_2010}
 
 The effects of electromagnetic radiation vary significantly by wavelength.
 Whereas the longer wavelengths are mostly capable of inducing thermal motion, other excitations and electric currents, the shorter wavelengths from ultraviolet radiation onwards have enough energy to remove an electron from an atom or a molecule and are therefore ionizing.
-
-Radiation can be characterized
+Radiation can also be characterized by its capability of penetrating matter, which is called the hardness of the radiation.
+Generally the hardness increases with the energy of the quanta.
 \cite{knoll_radiation_2010}
-
-However, the details of the interaction of high-energy photons with matter vary significantly by wavelength.
 
 Alpha and beta radiation are the most prominent types of particle radiation.
 Alpha radiation consists of 
+\fi
 
-In this project work we used $^{55}$Fe and $^{241}$Am sources.
-Both emit various types of radiation in their decay processes, but due to their closed packaging, only electromagnetic radiation was allowed to escape the sources.
+In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
+In this project $^{55}$Fe and $^{241}$Am sources were used.
 $^{55}$Fe decays by electron capture of the innermost shell (K-shell) into $^{55}$Mn with a half-life of 2.75 a.
-This results in an electron vacancy, which gets filled by an electron from the outer shells, resulting in a sequence of electron transfers, the energy of which is released as Auger electrons and X-ray emissions.
-
-
+This results in an electron vacancy, which gets filled by an electron from the outer shells, resulting in a sequence of electron transfers, the energy of which is released as Auger electrons and soft X-ray emissions.
+$^{241}$Am decays by $\alpha$-decay to $^{237}$Np with the reaction
 \begin{equation}
-^{241}_{95}\text{Am} \rightarrow ^{237}_{93}\text{Np} + ^4_2 \alpha + \gamma (59.24 \text{keV})
+^{241}_{95}\text{Am} \rightarrow ^{237}_{93}\text{Np} + ^4_2 \alpha + \gamma (59.24 \text{keV}),
 \end{equation}
+therefore producing a weak $\gamma$-ray as a byproduct.
+However, due to the closed packaging of the sources, only the X- and $\gamma$-rays were allowed to escape the sources.
+\cite{winkler_gaseous_2015}
+
+There are three primary mechanisms for the interaction of X- and $\gamma$-rays with matter.
+These are photoelectric absorption, Compton scattering and pair production.
+In photoelectric absorption the photon is completely absorbed by an atom, and its energy is transferred to an electron that gets excited out of the atom, resulting in ionization and a vacancy in the shell.
+With high-energy $\gamma$-rays the excited electrons are usually from the innermost shells such as the K-shell.
+These vacancies get quickly filled by electrons from the outer shells, and the excess energy is released by characteristic X-rays and Auger electrons.
+
+Compton scattering is the predominant mechanism for the $\gamma$-rays of radioisotope sources.
+In Compton scattering the photon is deflected by an electron of the absorbing material, and some of the kinetic energy of the photon gets transferred to the electron, resulting in ionization.
+
+If the $\gamma$-ray energy exceeds twice the rest-mass of an electron (1.02 MeV), the $\gamma$-ray may get
+However, the energies in 
 
 
 
-In this project we used an
-
-In this project we focus on x-rays and alpha, beta and gamma radiation.
+These interactions and the interactions of particle radiation with matter are discussed with more detail in the book \textit{Radiation Detection and Measurement} \cite{knoll_radiation_2010}.
 
 
 
@@ -587,7 +600,7 @@ On the
 Source	& MCA ch.	& $E_\text{est.}$ (keV)	& $E_\text{theor.}$ (keV)	& Origin \\
 \hline
 $^{55}$Fe	& 46.22			& -			& 3.19 			& Argon escape peak \cite{winkler_gaseous_2015} \\
-$^{55}$Fe	& 91.60			& -			& 5.90 			& $^{55}$Fe \cite{winkler_gaseous_2015} \\
+$^{55}$Fe	& 91.60			& -			& 5.90 			& $^{55}$Fe electron capture \cite{winkler_gaseous_2015} \\
 $^{241}$Am	& 276.88			& 17.84		& 17.751			& $^{237}$Np L$_\beta$ \cites{maeda_peak_2015}{am241_spectrum} \\
 $^{241}$Am	& 330.28			& 21.25		& 20.784			& $^{237}$Np L$_\gamma$ \cites{maeda_peak_2015}{am241_spectrum} \\
 $^{241}$Am	& 412.10			& 26.48		& 26			& $^{241}$Am \cite{am241_spectrum} \\
