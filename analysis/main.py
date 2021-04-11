@@ -144,8 +144,8 @@ def main():
     This will pop up quite a few plots, so comment out sections as needed.
     """
     analysis.analyze_sizes(sizes)
-    fig_titles = True
-    vlines = True
+    fig_titles = False
+    vlines = False
 
     cal_coeff, cal_coeff_covar = analysis.calibration(
         cal_data,
