@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.odr
-from scipy.optimize import curve_fit
+# import scipy.odr
+# from scipy.optimize import curve_fit
+import scipy.linalg
+import sympy as sp
 
 from devices.mca import MeasMCA
 import fitting
@@ -74,9 +76,9 @@ def spectra(
         ind_am_peak = fit_am[0][1]
         ind_fe_peak = fit_fe[0][0][1]
         ind_fe_escape_peak = fit_fe[1][0][1]
-        print("Am peak index:", ind_am_peak)
-        print("Fe peak index:", ind_fe_peak)
-        print("Fe escape peak index:", ind_fe_escape_peak)
+        print(f"Am peak index: {ind_am_peak}±{np.sqrt(fit_am[1][1, 1])}")
+        print(f"Fe peak index: {ind_fe_peak}±{np.sqrt(fit_fe[0][1][1, 1])}")
+        print(f"Fe escape peak index: {ind_fe_escape_peak}±{np.sqrt(fit_fe[1][1][1, 1])}")
         am_peak = 59.5409e3
         fe_peak = 5.90e3
         fe_escape_peak = 3.19e3
@@ -89,6 +91,7 @@ def spectra(
 
         a = fit[0][0]
         b = fit[0][1]
+        cal_covar = fit[1]
 
         cal_fig: plt.Figure = plt.figure()
         cal_ax: plt.Axes = cal_fig.add_subplot()
@@ -147,9 +150,18 @@ def spectra(
             am_sec_fits = None
 
         if fit_fe is not None and fit_am is not None and am_sec_fits is not None:
+            ch_sym, a_sym, b_sym = sp.symbols("ch a b")
+            func = a_sym*ch_sym + b_sym
+
             for i_fit, fit in enumerate(am_sec_fits):
                 ch = fit[0][1]
-                print(f"Am secondary peak {i_fit+1}: ch {ch}, {ind_conv_func(ch)} keV")
+                energy, energy_std = utils.error_propagation(
+                    func,
+                    [ch_sym, a_sym, b_sym],
+                    np.array([ch, a, b]),
+                    covar=scipy.linalg.block_diag(fit[1][1, 1], cal_covar)
+                )
+                print(f"Am secondary peak {i_fit+1}: ch {ch:.3f}±{np.sqrt(fit[1][1, 1]):.5f}, {float(energy) / 1000:.3f}±{float(energy_std)/1000:.5f} keV")
 
     ax1.set_xlabel("MCA channel")
     ax1.set_ylabel(r"Count ($^{241}Am$)")

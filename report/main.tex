@@ -61,7 +61,7 @@ However, the detector experienced unexpected degradation, due to which the resul
 
 \section{Introduction}
 \label{introduction}
-Radiation detectors are devices that measure the rate of incoming ionizing radiation such as $\alpha$, $\beta$, $\gamma$ and neutrino radiation and optionally measure its kinetic energies.
+Radiation detectors are devices that measure the rate of incoming ionizing radiation such as $\alpha$, $\beta$ and $\gamma$ radiation and optionally measure its kinetic energies.
 They are widely used on various fields from nuclear energy production to medicine.
 The properties of ionizing radiation and the needs of applications vary, and so do the detector principles and constructions used.
 
@@ -73,20 +73,21 @@ Proportional counters are gas-based radiation detectors, which as their name sug
 Their operation principles are discussed in section \ref{theory}.
 
 The construction of the proportional counter is discussed in section \ref{assembly}.
-To obtain accurate and meaningful results, the system had to be calibrated as in section \ref{assembly} and configured for the measurements as in section \ref{setup_testing}.
+To obtain accurate and meaningful results, the system had to be calibrated as in section \ref{setup_calibration} and configured for the measurements as in section \ref{setup_testing}.
 The results for the calibration, high voltage sweep and spectral measurements are discussed in section \ref{results}.
 
 We also constructed our own pre-amplifier, but the results were inconclusive due to unexpected degradation of the detector.
+However, testing the pre-amplifier with the detector of a fellow student was successful
 These measurements are discussed in the appendix \ref{pre_amp}.
 
 
 \section{Theory}
 \label{theory}
 
-\subsection{Radiation sources and interaction of their radiation with matter}
-\iffalse
+\subsection{Radiation sources and interaction of radiation with matter}
+\label{sources_interaction}
 Radiation can be categorized to ionizing and non-ionizing radiation depending on its capability of exciting electrons out of matter.
-In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
+In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and $\gamma$-radiation.
 Non-ionizing radiation refers primarily to electromagnetic radiation of visible and longer wavelengths.
 In addition to these there are other forms of radiation such as neutrons and neutrinos.
 \cite{knoll_radiation_2010}
@@ -94,14 +95,16 @@ In addition to these there are other forms of radiation such as neutrons and neu
 The effects of electromagnetic radiation vary significantly by wavelength.
 Whereas the longer wavelengths are mostly capable of inducing thermal motion, other excitations and electric currents, the shorter wavelengths from ultraviolet radiation onwards have enough energy to remove an electron from an atom or a molecule and are therefore ionizing.
 Radiation can also be characterized by its capability of penetrating matter, which is called the hardness of the radiation.
-Generally the hardness increases with the energy of the quanta.
+Generally for each type of radiation the hardness increases with the energy of the quanta.
 \cite{knoll_radiation_2010}
 
-Alpha and beta radiation are the most prominent types of particle radiation.
-Alpha radiation consists of 
-\fi
+$\alpha$- and $\beta$-radiation are the most prominent types of particle radiation.
+$\alpha$-radiation consists of helium nuclei, and due to its high rest mass, they have relatively high energies.
+However, their interaction with matter is strong, and consequently $\alpha$-radiation is very soft.
+$\beta$-radiation on the other hand consists of electrons or positrons and is therefore harder, but soft compared to X- and $\gamma$-rays.
+\cite{knoll_radiation_2010}
 
-In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
+% In the context of particle physics, the most relevant type of radiation is ionizing radiation, which includes particle radiation and short-wavelength electromagnetic radiation such as X-rays and gamma radiation.
 In this project $^{55}$Fe and $^{241}$Am sources were used.
 $^{55}$Fe decays by electron capture of the innermost shell (K-shell) into $^{55}$Mn with a half-life of 2.75 a.
 This results in an electron vacancy, which gets filled by an electron from the outer shells, resulting in a sequence of electron transfers, the energy of which is released as Auger electrons and soft X-ray emissions.
@@ -118,17 +121,15 @@ These are photoelectric absorption, Compton scattering and pair production.
 In photoelectric absorption the photon is completely absorbed by an atom, and its energy is transferred to an electron that gets excited out of the atom, resulting in ionization and a vacancy in the shell.
 With high-energy $\gamma$-rays the excited electrons are usually from the innermost shells such as the K-shell.
 These vacancies get quickly filled by electrons from the outer shells, and the excess energy is released by characteristic X-rays and Auger electrons.
-
+% \cite{knoll_radiation_2010}
 Compton scattering is the predominant mechanism for the $\gamma$-rays of radioisotope sources.
 In Compton scattering the photon is deflected by an electron of the absorbing material, and some of the kinetic energy of the photon gets transferred to the electron, resulting in ionization.
-
-If the $\gamma$-ray energy exceeds twice the rest-mass of an electron (1.02 MeV), the $\gamma$-ray may get
-However, the energies in 
-
-
-
-These interactions and the interactions of particle radiation with matter are discussed with more detail in the book \textit{Radiation Detection and Measurement} \cite{knoll_radiation_2010}.
-
+% \cite{knoll_radiation_2010}
+If the $\gamma$-ray energy exceeds twice the rest-mass of an electron (1.02 MeV), the $\gamma$-ray may get converted to an electron-positron pair in the electric field of a nucleus, and the excess photon energy is converted to the kinetic energy of the pair.
+The created positron will rapidly annihilate, creating a pair of photons.
+However, the energies in the range of tens of keV and therefore significantly below those required for pair production.
+These interactions and the interactions of particle radiation with matter are discussed with more detail in the book \textit{Radiation Detection and Measurement}.
+\cite{knoll_radiation_2010}
 
 
 
@@ -147,7 +148,8 @@ A schematic of the proportional counter is given in figure \ref{fig:theory_schem
 \label{fig:theory_schematic}
 \end{figure}
 
-When ionizing radiation passes through the detector, it collides with the gas inside, causing ionization of the gas.
+When ionizing radiation passes through the detector, it interacts with the gas inside by the mechanisms described in section \ref{sources_interaction}, causing ionization of the gas.
+The number of generated electron-ion pairs is proportional to the energy of the incident radiation.
 Due to the electric field the electrons drift towards the anode, and the positive ions drift towards the cathode.
 This causes a pulse of electric current, which is detectable with the readout electronics.
 The detector is cylindrically symmetric, and the electric field strength can therefore be approximated as
@@ -155,16 +157,34 @@ The detector is cylindrically symmetric, and the electric field strength can the
 E(r) = \frac{U}{r \ln(b/a) },
 \end{equation}
 where $U$ is the potential between the electrodes, $r$ is the radius of the can, $a$ is the outer radius of the anode wire and $b$ is the inner radius of the cathode tube.
-Consequently, the electric field strength increases when approaching the anode wire, and close to the anode ($\approx$ 30 \textmu m) it reaches sufficient level for
+Consequently, the electric field strength increases rapidly when approaching the anode wire, and close to the anode ($\approx$ 30 \textmu m) it reaches sufficient level for
 \href{https://en.wikipedia.org/wiki/Townsend_discharge}{Townsend avalanche} formation.
-In a Townsend avalanche the kinetic energy of a drifting electron is sufficient to ionize the gas upon collisions, and this results in the multiplication of the incomng electron.
+In a Townsend avalanche the kinetic energy of a drifting electron is sufficient to ionize the gas upon collisions, and this results in the multiplication of the incoming electron.
 As the naming of the proportional counter suggests, the number of generated electron-ion pairs is proportional to those generated by the incident radiation, and consequently incoming particles of different energies can be distinquished to create spectral measurements.
 \cites{winkler_gaseous_2015}[p. 159--164]{knoll_radiation_2010}
+
+The ratio of generated and incident electron-ion pairs is known as the gas multiplication factor $M$.
+It can be computed from the measured charge using the formula
+\begin{equation}
+M = \frac{Q}{n_0 e^-} = \frac{Q}{\frac{E_\text{rad}}{E_\text{ion pair}} e^-},
+\label{eq:gas_mult}
+\end{equation}
+where $Q$ is the incident charge, $E_\text{rad}$ is the energy of the incident radiation, $E_\text{ion pair}$ is the energy required to generate an electron-ion pair, and $e^-$ is the elementary charge.
+A theoretical estimate for the gas multiplication factor is provided by the Diethorn formula \cite[eq. 6.10]{knoll_radiation_2010}
+\begin{equation}
+\ln M = \frac{V}{\ln b/a} \frac{\ln 2}{\Delta V}
+\left( \ln \frac{V}{pa \ln (b/a)} - \ln K \right),
+\label{eq:diethorn}
+\end{equation}
+where V is the voltage between the anode and cathode, a and b are the anode and cathode radii, and p is the pressure of the fill gas.
+$\Delta$V and K are constants that depend on the fill gas.
+For the P-10 gas mixture used in this project $W = E_\text{ion pair} = 26$ V/ion pair, $K = 4.8 \pm 0.3 \cdot 10^4$ V/(cm atm) and $\Delta V = 23.6 \pm 5.4$ eV.
+\cites{winkler_gaseous_2015}{knoll_radiation_2010}
 
 The uniformity of the detector and especially the anode wire is highly important for the spectral accuracy of the detector.
 However, in the ends of the detector this is not achieved, as the field distortion caused by the shape of the detector is significant.
 As a solution the anode wire at the ends is covered by metallic field tubes, which increase the radius of the anode and consequently prevent the formation of avalanches in those regions.
-\cite[p. 165]{knoll_radiation_2010}
+\cites[p. 165]{knoll_radiation_2010}
 
 Each avalanche creates a cloud of positive ions near the anode, and these slowly diffuse towards the cathode.
 The anode wire is long compared to the avalanche, and therefore the detector can record other pulses from other regions of the wire before the ions have cleared from the first one.
@@ -189,19 +209,11 @@ In this project we used the P-10 gas mixture, which consists of 90 \% argon and 
 \cite[p. 168]{knoll_radiation_2010}
 
 
-Gas constants \cite{wolff_measurement_1974}
+% Gas constants \cite{wolff_measurement_1974}
+% Theoretical predictions on accuracy?
+% Schockley \cite{shockley_currents_1938}
+% Ramo \cite{ramo_currents_1939}
 
-Theoretical predictions on accuracy?
-
-Schockley \cite{shockley_currents_1938}
-Ramo \cite{ramo_currents_1939}
-TODO
-
-Diethorn formula \cite[eq. 6.10]{knoll_radiation_2010}
-\begin{equation}
-\ln M = \frac{V}{\ln b/a} \frac{\ln 2}{\Delta V}
-\left( \ln \frac{V}{pa \ln (b/a)} - \ln K \right)
-\end{equation}
 
 
 \subsection{Error analysis methods}
@@ -273,8 +285,6 @@ Was the coarse gain perhaps for the pre-amplifier and the fine gain for the spec
 \iffalse
 \subsection{Read-out electronics}
 \label{electronics}
-
-
 Capacitive decoupling \ref{fig:theory_schematic}
 
 The detector was also tested with a custom pre-amplifier, and the results are in appendix \ref{pre_amp}.
@@ -284,10 +294,8 @@ The detector was also tested with a custom pre-amplifier, and the results are in
 \clearpage
 \section{Experimental set-up}
 \label{setup}
-As a part of this project we built the detector ourselves from a construction kit designed by the course organizers.
-For the read-out electronics we used devices available in the laboratory.
-
-Answer the questions on page 5 of the instructions!
+As a significant part of this project we built the detector ourselves from a construction kit designed by the course organizers.
+For the read-out electronics we used the devices available in the laboratory.
 
 
 \subsection{Detector assembly}
@@ -308,7 +316,7 @@ The course organizers removed the top of the can and drilled two holes to its bo
 The cutting edges were then smoothened to avoid sharp edges that could cause sparking, and the anti-corrosion layer was grinded away for long-term stability of the detector.
 Table \ref{table:sizes} contains size measurements of the can and the brass tubes.
 Each of the results is averaged from five measurements.
-The can thickness and brass tube diameter were measured using a
+The can thickness and the diameters of the anode wire and the brass tube were measured using a
 \href{https://en.wikipedia.org/wiki/Micrometer}{micrometer}, and the rest were measured with a
 \href{https://en.wikipedia.org/wiki/Calipers}{caliper}.
 
@@ -371,7 +379,7 @@ In this step one should wait for the epoxy to dry properly before removing the t
 Once the epoxy of the caps was dry, some more was added to ensure airtightness.
 Then a pipe was attached to the hole on each of the end caps.
 
-Finally one side of the can was brushed with sandpaper and attached a piece of copper tape so that it went all the way to the shielding of the high voltage connector.
+Finally one side of the can was brushed with sandpaper and a piece of copper tape was attached so that it went all the way to the shielding of the high voltage connector.
 This established an electrical connection between the ground and the can.
 It should be noted that the copper tape should be put on a different side than on which the radiation source is placed, as the copper tape would otherwise absorb some of the radiation.
 A piece of aluminum foil was put over the bottom of the can to provide additional shielding from electromagnetic interference, as the end of the anode wire slightly extrudes from within the can.
@@ -426,7 +434,7 @@ These are illustrated in figure \ref{fig:cal_trace}.
 
 
 
-\FloatBarrier
+\clearpage
 \subsection{Measurements with radiation sources}
 \label{setup_testing}
 For the testing with radiation sources the electrical connections were the same as for the calibration, except that the pulse generator was removed and that the oscilloscope was attached to the output of the spectral amplifier.
@@ -448,7 +456,9 @@ Due to its different enclosure and higher activity, the $^{241}$Am source also r
 \section{Results and discussion}
 \label{results}
 This chapter discusses the measurement results of the setups described in chapter \ref{assembly}.
-The code used for the data analysis is available in the GitHub repository. \cite{repo}
+The
+\href{https://en.wikipedia.org/wiki/Python_(programming_language)}{Python}-based
+software used for the data analysis is available in the GitHub repository. \cite{repo}
 
 
 \subsection{Calibration}
@@ -460,7 +470,7 @@ To this data we can make the linear fit
 Q = g \cdot \text{Channel}_\text{MCA} + h.
 \label{eq:calibration}
 \end{equation}
-We used orthogonal distance regression to account for both the differential nonlinearity of the MCA and the standard deviation of the measured voltages for each pulser setting.
+Orthogonal distance regression was used to account for both the differential nonlinearity of the MCA and the standard deviation of the measured voltages for each pulser setting.
 The
 \href{https://en.wikipedia.org/wiki/Differential_nonlinearity}{differential nonlinearity}
 of the MCA is 0.6 \%, and the
@@ -482,8 +492,8 @@ The calibration of the pulser was also investigated, and the results are discuss
 \clearpage
 \subsection{High voltage sweep}
 \label{results_hv}
-To find the optimal settings for the detector we tested it with several voltages and gain values.
-With the $^{241}$Am source we obtained the spectra in figure \ref{fig:am_scan_fits} and for the $^{55}$Fe source the data in figure \ref{fig:fe_scan_fits}.
+To find the optimal settings, the detector was tested with several voltages and gain values.
+The spectra in figure \ref{fig:am_scan_fits} were obtained with the $^{241}$Am source, and the spectra in figure \ref{fig:fe_scan_fits} with the $^{55}$Fe source.
 For $^{55}$Fe the tested voltage range was 1603--2301 V, and for $^{241}$Am 1152--2301 V, as within this range suitable gain values were available to fit the signal within the range of the multichannel analyzer.
 The voltage and coarse gain values for each measurement are provided in the figures.
 The fine gain of the amplifier was held constant.
@@ -525,10 +535,11 @@ Consequently it appears that the detector reaches the desired proportional regio
 \end{figure}
 
 \FloatBarrier
-The measured charges were converted to gas multiplication factors with formula TODO, and the Diethorn formula was used to obtain theoretical predictions.
+The measured charges were converted to gas multiplication factors with formula \ref{eq:gas_mult}, and the Diethorn formula \ref{eq:diethorn} was used to obtain theoretical predictions.
 The anode and cathode radii and their uncertainties are provided in table \ref{table:sizes}, and air pressure was measured to be $1014 \pm 5$ mbar.
 The results are plotted in figure \ref{fig:gas_mult}.
 The results fit within the error limits of the theoretical predictions, but are consistently slightly higher.
+This could be due to an unaccounted systematic uncertanty.
 
 \begin{figure}[ht!]
 \centering
@@ -541,7 +552,7 @@ The results fit within the error limits of the theoretical predictions, but are 
 The resolution of the detector was also investigated by analyzing the peak width as a function of the operation voltage as in figure \ref{fig:resolution}.
 For optimal resolution a small peak width is desired.
 The ideal operation voltage for $^{241}$Am appears to be around 1530 V, whereas for $^{55}$Fe the peak width slightly decreases, as voltage is lowered beyond the suitable operation range.
-Presumably this could mean that the ideal measurement voltage for $^{55}$Fe is in the same range as for $^{241}$Am, but improvements in the readout electronics are required for operation in this range.
+Presumably this could mean that the ideal measurement voltage for $^{55}$Fe is in the same range as for $^{241}$Am, but the present setup could not measure $^{55}$Fe in this voltage range.
 
 \begin{figure}[ht!]
 \centering
@@ -580,8 +591,10 @@ This energy calibration is illustrated in figure \ref{fig:spectral_calibration}.
 \end{figure}
 
 \FloatBarrier
-The secondary peak on the $^{55}$Fe spectrum is the Argon escape peak.
-On the 
+The energy calibration was used to distinguish the sources of the additional peaks on the $^{241}$Am.
+These peaks and the calibration peaks are listed on table \ref{table:peaks}.
+The uncertainties for the secondary peaks are given as extracted from the fitting software and propagated to the energy scale using the uncertainties of the calibration.
+However, they are significantly smaller than their differences to the theoretical values, which demonstrates, that additional systematic uncertainties need to be accounted for to achieve error limits consistent with the results.
 
 \begin{table}[ht!]
 \centering
@@ -591,12 +604,13 @@ Source	& MCA ch.	& $E_\text{est.}$ (keV)	& $E_\text{theor.}$ (keV)	& Origin \\
 \hline
 $^{55}$Fe	& 46.22			& -			& 3.19 			& Argon escape peak \cite{winkler_gaseous_2015} \\
 $^{55}$Fe	& 91.60			& -			& 5.90 			& $^{55}$Fe electron capture \cite{winkler_gaseous_2015} \\
-$^{241}$Am	& 276.88			& 17.84		& 17.751			& $^{237}$Np L$_\beta$ \cites{maeda_peak_2015}{am241_spectrum} \\
-$^{241}$Am	& 330.28			& 21.25		& 20.784			& $^{237}$Np L$_\gamma$ \cites{maeda_peak_2015}{am241_spectrum} \\
-$^{241}$Am	& 412.10			& 26.48		& 26			& $^{241}$Am \cite{am241_spectrum} \\
-$^{241}$Am	& 771.82			& 49.47		&				& \\
+$^{241}$Am	& 276.88			& $17.84\pm0.00036$		& 17.751			& $^{237}$Np L$_\beta$ \cites{maeda_peak_2015}{am241_spectrum} \\
+$^{241}$Am	& 330.28			& $21.25\pm0.00036$		& 20.784			& $^{237}$Np L$_\gamma$ \cites{maeda_peak_2015}{am241_spectrum} \\
+$^{241}$Am	& 412.10			& $26.48\pm0.00036$		& 26			& $^{241}$Am \cite{am241_spectrum} \\
+$^{241}$Am	& 771.82			& $49.47\pm0.00072$		&				& Improper $\gamma$-ray absorption? \\
 $^{241}$Am	& 929.26			& -			& 59.5409		& Byproduct of $\alpha$-decay \cite{winkler_gaseous_2015} \\
 \end{tabular}
+\label{table:peaks}
 \end{table}
 
 
@@ -609,7 +623,7 @@ $^{241}$Am	& 929.26			& -			& 59.5409		& Byproduct of $\alpha$-decay \cite{winkl
 The detector works as intended, and has shown its capability of distinguishing the energies of new spectral peaks accurately.
 Therefore it is shown to be suitable for its intended purpose of being a cost-effective alternative for existing detectors.
 However, in the measurements of appendix \ref{pre_amp} the detector showed unexpected degradation, which casts doubt on its long-term stability.
-Additionally more error sources could be included in the error analysis, as at present the error bars are much tighter than the variations seen in the results.
+Additionally more error sources could be included in the error analysis, as at present the error bars based on the known error sources are much tighter than the variations seen in the results.
 
 
 \clearpage
@@ -733,8 +747,8 @@ Since no significant trend was detected in the results, we can estimate the gain
 \FloatBarrier
 Now that the gain of the pre-amplifier was known, it was installed to the setup to test its operation with the detector.
 However, unfortunately the detector had degraded between the measurements with the commercial amplifier and these measurements, and we were not able to measure good spectra.
-These failed results are plotted in \ref{fig:pre_amp_testing}.
-However, the same pre-amplifier was also measured with the detector of a fellow student, and the results are plotted in figure \ref{fig:pre_amp_testing_nikita}.
+These failed results are plotted in figure \ref{fig:pre_amp_testing}.
+However, the same pre-amplifier was also measured with the detector of a fellow student, and the results are plotted in figures \ref{fig:pre_amp_testing_nikita} and \ref{fig:spectral_calibration_nikita}.
 The $^{55}$Fe spectrum and the primary peak of $^{241}$Am are clearly visible, but some of the secondary peaks of $^{241}$Am are lost in the noise.
 In this measurement the amplification was also not ideal, as the $^{241}$Am peak is only around the channel 791, leaving some of the higher MCA channels unused.
 
@@ -752,6 +766,13 @@ In this measurement the amplification was also not ideal, as the $^{241}$Am peak
 \label{fig:pre_amp_testing_nikita}
 \end{figure}
 
+\clearpage
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/spectral_calibration_custom_preamp_Nikitas_detector.eps}
+\caption{Energy calibration of the spectral measurement with the detector of a fellow student}
+\label{fig:spectral_calibration_nikita}
+\end{figure}
 
 \FloatBarrier
 Overall, despite the unexpected degradation of the detector, these results prove that the pre-amplifier is useful for its intended purpose with the measurement setup.
