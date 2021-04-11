@@ -468,6 +468,7 @@ of the MCA is 0.6 \%, and the
 is 0.02 \%.
 The resulting error bars for the collected charge are significantly tighter than for Winkler et al., as we extracted the pulse heights and their standard deviations with software instead of measuring and estimating the error by eye.
 For the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \cdot 10^{-7}$ pC/channel and $h = -1.04 \cdot 10^{-4} \pm 6.99 \cdot 10^{-5}$ pC.
+The calibration of the pulser was also investigated, and the results are discussed in appendix \ref{pulser_calibration}.
 
 
 \begin{figure}[ht!]
@@ -475,17 +476,6 @@ For the fit parameters we get the values $g = 1.46 \cdot 10^{-4} \pm 4.81 \cdot 
 \includegraphics[width=\textwidth]{fig/python/mca_calibration.eps}
 \caption{MCA calibration: collected charge as a function of the MCA channel with a linear fit, and a histogram of the measured detection counts}
 \label{fig:mca_calibration}
-\end{figure}
-
-It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
-The relationship between these is illustrated in figure \ref{fig:pulser_calibration}.
-The relative error of the pulser voltages was assumed to be 5 \% with a minimum error of 10 mV, and orthogonal distance regression was used for the fitting.
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=\textwidth]{fig/python/pulser_calibration.eps}
-\caption{Pulser calibration}
-\label{fig:pulser_calibration}
 \end{figure}
 
 
@@ -768,6 +758,23 @@ Overall, despite the unexpected degradation of the detector, these results prove
 Its resolution is not as good as with the commercial amplifier, but it's highly cost-effective and compact, and has significant room for improvement.
 For example, the gain could be made adjustable by replacing one of the resistors on the amplifier PCB with a potentiometer.
 Additional improvements could also be made regarding the noise level, but on the other hand these can be worked around by increasing the measurement time.
+
+
+
+\clearpage
+\section{Pulser calibration}
+\label{pulser_calibration}
+It should be noted that the pulse heights measured with the oscilloscope differred significantly from those set on the pulser.
+The relationship between these is illustrated in figure \ref{fig:pulser_calibration}.
+The relative error of the pulser voltages was assumed to be 5 \% with a minimum error of 10 mV, and orthogonal distance regression was used for the fitting.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{fig/python/pulser_calibration.eps}
+\caption{Pulser calibration}
+\label{fig:pulser_calibration}
+\end{figure}
+
 
 
 \clearpage
